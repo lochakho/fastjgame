@@ -1,0 +1,21 @@
+客户端发来的token分布：
+forbidden(禁用) ---->   preUsing(限定可重连) -->  unused(无效) ----> curUsing(可重连)   -----> newer(可登录)
+
+禁用的token:             token.createTime < preUsing.createTime or token.createTime < curUsing.createTime
+重连的token(使用中的):    token == preUsing or token == curUsing
+登录的token:             token.createTime > curUsing.createTime
+无效的token：            token.createTime > preUsing.createTime token.createTime < curUsing.createTime
+基于时间戳的缺点是不同服务器时间差不能太大。
+
+其中使用中的token存在两种情况：
+1.确定客户端收到了会话的新token，那么就是会话的新token
+2.无法确认客户端收到了新的token时，可能是会话的当前token，或上一个token。
+
+什么时候添加禁用的toke？
+1.会话移除时，当前token及之前的token需要被禁用。
+2.连接成功后，验证的token之前的token需要被禁用。
+3.如果在2之后，确定客户端收到了新的token时，新token之前的token需要被禁用。
+
+为什么要有禁用token？
+拿网站验证码举个栗子，你可能同时有多个验证码，当你使用了一个验证码之后，其实是可以使得其它部分(甚至全部)验证码无效的。
+验证码有时限，但不能仅靠时限。

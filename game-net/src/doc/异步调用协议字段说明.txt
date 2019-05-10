@@ -1,0 +1,40 @@
+异步协议用于 玩家与服务器之间  服务器与服务器之间
+
+协议约定：
+公共部分：
+ int  4字节      frameLength       有效帧长度(不包含自身)
+ long 8字节      checkSum          消息的内容的校验和(不包含第一个字段和自身)
+ byte 1字节      pkgType           协议的类型(每种协议一个固定值)
+
+1.token验证(请求登录)
+ long  8字节     clientGuid        客户端唯一标识，用于初始化channel，关联会话
+ long  8字节     serverGuid        我想连谁 
+ int   4字节     sndTokenTimes     这是客户端第几次发起连接请求(用于识别在同一个token上的最新请求)和追踪结果
+ long  8字节     ack               客户端收到的最大消息号(捎带确认的ack)
+ bytes 字节数组  encryptTokenBytes 加密后的token字节数组,用于登录该服务器的token(用于校验请求参数)
+
+2.Token验证结果(建立连接响应)
+ int   4字节     sndTokenTimes    这是客户端第几次发起连接请求(返回给客户端)
+ byte  1字节     success          token验证结果(成功为 1,失败为 0)
+ long  8字节     ack              服务器收到的最大消息号
+ bytes 字节数组  encryptTokenBytes 加密后的token字节数组，验证成功为新的token，验证失败则为失败token
+
+
+3、4 客户端发送的正式消息 和 服务器发送的正式消息 同结构
+ long  8字节     ack              我收到的最大消息号(捎带确认的ack)
+ long  8字节     sequence         这是我发送的第几个包/帧。
+ int   4字节     messageId        协议id
+ bytes 字节数组   messageBytes     协议的具体内容
+
+5、6 客户端ack-ping消息 和 服务器返回的ack-pong消息 同结构 定长消息
+ long  8字节      ack              我收到的最大消息号(捎带确认的ack)
+ long  8字节      sequence         这是我发送的第几个包/帧。
+
+在3、4都有捎带确认的ack情况下为什么还需要5和6？
+1.采用捎带确认基于这样的假设：请求一般会存在一个响应，且双方总是有消息要发给另一方，而且间隔不会太长,。
+2.但请求可能没有响应信息,在长时间没有新的消息通信情况下，需要有机制对前面的消息进行确认。
+3.此外，用于避免双方消息队列缓存过多(尤其是要降低服务器缓存压力)
+
+如何区分建立连接请求的先后顺序？
+token不同时，通过token的createTimes区分先后
+token相同时，通过请求中的sndTokenTimes区分先后

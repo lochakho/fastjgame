@@ -1,0 +1,32 @@
+同步协议用于 服务器与服务器之间
+同步协议最大的特点是：只有最新的业务逻辑请求是有效的，旧的业务逻辑请求可以直接丢弃。
+
+公共部分：
+int  4字节      frameLength       有效帧长度(不包含自身)
+long 8字节      checkSum          消息的内容的校验和(不包含第一个字段和自身)
+byte 1字节      pkgType           协议的类型(每种协议一个固定值)
+
+1.token验证(请求登录)
+ long  8字节     clientGuid        客户端唯一标识，用于初始化channel，关联会话
+ long  8字节     serverGuid        我想连谁
+ long  8字节     sndTokenTimes     这是客户端第几次发起连接请求(用于识别在同一个token上的最新请求)和追踪结果
+ bytes 字节数组  encryptTokenBytes  加密后的token字节数组,用于登录该服务器的token(用于校验请求参数)
+
+2.Token验证结果(建立连接响应)
+ int   4字节     sndTokenTimes     这是客户端第几次发起连接请求(返回给客户端)
+ byte  1字节     success           token验证结果(成功为 1,失败为 0)
+ bytes 字节数组  encryptTokenBytes  加密后的token字节数组，验证成功为新的token，验证失败则为失败token
+
+3.请求包(消息类型3)
+long  8字节      requestGuid        请求包唯一id 用于追踪结果
+int   4字节      messageId          请求消息id
+bytes 字节数组    messageBytes       请求的内容
+
+4.响应包(消息类型4)
+long  8字节      requestGuid       请求包唯一id(注意，由请求包决定)
+int   4字节      messageId         响应消息id
+bytes 字节数组    messageBytes      响应的内容
+
+5.ping包 保活机制(无其它内容)
+
+

@@ -21,3 +21,24 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+#ignore thumbnails created by windows
+Thumbs.db
+*.log
+*.dll
+*.lib
+*.sbr
+
+#Eclipse Project Files
+.classpath
+.project
+.settings/
+
+#IntelliJ IDEA Files
+*.idea/
+*target/
+*.iml
+*.ipr
+*.iws
+*.idea
+*.jar

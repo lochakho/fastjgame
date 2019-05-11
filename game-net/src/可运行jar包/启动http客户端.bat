@@ -1,0 +1,1 @@
+java -jar game-net-1.0-SNAPSHOT.jar roleType=LOGIN_SERVER processGuid=20003 http_1=192.168.1.103:10003 http_2=192.168.1.103:20003

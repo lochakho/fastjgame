@@ -1,1 +1,0 @@
-java -jar game-net-1.0-SNAPSHOT.jar roleType=GAME_SERVER processGuid=2 tcpPort=20001 wsPort=20002 httpPort=20003 syncRpcPort=20004

@@ -226,7 +226,7 @@ public class SyncC2SSessionMrg {
         SyncC2SSession session=sessionWrapper.getSession();
         NetUtils.closeQuietly(sessionWrapper.getChannel());
 
-        logger.info("remove syncRpc session by reason of,sessionInfo={}",reason,session);
+        logger.info("remove syncRpc session by reason of {},sessionInfo={}",reason,session);
 
         // 验证成功过(调用过connect)才会执行disconnect回调。
         if (sessionWrapper.getVerifiedSequencer().get() > 0 && session.getLifeCycleAware() != null){
@@ -257,11 +257,12 @@ public class SyncC2SSessionMrg {
         // 使用的时候检查是否断开连接，断开了连接则重连
         if (!sessionWrapper.getChannel().isActive()){
             connect(sessionWrapper);
+            // 仍然不可用，无法建立连接
+            if (!sessionWrapper.getChannel().isActive()){
+                return Optional.empty();
+            }
         }
-        // 仍然不可用，无法建立连接
-        if (!sessionWrapper.getChannel().isActive()){
-            return Optional.empty();
-        }
+
         long nextRequestGuid= sessionWrapper.getRequestGuidSequencer().incAndGet();
         SyncLogicRequestTO logicRequestTO=new SyncLogicRequestTO(nextRequestGuid,request);
 

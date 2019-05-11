@@ -55,7 +55,7 @@ public abstract class AbstractThreadLifeCycleHelper {
      * 请求启动线程
      * @return
      */
-    public final boolean start(){
+    public final boolean start() throws Exception {
         if (state.compareAndSet(NOT_START,RUNNING)){
             startImp();
             logger.info("{} start thread(s) success!",this.getClass().getSimpleName());
@@ -68,8 +68,9 @@ public abstract class AbstractThreadLifeCycleHelper {
 
     /**
      * 子类真正的启动线程
+     * @throws Exception 允许启动时抛出异常
      */
-    protected abstract void startImp();
+    protected abstract void startImp() throws Exception;
 
     /**
      * 请求关闭线程

@@ -113,7 +113,7 @@ public class DisruptorMrg extends AbstractThreadLifeCycleHelper {
      * @param worldThreadFactory 游戏世界线程工厂
      * @param netEventHandler 游戏世界(网络事件处理器)
      */
-    public void start(ThreadFactory worldThreadFactory, NetEventHandler netEventHandler){
+    public void start(ThreadFactory worldThreadFactory, NetEventHandler netEventHandler) throws Exception {
         this.worldThreadFactory=worldThreadFactory;
         this.netEventHandler = netEventHandler;
         super.start();

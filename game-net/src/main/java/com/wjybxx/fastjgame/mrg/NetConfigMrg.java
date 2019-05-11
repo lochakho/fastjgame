@@ -56,17 +56,17 @@ public class NetConfigMrg {
     private final int sndBufferAsClient;
     private final int revBufferAsClient;
     private final int ringBufferSize;
+    private final int globalExecutorThreadNum;
 
     private final int connectMaxTryTimes;
     private final int connectTimeout;
     private final int waitTokenResultTimeout;
     private final int loginTokenTimeout;
     private final int ackTimeout;
+    private final int sessionTimeout;
 
     private final int serverMaxCacheNum;
     private final int clientMaxCacheNum;
-
-    private final int sessionTimeout;
 
     private final int httpRequestTimeout;
     private final int httpSessionTimeout;
@@ -93,6 +93,7 @@ public class NetConfigMrg {
         sndBufferAsClient= configWrapper.getAsInt("sndBufferAsClient");
         revBufferAsClient= configWrapper.getAsInt("revBufferAsClient");
         ringBufferSize= configWrapper.getAsInt("ringBufferSize");
+        globalExecutorThreadNum=configWrapper.getAsInt("globalExecutorThreadNum");
 
         serverMaxCacheNum= configWrapper.getAsInt("serverMaxCacheNum");
         clientMaxCacheNum= configWrapper.getAsInt("clientMaxCacheNum");
@@ -102,8 +103,8 @@ public class NetConfigMrg {
         waitTokenResultTimeout = configWrapper.getAsInt("waitTokenResultTimeout");
         loginTokenTimeout = configWrapper.getAsInt("loginTokenTimeout");
         ackTimeout = configWrapper.getAsInt("ackTimeout");
-
         sessionTimeout = configWrapper.getAsInt("sessionTimeout");
+
 
         httpRequestTimeout =configWrapper.getAsInt("httpRequestTimeout");
         httpSessionTimeout =configWrapper.getAsInt("httpSessionTimeout");
@@ -172,22 +173,30 @@ public class NetConfigMrg {
      * 作为服务器时的接收缓冲区
      * @return
      */
-    public  int revBufferAsServer(){
+    public int revBufferAsServer(){
         return revBufferAsServer;
     }
     /**
      * 作为客户端时的发送缓冲区
      * @return
      */
-    public  int sndBufferAsClient(){
+    public int sndBufferAsClient(){
         return sndBufferAsClient;
     }
     /**
      * 作为客户端时的接收缓冲区
      * @return
      */
-    public  int revBufferAsClient(){
+    public int revBufferAsClient(){
         return revBufferAsClient;
+    }
+
+    /**
+     * 全局线程池最大线程数
+     * @return
+     */
+    public int globalExecutorThreadNum(){
+        return globalExecutorThreadNum;
     }
 
     /**

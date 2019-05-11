@@ -73,7 +73,7 @@ public class NetBootstrap<T extends NetBootstrap<T>> extends AbstractThreadLifeC
     }
 
     @Override
-    protected void startImp() {
+    protected void startImp() throws Exception {
         modules.add(new GameNetModule());
         modules.addAll(childModules());
 

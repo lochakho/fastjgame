@@ -64,7 +64,7 @@ import java.io.File;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         ConfigWrapper configWrapper =new ArrayConfigWrapper(args);
         // 启动的进程类型
         RoleType roleType= RoleType.valueOf(configWrapper.getAsString("roleType"));

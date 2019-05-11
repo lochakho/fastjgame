@@ -23,7 +23,7 @@ import java.util.Objects;
 
 /**
  * 对Netty的泛型参数查找增强(适配)。
- * Netty自带的查找只支持超类中查找，这里适配了下，以支持查找接口中声明的泛型参数。
+ * Netty自带的查找只支持超类中查找，这里进行适配增强，以支持查找接口中声明的泛型参数。
  *
  * @author wjybxx
  * @version 1.0
@@ -37,15 +37,6 @@ public class NettyTypeParameterFinderAdapter implements TypeParameterFinder{
     private NettyTypeParameterFinderAdapter() {
     }
 
-    /**
-     * 泛型class由netty实现。这里只实现接口部分，简化一下逻辑，更容易分析是否存在bug
-     * @param instance 实例对象
-     * @param superClazzOrInterface 泛型参数typeParamName存在的类,class或interface
-     * @param typeParamName 泛型参数名字
-     * @param <T>
-     * @return
-     * @throws Exception
-     */
     @Override
     public <T> Class<?> findTypeParameter(T instance, Class<? super T> superClazzOrInterface, String typeParamName) throws Exception {
         Objects.requireNonNull(instance,"instance");
@@ -53,7 +44,7 @@ public class NettyTypeParameterFinderAdapter implements TypeParameterFinder{
         Objects.requireNonNull(typeParamName,"typeParamName");
 
         if (instance.getClass()==superClazzOrInterface){
-            // 仅仅支持查找父类/父接口定义的泛型且被子类声明为具体类型的
+            // 仅仅支持查找父类/父接口定义的泛型且被子类声明为具体类型的泛型参数
             throw new IllegalArgumentException("typeParam " + typeParamName + " is declared in self class"
                     + ", instance class " + instance.getClass().getSimpleName()
                     + "\n only support find superClassOrInterface typeParam.");
@@ -89,8 +80,8 @@ public class NettyTypeParameterFinderAdapter implements TypeParameterFinder{
 
     /**
      * 确保泛型参数在该类型中进行了定义
-     * @param superClazz
-     * @param typeParamName
+     * @param superClazz 超类Class对象
+     * @param typeParamName 泛型参数名
      */
     private void ensureTypeParameterExist(Class<?> superClazz, String typeParamName){
         TypeVariable<? extends Class<?>>[] typeParameters = superClazz.getTypeParameters();

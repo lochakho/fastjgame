@@ -30,6 +30,7 @@ public class UtilConstants {
 
     /**
      * 数组分割符 '|'
+     * 逗号在某些场合下效果不好，逗号使用面太广。
      */
     public static final String ARRAY_DELIMITER="\\|";
     /**

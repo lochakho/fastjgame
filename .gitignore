@@ -11,7 +11,7 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
+# *.jar
 *.war
 *.nar
 *.ear
@@ -41,4 +41,4 @@ Thumbs.db
 *.ipr
 *.iws
 *.idea
-*.jar
+#*.jar

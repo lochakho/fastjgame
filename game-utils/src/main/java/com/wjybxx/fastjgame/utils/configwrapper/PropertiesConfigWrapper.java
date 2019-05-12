@@ -28,11 +28,11 @@ import java.util.Properties;
  * @github - https://github.com/hl845740757
  */
 @Immutable
-public final class PropertiesWrapper extends ConfigWrapper {
+public final class PropertiesConfigWrapper extends ConfigWrapper {
 
     private final Properties properties;
 
-    public PropertiesWrapper(Properties properties) {
+    public PropertiesConfigWrapper(Properties properties) {
         this.properties = properties;
     }
 
@@ -53,7 +53,7 @@ public final class PropertiesWrapper extends ConfigWrapper {
 
     @Override
     public String toString() {
-        return "PropertiesWrapper{" +
+        return "PropertiesConfigWrapper{" +
                 "properties=" + properties +
                 '}';
     }

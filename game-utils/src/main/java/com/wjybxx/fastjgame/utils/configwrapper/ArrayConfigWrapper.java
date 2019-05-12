@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * 基于数组的配置的包装器。
+ * 基于数组的键值对配置的包装器。
  * 数组的每一个元素都是一个键值对 key=value，如：[a=1,b=2]
  * @author wjybxx
  * @version 1.0

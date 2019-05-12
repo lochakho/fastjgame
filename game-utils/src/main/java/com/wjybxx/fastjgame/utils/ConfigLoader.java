@@ -17,7 +17,7 @@
 package com.wjybxx.fastjgame.utils;
 
 import com.wjybxx.fastjgame.utils.configwrapper.ConfigWrapper;
-import com.wjybxx.fastjgame.utils.configwrapper.PropertiesWrapper;
+import com.wjybxx.fastjgame.utils.configwrapper.PropertiesConfigWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +96,7 @@ public final class ConfigLoader {
         }
         // 两个都存在，需要合并(gameConfig下的替换jar包中的)
         if (cfgFromGameConfigDir != null && cfgFromJarResources != null){
-            return cfgFromJarResources.convert2MapWrapper().replaceAll(cfgFromGameConfigDir.convert2MapWrapper());
+            return cfgFromJarResources.convert2MapWrapper().merge(cfgFromGameConfigDir.convert2MapWrapper());
         }
         // 哪个存在返回哪个
         if (cfgFromGameConfigDir != null){
@@ -122,7 +122,7 @@ public final class ConfigLoader {
                 InputStreamReader inputStreamReader=new InputStreamReader(fileInputStream, StandardCharsets.UTF_8)){
                 Properties properties=new Properties();
                 properties.load(inputStreamReader);
-                return new PropertiesWrapper(properties);
+                return new PropertiesConfigWrapper(properties);
             }
         }
         throw new FileNotFoundException(fileName);
@@ -144,7 +144,7 @@ public final class ConfigLoader {
         try (InputStream inputStream=resource.openStream()){
             Properties properties=new Properties();
             properties.load(inputStream);
-            return new PropertiesWrapper(properties);
+            return new PropertiesConfigWrapper(properties);
         }
     }
 }

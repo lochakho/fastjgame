@@ -3,7 +3,7 @@ package com.wjybxx.fastjgame.utils.configwrapper;
 import com.wjybxx.fastjgame.utils.constants.UtilConstants;
 
 /**
- * 配置帮助类。
+ * 基于字符串键值对配置的帮助类。
  *
  * 注意：数组分隔为{@link UtilConstants#ARRAY_DELIMITER} 即'|'
  *

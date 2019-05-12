@@ -53,10 +53,10 @@ public class MapConfigWrapper extends ConfigWrapper {
     /**
      * 使用{@code other}中的参数替换当前Config中的属性。
      * 它不会修改当前对象，返回的是拥有两者参数的一个新对象。
-     * @param other
-     * @return
+     * @param other 优先级更高
+     * @return a new MapConfigWrapper
      */
-    public final MapConfigWrapper replaceAll(MapConfigWrapper other){
+    public final MapConfigWrapper merge(MapConfigWrapper other){
         Map<String,String> map=new HashMap<>(configMap);
         map.putAll(other.configMap);
         return new MapConfigWrapper(map);

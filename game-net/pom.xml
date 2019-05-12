@@ -15,6 +15,14 @@
 
     <dependencies>
 
+        <!-- 尝试切换到logback,之前一直使用log4j -->
+        <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
         <!-- 依赖注入框架 -->
         <!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
         <dependency>
@@ -23,6 +31,7 @@
             <version>4.2.2</version>
         </dependency>
 
+        <!-- 无锁并发框架disruptor -->
         <!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
         <dependency>
             <groupId>com.lmax</groupId>

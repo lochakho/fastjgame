@@ -17,7 +17,7 @@
 package com.wjybxx.fastjgame.example.mrg;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.utils.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
 import com.wjybxx.fastjgame.net.common.RoleType;
 
 /**

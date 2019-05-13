@@ -21,8 +21,8 @@ import com.wjybxx.fastjgame.NetBootstrap;
 import com.wjybxx.fastjgame.example.module.ExampleGameServerModule;
 import com.wjybxx.fastjgame.example.module.ExampleLoginServerModule;
 import com.wjybxx.fastjgame.net.common.RoleType;
-import com.wjybxx.fastjgame.utils.configwrapper.ArrayConfigWrapper;
-import com.wjybxx.fastjgame.utils.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.ArrayConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
 
 import java.io.File;
 

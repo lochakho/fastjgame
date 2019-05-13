@@ -33,6 +33,10 @@ public enum RoleType {
      */
     INVALID(-1),
     /**
+     * 测试用
+     */
+    TEST(0),
+    /**
      * 网关服
      */
     GATE_SERVER(1),

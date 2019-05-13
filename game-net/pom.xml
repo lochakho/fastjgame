@@ -29,6 +29,13 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>4.2.2</version>
+            <!-- 去除低版本guava -->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- 无锁并发框架disruptor -->

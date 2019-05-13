@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 import com.wjybxx.fastjgame.constants.NetConstants;
 import com.wjybxx.fastjgame.utils.ConfigLoader;
 import com.wjybxx.fastjgame.utils.NetUtils;
-import com.wjybxx.fastjgame.utils.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

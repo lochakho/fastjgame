@@ -16,8 +16,8 @@
 
 package com.wjybxx.fastjgame.utils;
 
-import com.wjybxx.fastjgame.utils.configwrapper.ConfigWrapper;
-import com.wjybxx.fastjgame.utils.configwrapper.PropertiesConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.PropertiesConfigWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

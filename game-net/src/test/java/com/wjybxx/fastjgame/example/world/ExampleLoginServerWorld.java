@@ -219,11 +219,12 @@ public class ExampleLoginServerWorld extends World {
         if (serverInfo.isSyncRpcRegistered()){
             ExampleJsonMsg.LoginRequest syncRequest = new ExampleJsonMsg.LoginRequest("syncRequest",
                     serverInfo.getSyncRpcSequencer().incAndGet());
-            logger.info("send serverGuid {} syncRpc request {} ",serverInfo.getServerGuid(),syncRequest);
+            long startTime=System.currentTimeMillis();
             Optional<ExampleJsonMsg.LoginResponse> response = syncC2SSessionMrg.request(serverInfo.getServerGuid(), syncRequest,
                     ExampleJsonMsg.LoginResponse.class);
             if (response.isPresent()){
-                logger.info("serverGuid {} syncRpc request success, response {}",serverInfo.getServerGuid(),response.get());
+                long costTime=System.currentTimeMillis()-startTime;
+                logger.info("serverGuid {} syncRpc request success,cost {} millTimes, response {}",serverInfo.getServerGuid(),costTime,response.get());
             }else {
                 logger.info("serverGuid {} syncRpc request timeout",serverInfo.getServerGuid());
             }

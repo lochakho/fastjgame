@@ -19,14 +19,10 @@ package com.wjybxx.fastjgame.example.mrg;
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.example.bean.ServerInfo;
 import com.wjybxx.fastjgame.net.common.RoleType;
-import com.wjybxx.fastjgame.utils.configwrapper.ConfigWrapper;
-import com.wjybxx.fastjgame.utils.configwrapper.MapConfigWrapper;
-import com.wjybxx.fastjgame.utils.constants.UtilConstants;
+import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.MapConfigWrapper;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 登录服信息管理器

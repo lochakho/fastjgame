@@ -1,8 +1,8 @@
 package com.wjybxx.fastjgame.utils;
 
-import com.wjybxx.fastjgame.utils.tablereader.CSVReader;
-import com.wjybxx.fastjgame.utils.tablereader.ExcelReader;
-import com.wjybxx.fastjgame.utils.tablereader.TableSheet;
+import com.wjybxx.fastjgame.tablereader.CSVReader;
+import com.wjybxx.fastjgame.tablereader.ExcelReader;
+import com.wjybxx.fastjgame.tablereader.TableSheet;
 
 import java.io.File;
 import java.nio.charset.Charset;

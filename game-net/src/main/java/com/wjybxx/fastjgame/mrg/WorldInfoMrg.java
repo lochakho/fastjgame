@@ -17,13 +17,13 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.utils.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
 import com.wjybxx.fastjgame.net.common.RoleType;
 
 /**
- * 游戏世界基本信息控制器。用于逻辑线程(游戏世界线程)。
+ * 游戏世界基本信息控制器，用于逻辑线程(游戏世界线程)，它会在游戏世界线程启动之前初始化。
  * 子类可以存储更多的信息。
- * {@link #init(ConfigWrapper)} happens-before world thread invoke other public methods
+ * {@link #init(ConfigWrapper, int)} happens-before world thread invoke other public methods
  *
  * @author wjybxx
  * @version 1.0

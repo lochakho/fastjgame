@@ -16,7 +16,7 @@
 
 package com.wjybxx.fastjgame.net.async.codec.http;
 
-import com.wjybxx.fastjgame.utils.configwrapper.MapConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.MapConfigWrapper;
 import com.wjybxx.fastjgame.misc.HttpResponseHelper;
 import com.wjybxx.fastjgame.mrg.DisruptorMrg;
 import com.wjybxx.fastjgame.net.async.event.NetEventType;

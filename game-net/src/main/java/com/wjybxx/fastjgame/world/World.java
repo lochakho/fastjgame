@@ -217,7 +217,7 @@ public abstract class World {
     /**
      * world子类自己的启动逻辑，不要轻易的在构造方法中写太多逻辑
      */
-    protected abstract void worldStartImp();
+    protected abstract void worldStartImp() throws Exception;
 
     /**
      * 分发同步Rpc事件

@@ -16,7 +16,7 @@
 
 package com.wjybxx.fastjgame.utils;
 
-import com.wjybxx.fastjgame.utils.function.*;
+import com.wjybxx.fastjgame.function.*;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;

@@ -16,7 +16,7 @@
 
 package com.wjybxx.fastjgame.net.async.transferobject;
 
-import com.wjybxx.fastjgame.utils.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
 import com.wjybxx.fastjgame.net.async.event.NetEventParam;
 import com.wjybxx.fastjgame.net.common.TransferObject;
 

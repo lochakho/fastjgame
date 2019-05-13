@@ -17,7 +17,7 @@
 package com.wjybxx.fastjgame.utils;
 
 import com.google.protobuf.Parser;
-import com.wjybxx.fastjgame.utils.ref.NettyTypeParameterFinderAdapter;
+import com.wjybxx.fastjgame.ref.NettyTypeParameterFinderAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

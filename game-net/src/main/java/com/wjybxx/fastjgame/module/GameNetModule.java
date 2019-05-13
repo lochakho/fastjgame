@@ -28,6 +28,10 @@ import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
 
 /**
  * 网络层Module
+ * 其他module需要提供以下类的实现：
+ * {@link com.wjybxx.fastjgame.world.World}
+ * {@link WorldInfoMrg}
+ *
  * @author wjybxx
  * @version 1.0
  * @date 2019/4/26 23:11

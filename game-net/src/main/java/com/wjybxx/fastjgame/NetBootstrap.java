@@ -24,8 +24,8 @@ import com.wjybxx.fastjgame.module.GameNetModule;
 import com.wjybxx.fastjgame.mrg.DisruptorMrg;
 import com.wjybxx.fastjgame.mrg.WorldInfoMrg;
 import com.wjybxx.fastjgame.net.async.event.NetEventHandlerImp;
-import com.wjybxx.fastjgame.utils.configwrapper.ArrayConfigWrapper;
-import com.wjybxx.fastjgame.utils.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.ArrayConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
 import com.wjybxx.fastjgame.world.World;
 
 import java.util.*;
@@ -63,7 +63,7 @@ public class NetBootstrap<T extends NetBootstrap<T>> extends AbstractThreadLifeC
 
     private List<AbstractModule> modules=new ArrayList<>();
 
-    protected void checkProperties(){
+    protected void verifyArgs(){
         if (null==args){
             throw new IllegalArgumentException("args is missing");
         }
@@ -73,37 +73,40 @@ public class NetBootstrap<T extends NetBootstrap<T>> extends AbstractThreadLifeC
     }
 
     @Override
-    protected void startImp() throws Exception {
+    protected final void startImp() throws Exception {
+        verifyArgs();
+
         modules.add(new GameNetModule());
         modules.addAll(childModules());
 
         Injector injector = Guice.createInjector(modules);
-
-        World world=injector.getInstance(World.class);
-        this.world=world;
-
+        // worldInfo初始化
         WorldInfoMrg worldInfoMrg=injector.getInstance(WorldInfoMrg.class);
         worldInfoMrg.init(args,framesPerSecond);
 
-        DisruptorMrg disruptorMrg=injector.getInstance(DisruptorMrg.class);
-
+        // 启动之前的钩子
         beforeStart(injector);
-        disruptorMrg.start(threadFactory,new NetEventHandlerImp(world, framesPerSecond));
 
+        // 尽可能的延迟创建world
+        World world=injector.getInstance(World.class);
+        this.world=world;
+        // 启动
+        DisruptorMrg disruptorMrg=injector.getInstance(DisruptorMrg.class);
+        disruptorMrg.start(threadFactory,new NetEventHandlerImp(world, framesPerSecond));
         // 没有留启动完成钩子是因为启动完成后设置属性可能存在线程安全问题
     }
 
     /**
-     * 留给子类的启动钩子。
-     * 最好不要在这里面启动游戏世界用到的线程。
-     * @param injector 用于获取需要的对象
+     * 留给子类的启动钩子，主要完成一些初始化工作
+     * 最好不要在这里面启动需要游戏线程数据的线程，可以启动连接池这种不依赖游戏数据的线程。
+     * @param injector 用于获取需要的对象，最好不要获取world对象，world依赖太大，触发的逻辑太多,很难保证安全性
      */
     protected void beforeStart(Injector injector){
 
     }
 
     @Override
-    protected void shutdownImp() {
+    protected final void shutdownImp() {
         if (null!=world){
             world.requestShutdown();
         }
@@ -182,7 +185,6 @@ public class NetBootstrap<T extends NetBootstrap<T>> extends AbstractThreadLifeC
     protected final T castThis(){
         return (T) this;
     }
-
 
     /**
      * 默认线程工厂

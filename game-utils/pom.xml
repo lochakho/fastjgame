@@ -36,12 +36,12 @@
             <optional>true</optional>
         </dependency>
 
-        <!--findBugs-->
-        <!-- https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305 -->
+        <!-- guava,包含findBugs-->
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>27.1-jre</version>
         </dependency>
 
         <!--json支持-->

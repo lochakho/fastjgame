@@ -16,7 +16,7 @@
 
 package com.wjybxx.fastjgame.net.async;
 
-import com.wjybxx.fastjgame.utils.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
 
 /**
  * http请求处理器

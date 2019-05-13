@@ -1,7 +1,7 @@
 package com.wjybxx.fastjgame.mrg;
 
+import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.utils.MathUtils;
 import org.apache.curator.framework.recipes.atomic.DistributedAtomicLong;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.zookeeper.CreateMode;
@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 基于zookeeper实现的guid生成器。
@@ -62,16 +61,32 @@ public class ZkGuidMrg implements GuidMrg {
         }
     }
 
+    /**
+     * 检查缓存是否需要更新
+     * @throws Exception zk error
+     */
     private void checkCache() throws Exception{
+        // 还未初始化
         if (guidIndex == 0){
             init();
             return;
         }
+        // 本地缓存用完了
         if (guidSequence == Integer.MAX_VALUE){
             String guidIndexPath = zkPathMrg.guidIndexPath();
             String lockPath=zkPathMrg.findAppropriateLockPath(guidIndexPath);
             curatorMrg.actionWhitLock(lockPath,lockPath1 -> incGuidIndex());
         }
+    }
+
+    /**
+     * 缓存真正更新的地方
+     * @param guidIndex 新的guid区间
+     */
+    private void updateCache(int guidIndex) {
+        this.guidIndex = guidIndex;
+        this.guidSequence = 1;
+        logger.info("guidIndex={}",guidIndex);
     }
 
     /**
@@ -85,11 +100,10 @@ public class ZkGuidMrg implements GuidMrg {
         curatorMrg.actionWhitLock(lockPath,lockPath1 -> {
             if (!curatorMrg.isPathExist(guidIndexPath)){
                 // 初始化为1 并据为己有
-                byte[] initData = "1".getBytes(StandardCharsets.UTF_8);
+                byte[] initData = Ints.toByteArray(1);
                 curatorMrg.createNode(guidIndexPath, CreateMode.PERSISTENT,initData);
 
-                this.guidIndex=1;
-                this.guidSequence=1;
+                updateCache(1);
             }else {
                 incGuidIndex();
             }
@@ -102,13 +116,12 @@ public class ZkGuidMrg implements GuidMrg {
      */
     private void incGuidIndex() throws Exception{
         byte[] oldData=curatorMrg.getData(zkPathMrg.guidIndexPath());
-        int zkGuidIndex=Integer.parseInt(new String(oldData,StandardCharsets.UTF_8));
+        int zkGuidIndex=Ints.fromByteArray(oldData);
 
         int nextGuidIndex = zkGuidIndex+1;
-        byte[] newData = String.valueOf(nextGuidIndex).getBytes(StandardCharsets.UTF_8);
+        byte[] newData = Ints.toByteArray(nextGuidIndex);
         curatorMrg.setData(zkPathMrg.guidIndexPath(), newData);
 
-        this.guidIndex = nextGuidIndex;
-        this.guidSequence = 1;
+        updateCache(nextGuidIndex);
     }
 }

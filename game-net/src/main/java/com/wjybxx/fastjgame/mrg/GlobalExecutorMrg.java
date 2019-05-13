@@ -36,7 +36,7 @@ public class GlobalExecutorMrg extends AbstractThreadLifeCycleHelper {
 
     @Inject
     public GlobalExecutorMrg(NetConfigMrg netConfigMrg) {
-        // 最多创建5个线程
+        // 最多创建配置个数的线程
         executorService =new ThreadPoolExecutor(1,netConfigMrg.globalExecutorThreadNum(),
                 5, TimeUnit.SECONDS,new LinkedBlockingQueue<>(),
                 new DefaultThreadFactory());

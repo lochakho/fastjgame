@@ -88,7 +88,6 @@ public class S2CSessionMrg {
     private final Long2ObjectMap<SessionWrapper> sessionWrapperMap =new Long2ObjectOpenHashMap<>();
     /**
      * 会话生命周期handler
-     * 作为服务器，认为所有客户端都是一样的
      */
     private SessionLifecycleAware<S2CSession> sessionLifecycleAware;
 

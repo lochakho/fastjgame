@@ -28,6 +28,10 @@ public class GameConfigMrg {
      * zookeeper会话超时时间
      */
     private final int zkSessionTimeoutMs;
+    /**
+     * zookeeper命名空间
+     */
+    private final String zkNameSpace;
 
     @Inject
     public GameConfigMrg() throws IOException {
@@ -35,6 +39,7 @@ public class GameConfigMrg {
         zkConnectString = configWrapper.getAsString("zkConnectString");
         zkConnectionTimeoutMs=configWrapper.getAsInt("zkConnectionTimeoutMs");
         zkSessionTimeoutMs=configWrapper.getAsInt("zkSessionTimeoutMs");
+        zkNameSpace=configWrapper.getAsString("zkNameSpace");
     }
 
     public ConfigWrapper getConfigWrapper() {
@@ -51,5 +56,9 @@ public class GameConfigMrg {
 
     public int getZkSessionTimeoutMs() {
         return zkSessionTimeoutMs;
+    }
+
+    public String getZkNameSpace() {
+        return zkNameSpace;
     }
 }

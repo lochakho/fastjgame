@@ -68,7 +68,9 @@ public class SyncS2CSessionMrg {
     private final NetConfigMrg netConfigMrg;
     private final TokenMrg tokenMrg;
     private final ForbiddenTokenHelper forbiddenTokenHelper;
-
+    /**
+     * 会话生命周期回调
+     */
     private SessionLifecycleAware<SyncS2CSession> lifecycleAware;
     /**
      * 与客户端建立的会话信息

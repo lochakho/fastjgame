@@ -17,14 +17,6 @@ public class ZkPathMrg {
     }
 
     /**
-     * 名字空间
-     * @return
-     */
-    public String nameSpace(){
-        return "global";
-    }
-
-    /**
      * 获取全局锁路径
      * @return
      */
@@ -52,6 +44,21 @@ public class ZkPathMrg {
         int delimiterIndex = path.lastIndexOf("/");
         if (delimiterIndex == 0){
             return globalLockPath();
+        }
+        return path.substring(0,delimiterIndex);
+    }
+
+    /**
+     *
+     * @param path 路径参数，不可以是根节点("/")
+     * @return
+     */
+    public String findParentPath(String path){
+        PathUtils.validatePath(path);
+        int delimiterIndex = path.lastIndexOf("/");
+        // root(nameSpace)
+        if (delimiterIndex == 0){
+            throw new IllegalArgumentException("path " + path + " is root parent");
         }
         return path.substring(0,delimiterIndex);
     }

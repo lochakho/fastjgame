@@ -383,7 +383,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
         pathChildrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
 
         // 等待初始化数据完毕
-        initCaptureListener.awaitWithHeartBeat(500,TimeUnit.MILLISECONDS);
+        initCaptureListener.awaitWithHeartBeat(1,TimeUnit.SECONDS);
         return initCaptureListener.getInitChildData();
     }
 

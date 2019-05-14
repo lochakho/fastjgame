@@ -149,8 +149,8 @@ public class SyncC2SSessionMrg {
         sessionWrapper.setChannel(channel);
 
         if (!channel.isActive()){
-            NetUtils.closeQuietly(channel);
-            logger.warn("can't connect remote {}:{}",host,port);
+            // 远程服务器可能没启动
+            removeSession(serverGuid,"can't connect remote " + host + ":" + port);
             return;
         }
 
@@ -178,8 +178,7 @@ public class SyncC2SSessionMrg {
         // 禁止连接(token验证失败)
         SyncConnectResponseTO response = connectResponseEvent.getConnectResponseTO();
         if (!response.isSuccess()){
-            logger.warn("connect {}:{} was refused",host,port);
-            removeSession(serverGuid,"connect refused");
+            removeSession(serverGuid,"connect remote " +host +":" + port + " was refused!");
             return;
         }
 

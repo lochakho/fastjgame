@@ -392,7 +392,7 @@ public class C2SSessionMrg {
                 tryConnect();
             }else {
                 // 无法连接到服务器，移除会话，结束
-                removeSession(session.getServerGuid(),"can't connect to server.");
+                removeSession(session.getServerGuid(),"can't connect remote " + session.getHost()+  ":" + session.getPort());
             }
         }
 

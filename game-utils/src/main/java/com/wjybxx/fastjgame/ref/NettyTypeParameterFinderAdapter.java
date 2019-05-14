@@ -142,7 +142,7 @@ public class NettyTypeParameterFinderAdapter implements TypeParameterFinder{
 
     /**
      * 通过找到的类/接口的声明信息和类对象解析出具体的泛型类型,使用了netty的解析代码，保持尽量少的改动
-     * {@link TypeParameterMatcher#find0(Object, Class, String)}
+     * {@code TypeParameterMatcher#find0(Object, Class, String)}
      * @param instance 查找的对象，可能需要递归重新查找
      * @param currentClass 直接孩子(子接口或实现类)
      * @param parametrizedSuperInterface 显示声明指定泛型参数typeParamName的接口

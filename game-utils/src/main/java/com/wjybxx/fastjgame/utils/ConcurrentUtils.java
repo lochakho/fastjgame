@@ -1,11 +1,15 @@
 package com.wjybxx.fastjgame.utils;
 
+import com.wjybxx.fastjgame.function.AcquireFun;
+import com.wjybxx.fastjgame.function.TryAcquireFun;
+
+import javax.annotation.Nonnull;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
+ * 并发工具包
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/14 1:02
@@ -14,14 +18,38 @@ import java.util.function.Predicate;
 public class ConcurrentUtils {
 
     private ConcurrentUtils() {
+
     }
 
-    public static void awaitUninterruptibly(CountDownLatch countDownLatch){
+    /**
+     * 在{@link CountDownLatch#await()}上等待，等待期间不响应中断
+     * @param countDownLatch 闭锁
+     */
+    public static void awaitUninterruptibly(@Nonnull CountDownLatch countDownLatch){
+        awaitUninterruptibly(countDownLatch,CountDownLatch::await);
+    }
+
+    /**
+     * 在{@link Semaphore#acquire()}上等待，等待期间不响应中断
+     * @param semaphore 信号量
+     */
+    public static void awaitUninterruptibly(Semaphore semaphore){
+        awaitUninterruptibly(semaphore,Semaphore::acquire);
+    }
+
+    /**
+     * 在等待期间不响应中断
+     * @param resource 资源，锁，信号量等等
+     * @param acquireFun 如果在资源上申请资源
+     * @param <T> 资源的类型
+     */
+    public static <T> void awaitUninterruptibly(T resource, AcquireFun<T> acquireFun){
         boolean interrupted=false;
         try {
-            while (countDownLatch.getCount() != 0){
+            while (true){
                 try {
-                    countDownLatch.await();
+                    acquireFun.acquire(resource);
+                    break;
                 }catch (InterruptedException e){
                     interrupted=true;
                 }
@@ -34,18 +62,43 @@ public class ConcurrentUtils {
     }
 
     /**
-     * 带有心跳的等待(保持线程的活性，否则可能导致某些资源关闭，如socket)
+     * 在等待闭锁通过期间带有心跳(保持线程的活性，否则可能导致某些资源关闭，如socket)
      * @param countDownLatch 闭锁
      * @param heartbeat 心跳间隔
      * @param timeUnit 时间单位
      */
     public static void awaitWithHeartBeat(CountDownLatch countDownLatch, long heartbeat, TimeUnit timeUnit){
+        awaitWithHeartBeat(countDownLatch,CountDownLatch::await,heartbeat,timeUnit);
+    }
+
+    /**
+     * 在等待信号量期间带有心跳(保持线程的活性，否则可能导致某些资源关闭，如socket)
+     * @param semaphore 信号量
+     * @param heartbeat 心跳间隔
+     * @param timeUnit 时间单位
+     */
+    public static void awaitWithHeartBeat(Semaphore semaphore, long heartbeat, TimeUnit timeUnit){
+        awaitWithHeartBeat(semaphore,Semaphore::tryAcquire,heartbeat,timeUnit);
+    }
+
+    /**
+     /**
+     * 在等待资源期间带有心跳(保持线程的活性，否则可能导致某些资源关闭，如socket)
+     * @param resource 资源
+     * @param tryAcquireFun 如何在资源上尝试获取资源
+     * @param heartbeat 心跳间隔
+     * @param timeUnit 时间单位
+     * @param <T> 资源的类型
+     */
+    public static <T> void awaitWithHeartBeat(T resource, TryAcquireFun<T> tryAcquireFun, long heartbeat, TimeUnit timeUnit){
         boolean interrupted=false;
         try {
-            while (countDownLatch.getCount() != 0){
+            while (true){
                 try {
-                    countDownLatch.await(heartbeat,timeUnit);
-                }catch (InterruptedException e){
+                    if (tryAcquireFun.tryAcquire(resource,heartbeat,timeUnit)){
+                        break;
+                    }
+                } catch (InterruptedException e) {
                     interrupted=true;
                 }
             }
@@ -54,35 +107,5 @@ public class ConcurrentUtils {
                 Thread.currentThread().interrupt();
             }
         }
-    }
-
-    public static <T> void awaitWithHeartBeat(T resource, TryAwaitFun<T> awaitFun, TrySuccessFun<T> trySuccessFun){
-        boolean interrupted=false;
-        try {
-            while (!trySuccessFun.isSuccess(resource)){
-                try {
-                    awaitFun.acquire(resource);
-                }catch (InterruptedException e){
-                    interrupted=true;
-                }
-            }
-        }finally {
-            if(interrupted){
-                Thread.currentThread().interrupt();
-            }
-        }
-    }
-
-    @FunctionalInterface
-    public interface TryAwaitFun<T>{
-
-        void acquire(T resource) throws InterruptedException;
-
-    }
-
-    @FunctionalInterface
-    public interface TrySuccessFun<T>{
-
-        boolean isSuccess(T resource);
     }
 }

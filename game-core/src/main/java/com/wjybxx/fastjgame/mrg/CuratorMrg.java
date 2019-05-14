@@ -8,12 +8,10 @@ import com.wjybxx.fastjgame.utils.ConcurrentUtils;
 import com.wjybxx.fastjgame.utils.GameUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.framework.recipes.cache.ChildData;
-import org.apache.curator.framework.recipes.cache.PathChildrenCache;
-import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
-import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
+import org.apache.curator.framework.recipes.cache.*;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.curator.utils.CloseableExecutorService;
+import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
@@ -23,11 +21,9 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <h3>Curator</h3>
@@ -50,6 +46,9 @@ import java.util.concurrent.atomic.AtomicReference;
  *     加锁时注意：不可以对临时节点加锁(临时节点不能创建子节点，你需要使用另外一个节点加锁，来保护它)。
  *     {@link ZkPathMrg#findAppropriateLockPath(String)}可能会有帮助。
  * </p>
+ *   警告：
+ *   关于Curator的{@link NodeCache} 和 {@link PathChildrenCache}线程安全问题请查看笔记：
+ * - http://note.youdao.com/noteshare?id=721ba3029455fac81d8ec19c813423bf&sub=D20C495A90CD4487A909EE6637A788A6
  *
  * <p>
  *     如果提供的简单方法不能满足需要，可以调用{@link #getClient()}获取client。
@@ -241,7 +240,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
     /**
      * 尝试获取对应节点的数据，建议使用在永久节点上，如果是可能并发修改的节点，必须加锁。
      * 对于永久节点，加锁可保证先检查后执行复合操作的原子性。
-     * 对于临时节点，即使外部加锁，也无法保证，路径存在时一定能获取到数据。
+     * 对于临时节点，即使外部加锁，也无法保证检查到路径存在时一定能获取到数据。
      * 主要原因是临时节点超时删除的无法控制的。
      * eg.
      * 加锁 -> 检查到临时节点存在 -> (远程自动删除节点) -> 获取数据失败
@@ -270,8 +269,8 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
     public byte[] getDataIfPresent(String path) throws Exception {
         try {
             return client.getData().forPath(path);
-        }catch (KeeperException.NoNodeException e){
-            logger.warn("may other process delete {} node.",path,e);
+        }catch (KeeperException.NoNodeException ignore){
+            // ignore,may other process delete this node, it's ok
         }
         return null;
     }
@@ -294,7 +293,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
      * @return 返回创建的路径
      * @throws Exception 节点存在抛出异常，以及zookeeper连接断开导致的异常
      */
-    public String createNode(String path, CreateMode mode,byte[] initData) throws Exception {
+    public String createNode(String path, CreateMode mode,@Nonnull byte[] initData) throws Exception {
         return client.create().creatingParentsIfNeeded().withMode(mode).forPath(path,initData);
     }
 
@@ -341,194 +340,168 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
     }
 
     /**
-     * 获取当前节点的所有子节点数据
+     * 获取当前节点的所有子节点数据，返回的只是个快照。
+     * 你可以参考{@link PathChildrenCache#rebuild()}
      * @param path 父节点路径
      * @return childFullPath -> data
      */
-    public Map<String,byte[]> getChildData(String path) throws Exception {
-        // 这里的没有必要留到后面关闭
-        try (PathChildrenCache pathChildrenCache = newPathChildrenCache(path)){
-            pathChildrenCache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
-            List<ChildData> currentData = pathChildrenCache.getCurrentData();
-            Map<String,byte[]> result=new HashMap<>(currentData.size()+1,1);
-            for (ChildData childData:currentData){
-                result.put(childData.getPath(),childData.getData());
+    public Map<String,byte[]> getChildrenData(String path) throws Exception {
+        List<String> children = getChildren(path);
+        Map<String,byte[]> result=new LinkedHashMap<>();
+        for (String child : children) {
+            String childFullPath = ZKPaths.makePath(path, child);
+            byte[] childData = getDataIfPresent(childFullPath);
+            // 即使 getChildren 查询到节点存在，也不一定能获取到数据，一定要注意
+            if (null!=childData){
+                result.put(childFullPath,childData);
             }
-            return result;
         }
+        return result;
     }
 
     /**
      * 创建一个路径节点缓存，返回之前已调用{@link PathChildrenCache#start()}，
      * 你需要在使用完之后调用{@link PathChildrenCache#close()}关闭缓存节点；
      * 如果你忘记关闭，那么会在curator关闭的时候统一关闭。
-     *
+     * 更多线程安全问题，请查看类文档中提到的笔记。
      * @param path 父节点
-     * @param listener 事件监听，注意事件分发后于数据更新。{@link PathChildrenCache} 更新数据之后才会派发事件，因此
-     *                 {@link PathChildrenCache#getCurrentData()}的数据可能比事件产生的时候更加新。
-     * @return 已启动的节点缓存
+     * @param listener 缓存初始化之后的事件，listener中的处理是事件一定后于
+     * @return 当前孩子节点数据
      * @throws Exception
      */
-    public PathChildrenCache newChildrenCache(String path, @Nonnull PathChildrenCacheListener listener) throws Exception {
+    public Map<String, ChildData> watchChildren(String path, @Nonnull PathChildrenCacheListener listener) throws Exception {
         // CloseableExecutorService这个还是不共享的好
-        PathChildrenCache pathChildrenCache = newPathChildrenCache(path);
-        pathChildrenCache.getListenable().addListener(listener);
-        this.allocateNodeCache.add(pathChildrenCache);
-
-        pathChildrenCache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
-        return pathChildrenCache;
-    }
-
-    /**
-     * 为指定节点创建一个缓存节点。
-     * (该封装的还是得封装，减少重复代码，降低出错几率，要习惯)
-     */
-    private PathChildrenCache newPathChildrenCache(String path) {
         CloseableExecutorService watcherService = new CloseableExecutorService(watcherExecutor, false);
-        return new PathChildrenCache(client, path, true,false, watcherService);
+        // 指定pathChildrenCache接收事件的线程，复用线程池，以节省开销。
+        PathChildrenCache pathChildrenCache = new PathChildrenCache(client, path, true, false, watcherService);
+        // 捕获初始化之前的事件，并将其保存到初始化数据中
+        InitCaptureListener initCaptureListener = new InitCaptureListener(listener);
+        pathChildrenCache.getListenable().addListener(initCaptureListener);
+
+        // 先添加listener以确保不会遗漏事件
+        this.allocateNodeCache.add(pathChildrenCache);
+        pathChildrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
+
+        // 等待初始化数据完毕
+        initCaptureListener.awaitWithHeartBeat(500,TimeUnit.MILLISECONDS);
+        return initCaptureListener.getInitChildData();
     }
 
     /**
      * 等待节点出现
-     * @param path 节点一定不能是根节点
-     * @return  节点的数据。不要使用{@link #getData(String)}，
-     * {@link #getDataIfPresent(String)}去获取数据，因为不一定能获取到。
+     * @param path 节点路径
+     * @return 节点的数据
      */
     public byte[] waitForNodeCreate(String path) throws Exception {
-        String parentPath = zkPathMrg.findParentPath(path);
-        final CountDownLatch countDownLatch=new CountDownLatch(1);
-        // 这里使用AtomicReference是因为lambda表达式必须使用final类型，而且不能一直睡眠，还需要保持线程活性
-        final AtomicReference<byte[]> resultHolder=new AtomicReference<>();
-        // 这里不能使用try with resources,还没启动就关了。
-        PathChildrenCache pathChildrenCache = newPathChildrenCache(parentPath);
-        pathChildrenCache.getListenable().addListener((client1, event) -> {
-            if (event.getType() == PathChildrenCacheEvent.Type.CHILD_ADDED){
-                ChildData childData = event.getData();
-                if (childData.getPath().equals(path)){
-                    resultHolder.compareAndSet(null,childData.getData());
-                    countDownLatch.countDown();
-                }
-            }
-        });
+        // 使用NodeCache的话，写了太多代码，搞得复杂了，不利于维护，使用简单的轮询代替。
+        // 轮询虽然不雅观，但是正确性易保证
         boolean interrupted=false;
+        byte[] data;
         try {
-            pathChildrenCache.start(PathChildrenCache.StartMode.NORMAL);
-            // 不能一直睡眠，需要保持活性
-            while (true){
+            while ((data=getDataIfPresent(path)) == null){
                 try {
-                    countDownLatch.await(1,TimeUnit.SECONDS);
-                    if (countDownLatch.getCount()==0){
-                        break;
-                    }
+                    Thread.sleep(500);
                 }catch (InterruptedException e){
                     interrupted=true;
                 }
             }
-            return resultHolder.get();
         }finally {
-            GameUtils.closeQuietly(pathChildrenCache);
+            if (interrupted){
+                Thread.currentThread().interrupt();
+            }
+        }
+        // 恢复中断
+        return data;
+    }
+
+    /**
+     * 等待节点删除，当节点不存在，立即返回
+     * @param path 节点路径
+     * @throws Exception zk errors
+     */
+    public void waitForNodeDelete(String path) throws Exception {
+        // 使用NodeCache的话，主要是当前节点不存在的时候，不会产生事件，无法基于事件优雅的等待
+        // 轮询虽然不雅观，但是正确性易保证
+        boolean interrupted=false;
+        try {
+            while (isPathExist(path)){
+                try {
+                    Thread.sleep(500);
+                }catch (InterruptedException e){
+                    interrupted=true;
+                }
+            }
+        }finally {
+            // 恢复中断
             if (interrupted){
                 Thread.currentThread().interrupt();
             }
         }
     }
 
-    // endregion
-
-    public static void main(String[] args) throws Exception {
-        ZkPathMrg zkPathMrg = new ZkPathMrg();
-        GameConfigMrg gameConfigMrg = new GameConfigMrg();
-        CuratorMrg curatorMrg = new CuratorMrg(gameConfigMrg, zkPathMrg);
-        curatorMrg.start();
-
-        byte[] bytes = curatorMrg.waitForNodeCreate("/mutex/newChild");
-        System.out.println(new String(bytes,StandardCharsets.UTF_8));
-
-        curatorMrg.shutdown();
-    }
-
-    private static void onCacheEvent(CuratorFramework client, PathChildrenCacheEvent event){
-        switch (event.getType()){
-            case CHILD_ADDED:
-                printEventData(event);
-                break;
-            case CHILD_UPDATED:
-                printEventData(event);
-                break;
-            case CHILD_REMOVED:
-                printEventData(event);
-                break;
-                default:
-                    break;
-        }
-    }
-
-    private static void printEventData(PathChildrenCacheEvent event){
-        ChildData childData = event.getData();
-        System.out.println(String.format("thread%s eventType=%s path=%s data=%s",
-                Thread.currentThread().getName(),
-                event.getType(), childData.getPath(),
-                new String(childData.getData(), StandardCharsets.UTF_8)));
-    }
-
-    private static void printChildData(ChildData childData){
-        System.out.println(String.format("path=%s data=%s",
-                childData.getPath(),
-                new String(childData.getData(), StandardCharsets.UTF_8)));
-    }
-
-
-    private static class WaitChildEventListener implements PathChildrenCacheListener{
-
-        private final PathChildrenCacheEvent.Type waitType;
-        private final String fullPath;
-
-        private final CountDownLatch countDownLatch = new CountDownLatch(1);
+    /**
+     * 初始化数据捕获监听器，运行在PathChildrenCache的线程池中，它通过事件恢复数据，以和main-EventThread产生事件时的状态一致。
+     */
+    private static class InitCaptureListener implements PathChildrenCacheListener{
         /**
-         * 结果变量，非volatile，由countdownLatch的await和countdown保护
-         * non-volatile, protected by countDownLatch countdown and await
-          */
-        private byte[] result=null;
+         * pathChildrenCache的数据更新是在main-EventThread中，但是事件在我们的线程中。
+         * 这不是坑爹吗....
+         */
+        private final PathChildrenCacheListener after;
+        private boolean inited=false;
 
-        private WaitChildEventListener(PathChildrenCacheEvent.Type waitType, String fullPath) {
-            this.waitType = waitType;
-            this.fullPath = fullPath;
+        private final CountDownLatch countDownLatch=new CountDownLatch(1);
+        private Map<String,ChildData> initChildData=new LinkedHashMap<>();
+
+        private InitCaptureListener(PathChildrenCacheListener after) {
+            this.after = after;
         }
 
         @Override
         public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
-            if (event.getType() == waitType && null == result){
-                ChildData childData = event.getData();
-                if (childData.getPath().equals(fullPath)){
-                    result = childData.getData();
-                    countDownLatch.countDown();
-                }
+            if (event.getType() == PathChildrenCacheEvent.Type.INITIALIZED){
+                inited=true;
+                countDownLatch.countDown();
+                // 在这里移除自己，注册after的话会导致after也收到init事件.
+                return;
+            }
+
+            if (inited){
+                after.childEvent(client,event);
+                return;
+            }
+
+            switch (event.getType()){
+                case CHILD_ADDED:
+                case CHILD_UPDATED:
+                    initChildData.put(event.getData().getPath(),event.getData());
+                    break;
+                case CHILD_REMOVED:
+                    initChildData.remove(event.getData().getPath());
+                    break;
+                    default:
+                        after.childEvent(client,event);
+                        break;
             }
         }
 
-        public void awaitUninterruptibly(){
-            ConcurrentUtils.awaitUninterruptibly(countDownLatch);
-        }
-
-        public void awaitWithHearBeat(long heartBeat,TimeUnit timeUnit){
+        /**
+         * 等待结果期间保持心跳，以维持线程活性(避免资源socket等关闭)
+         * @param heartBeat 心跳间隔
+         * @param timeUnit 时间单位
+         */
+        void awaitWithHeartBeat(long heartBeat,TimeUnit timeUnit) {
             ConcurrentUtils.awaitWithHeartBeat(countDownLatch,heartBeat,timeUnit);
         }
 
         /**
-         * 是否已经完成
-         * @return 已完成时返回true
+         * 当你从{@link #awaitWithHeartBeat(long, TimeUnit)}成功返回后，可获取初始化数据
+         * @return 初始化的数据的一个快照
          */
-        public boolean isDone(){
-            return countDownLatch.getCount() == 0;
-        }
-
-        /**
-         * 当{@link #isDone()}返回true时，或你从{@link #awaitUninterruptibly()}成功返回时,
-         * 或你从{@link #awaitWithHearBeat(long, TimeUnit)}成功返回时可获取结果
-         * @return
-         */
-        public byte[] getResult(){
-            return result;
+        Map<String,ChildData> getInitChildData() {
+            return initChildData;
         }
     }
+
+    // endregion
 }

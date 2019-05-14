@@ -279,9 +279,21 @@ public abstract class World {
             case OK_HTTP_RESPONSE:
                 httpDispatcherMrg.handleOkHttpResponse((OkHttpResponseTO) netEvent.getNetEventParam());
                 break;
-                default:
-                throw new RuntimeException(" " + netEvent.getEventType());
+            case CHILD_CUSTOM_EVENTS:
+                onChildEvent(netEvent);
+                break;
+            default:
+                throw new IllegalArgumentException("unexpected event type " + netEvent.getEventType());
         }
+    }
+
+    /**
+     * 如果子类定义了新的事件类型，必须覆盖该方法。
+     * (即：允许子类将事件发布到RingBuffer)
+     * @param netEvent 事件信息
+     */
+    protected void onChildEvent(NetEvent netEvent){
+        throw new UnsupportedOperationException("unimplemented event handler " + netEvent.getEventType());
     }
 
     /**

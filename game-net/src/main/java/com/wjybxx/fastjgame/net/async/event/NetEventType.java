@@ -57,7 +57,12 @@ public enum NetEventType {
     /**
      * okHttpClient异步调用结果
      */
-    OK_HTTP_RESPONSE((byte)8);
+    OK_HTTP_RESPONSE((byte)8),
+    /**
+     * 子类自定义事件
+     */
+    CHILD_CUSTOM_EVENTS((byte)9)
+    ;
 
     public final byte pkgType;
     /**

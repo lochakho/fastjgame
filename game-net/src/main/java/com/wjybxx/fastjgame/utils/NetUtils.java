@@ -30,7 +30,7 @@ import java.net.*;
 import java.util.Enumeration;
 
 /**
- * 网络工具类，计算校验和 以及 消息类名的hashcode。
+ * 网络包工具类
  * @author wjybxx
  * @version 1.0
  * @date 2019/4/27 10:28

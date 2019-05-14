@@ -1,7 +1,7 @@
 package com.wjybxx.fastjgame.mrg;
 
-import com.google.common.primitives.Ints;
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.utils.GameUtils;
 import org.apache.curator.framework.recipes.atomic.DistributedAtomicLong;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.zookeeper.CreateMode;
@@ -99,8 +99,8 @@ public class ZkGuidMrg implements GuidMrg {
 
         curatorMrg.actionWhitLock(lockPath,lockPath1 -> {
             if (!curatorMrg.isPathExist(guidIndexPath)){
-                // 初始化为1 并据为己有
-                byte[] initData = Ints.toByteArray(1);
+                // 初始化为1 并据为己有，序列化为字符串字节数组具有更好的可读性
+                byte[] initData = GameUtils.serializeToStringBytes(1);
                 curatorMrg.createNode(guidIndexPath, CreateMode.PERSISTENT,initData);
 
                 updateCache(1);
@@ -116,12 +116,13 @@ public class ZkGuidMrg implements GuidMrg {
      */
     private void incGuidIndex() throws Exception{
         byte[] oldData=curatorMrg.getData(zkPathMrg.guidIndexPath());
-        int zkGuidIndex=Ints.fromByteArray(oldData);
+        int zkGuidIndex= GameUtils.parseIntFromStringBytes(oldData);
 
         int nextGuidIndex = zkGuidIndex+1;
-        byte[] newData = Ints.toByteArray(nextGuidIndex);
+        byte[] newData = GameUtils.serializeToStringBytes(nextGuidIndex);
         curatorMrg.setData(zkPathMrg.guidIndexPath(), newData);
 
         updateCache(nextGuidIndex);
     }
+
 }

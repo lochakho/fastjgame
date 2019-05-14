@@ -3,8 +3,11 @@ package com.wjybxx.fastjgame.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
+
 /**
- * 游戏帮助类
+ * 游戏帮助类;
+ * (不知道放哪儿的方法就放这里)
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/12 15:33
@@ -33,7 +36,7 @@ public class GameUtils {
 
     /**
      * 安全的执行一个任务，不抛出异常。
-     * {@link io.netty.channel.SingleThreadEventLoop#safeExecute(Runnable)}
+     * {@code io.netty.channel.SingleThreadEventLoop#safeExecute(Runnable)}
      * @param task 要执行的任务，可以将要执行的方法封装为 ()-> safeExecute()
      */
     public static void safeExecute(Runnable task){
@@ -42,5 +45,23 @@ public class GameUtils {
         } catch (Exception e) {
             logger.warn("A task raised an exception. Task: {}", task, e);
         }
+    }
+
+    /**
+     * 字符串具有可读性
+     * @param integer
+     * @return
+     */
+    public static byte[] serializeToStringBytes(int integer){
+        return String.valueOf(integer).getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 从字符串字节数组中解析一个int
+     * @param bytes
+     * @return
+     */
+    public static int parseIntFromStringBytes(byte[] bytes){
+        return Integer.parseInt(new String(bytes,StandardCharsets.UTF_8));
     }
 }

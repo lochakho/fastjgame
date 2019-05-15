@@ -19,6 +19,8 @@ package com.wjybxx.fastjgame.example.jsonmsg;
 import com.wjybxx.fastjgame.example.jsonmsg.ExampleJsonMsg;
 import com.wjybxx.fastjgame.net.common.MessageMappingStrategy;
 import com.wjybxx.fastjgame.utils.NetUtils;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -36,8 +38,8 @@ public class ExampleMappingStrategy implements MessageMappingStrategy {
     }
 
     @Override
-    public Map<Class<?>, Integer> mapping() {
-        Map<Class<?>,Integer> messageClazz2IdMap=new IdentityHashMap<>();
+    public Object2IntMap<Class<?>> mapping() {
+        Object2IntMap<Class<?>> messageClazz2IdMap=new Object2IntOpenHashMap<>();
         // 基于反射扫描，发生在启动时，不必太纠结性能
         Class<?>[] messageClazzArray = ExampleJsonMsg.class.getDeclaredClasses();
         for (Class<?> messageClazz:messageClazzArray){

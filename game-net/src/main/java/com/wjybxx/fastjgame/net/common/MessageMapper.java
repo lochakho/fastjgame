@@ -46,10 +46,10 @@ public final class MessageMapper {
      */
     private final Int2ObjectMap<Class<?>> messageId2ClazzMap=new Int2ObjectOpenHashMap<>();
 
-    public MessageMapper(Map<Class<?>, Integer> mapper){
-        for (Map.Entry<Class<?>,Integer> entry:mapper.entrySet()){
-            messageClazz2IdMap.put(entry.getKey(),entry.getValue().intValue());
-            messageId2ClazzMap.put(entry.getValue().intValue(),entry.getKey());
+    public MessageMapper(Object2IntMap<Class<?>> mapper){
+        for (Object2IntMap.Entry<Class<?>> entry:mapper.object2IntEntrySet()){
+            messageClazz2IdMap.put(entry.getKey(),entry.getIntValue());
+            messageId2ClazzMap.put(entry.getIntValue(),entry.getKey());
         }
     }
 

@@ -38,6 +38,7 @@ import com.wjybxx.fastjgame.net.async.transferobject.OkHttpResponseTO;
 import com.wjybxx.fastjgame.net.common.*;
 import com.wjybxx.fastjgame.net.sync.SyncRequestHandler;
 import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,7 +135,7 @@ public abstract class World {
      * @param messageSerializer 消息序列化反序列化实现类
      */
     protected final void registerCodecHelper(String name, MessageMappingStrategy mappingStrategy, MessageSerializer messageSerializer) throws Exception {
-        Map<Class<?>, Integer> mapper = mappingStrategy.mapping();
+        Object2IntMap<Class<?>> mapper = mappingStrategy.mapping();
         MessageMapper messageMapper = new MessageMapper(mapper);
         messageSerializer.init(messageMapper);
         codecHelperMrg.registerCodecHelper(name,new CodecHelper(messageMapper,messageSerializer));

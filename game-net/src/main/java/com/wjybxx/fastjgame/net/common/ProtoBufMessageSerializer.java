@@ -62,7 +62,7 @@ public class ProtoBufMessageSerializer implements MessageSerializer {
         @SuppressWarnings("unchecked")
         Parser<T> parser = (Parser<T>) parserMap.get(messageClazz);
         if (parser == null){
-            throw new UnsupportedEncodingException("not protoBuf class " + messageClazz.getSimpleName());
+            throw new UnsupportedEncodingException("unregistered protoBuf class " + messageClazz.getSimpleName());
         }
         return parser.parseFrom(messageBytes);
     }

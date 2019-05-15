@@ -1,0 +1,21 @@
+// 公共枚举定义文件
+
+syntax = "proto3";
+package fastjgame;
+
+// optimize_for (file option): Can be set to SPEED, CODE_SIZE, or LITE_RUNTIME.
+option optimize_for=SPEED;
+
+option java_package="com.wjybxx.fastjgame.protobuffer";
+option java_outer_classname="p_enum";
+
+enum RoleType{
+    // protoBuf3开始，枚举必须0开始，但是0打出不来信息
+    ROLE_TYPE_INVALID=0;
+    // 程序
+    ROLE_TYPE_CODER=1;
+    // 策划
+    ROLE_TYPE_DESIGNERS=2;
+    // 美术
+    ROLE_TYPE_ARTISTS=3;
+}

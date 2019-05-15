@@ -16,6 +16,7 @@
 
 package com.wjybxx.fastjgame.utils;
 
+import com.google.protobuf.MessageLite;
 import com.google.protobuf.Parser;
 import com.wjybxx.fastjgame.ref.NettyTypeParameterFinderAdapter;
 import org.slf4j.Logger;
@@ -83,5 +84,20 @@ public class ReflectionUtils {
             logger.info("not protoBuf 2.x");
         }
         throw new ReflectiveOperationException("invalid protocol buffer class " + clazz.getSimpleName());
+    }
+
+    /**
+     * 获取proto文件定义的文件的完整类名
+     * @param javaPackageName 文件中的java_package
+     * @param javaOuterClassName 文件中的java_outer_classname
+     * @param messageName 消息体名字
+     * @param <T>
+     * @return
+     * @throws ClassNotFoundException
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends MessageLite> Class<T> findMessageClass(String javaPackageName, String javaOuterClassName, String messageName) throws ClassNotFoundException {
+        String classFullName=javaPackageName+"."+javaOuterClassName+"$"+messageName;
+        return (Class<T>)Class.forName(classFullName);
     }
 }

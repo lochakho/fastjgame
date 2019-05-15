@@ -16,6 +16,8 @@
 
 package com.wjybxx.fastjgame.net.common;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+
 import java.util.Map;
 
 /**
@@ -32,6 +34,6 @@ public interface MessageMappingStrategy {
      *
      * @return 消息类->消息id的映射关系
      */
-    Map<Class<?>,Integer> mapping() throws Exception;
+    Object2IntMap<Class<?>> mapping() throws Exception;
 
 }

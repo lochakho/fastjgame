@@ -1,0 +1,10 @@
+// 公共结构体定义文件
+
+syntax = "proto3";
+package fastjgame;
+
+// optimize_for (file option): Can be set to SPEED, CODE_SIZE, or LITE_RUNTIME.
+option optimize_for=SPEED;
+
+option java_package="com.wjybxx.fastjgame.protobuffer";
+option java_outer_classname="p_struct";

@@ -16,7 +16,6 @@
 
 package com.wjybxx.fastjgame.net.sync.transferobject;
 
-import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.net.common.TransferObject;
 
 import javax.annotation.concurrent.Immutable;

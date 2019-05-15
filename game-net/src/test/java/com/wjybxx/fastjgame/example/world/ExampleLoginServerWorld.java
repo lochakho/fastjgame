@@ -21,6 +21,7 @@ import com.wjybxx.fastjgame.example.bean.ServerInfo;
 import com.wjybxx.fastjgame.example.jsonmsg.ExampleJsonMsg;
 import com.wjybxx.fastjgame.example.jsonmsg.ExampleMappingStrategy;
 import com.wjybxx.fastjgame.example.mrg.ExampleLoginServerInfoMrg;
+import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.WorldWrapper;
 import com.wjybxx.fastjgame.net.async.C2SSession;
 import com.wjybxx.fastjgame.net.async.OkHttpResponseHandler;
@@ -156,9 +157,9 @@ public class ExampleLoginServerWorld extends World {
             initializerSupplier=()-> new WsClientChannelInitializer(url,netConfigMrg.maxFrameLength(), disruptorMrg,codecHelper);
         }
         assert null!=address;
-        HostAndPort hostAndPort=parseHostAndPort(address);
+        HostAndPort hostAndPort= HostAndPort.parseHostAndPort(address);
 
-        c2SSessionMrg.register(serverInfo.getServerGuid(), RoleType.GAME_SERVER, hostAndPort.host,hostAndPort.port,
+        c2SSessionMrg.register(serverInfo.getServerGuid(), RoleType.GAME_SERVER, hostAndPort.getHost(),hostAndPort.getPort(),
                 initializerSupplier,
                 new ExampleSessionLifecycleAware(), encryptToken);
         serverInfo.setTcpOrWsRegistered(true);
@@ -173,9 +174,9 @@ public class ExampleLoginServerWorld extends World {
             return;
         }
         CodecHelper codecHelper=codecHelperMrg.getCodecHelper("json");
-        HostAndPort hostAndPort=parseHostAndPort(syncRpcAddress);
+        HostAndPort hostAndPort= HostAndPort.parseHostAndPort(syncRpcAddress);
 
-        syncC2SSessionMrg.registerServer(serverInfo.getServerGuid(), RoleType.GAME_SERVER, hostAndPort.host,hostAndPort.port,
+        syncC2SSessionMrg.registerServer(serverInfo.getServerGuid(), RoleType.GAME_SERVER, hostAndPort.getHost(),hostAndPort.getPort(),
                 () -> new ClientSyncRpcInitializer(netConfigMrg.maxFrameLength(),
                         netConfigMrg.syncRpcPingInterval(),
                         codecHelper,
@@ -276,28 +277,4 @@ public class ExampleLoginServerWorld extends World {
         }
     }
 
-    private static class HostAndPort{
-        private final String host;
-        private final int port;
-
-        private HostAndPort(String host, int port) {
-            this.host = host;
-            this.port = port;
-        }
-
-        @Override
-        public String toString() {
-            return "HostAndPort{" +
-                    "host='" + host + '\'' +
-                    ", port=" + port +
-                    '}';
-        }
-    }
-
-    private static HostAndPort parseHostAndPort(String address){
-        String[] hostAndPort = address.split(":",2);
-        String host=hostAndPort[0];
-        int port=Integer.parseInt(hostAndPort[1]);
-        return new HostAndPort(host,port);
-    }
 }

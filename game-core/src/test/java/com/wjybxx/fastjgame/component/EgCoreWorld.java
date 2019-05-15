@@ -6,12 +6,11 @@ import com.wjybxx.fastjgame.mrg.WorldWrapper;
 import com.wjybxx.fastjgame.net.async.S2CSession;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
-import com.wjybxx.fastjgame.world.WorldCore;
+import com.wjybxx.fastjgame.world.CoreWorld;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.util.stream.IntStream;
 
 /**
  * @author wjybxx
@@ -19,12 +18,12 @@ import java.util.stream.IntStream;
  * @date 2019/5/13 10:46
  * @github - https://github.com/hl845740757
  */
-public class EgWorldCore extends WorldCore {
+public class EgCoreWorld extends CoreWorld {
 
-    private static final Logger logger= LoggerFactory.getLogger(EgWorldCore.class);
+    private static final Logger logger= LoggerFactory.getLogger(EgCoreWorld.class);
 
     @Inject
-    public EgWorldCore(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
+    public EgCoreWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
         super(worldWrapper, coreWrapper);
     }
 

@@ -4,14 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.wjybxx.fastjgame</groupId>
-    <artifactId>game-net</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <parent>
+        <groupId>com.wjybxx.fastjgame</groupId>
+        <artifactId>game-parent</artifactId>
+        <version>1.0</version>
+    </parent>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
-    </properties>
+    <artifactId>game-net</artifactId>
 
     <dependencies>
 

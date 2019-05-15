@@ -25,7 +25,7 @@ import com.wjybxx.fastjgame.mrg.*;
  * @date 2019/5/12 12:25
  * @github - https://github.com/hl845740757
  */
-public abstract class WorldCore extends World{
+public abstract class CoreWorld extends World{
 
     protected final ZkPathMrg zkPathMrg;
     protected final CuratorMrg curatorMrg;
@@ -33,7 +33,7 @@ public abstract class WorldCore extends World{
     protected final GuidMrg guidMrg;
 
     @Inject
-    public WorldCore(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
+    public CoreWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
         super(worldWrapper);
         zkPathMrg=coreWrapper.getZkPathMrg();
         curatorMrg=coreWrapper.getCuratorMrg();

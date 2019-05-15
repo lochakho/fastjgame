@@ -21,8 +21,6 @@ import com.wjybxx.fastjgame.net.common.MessageMapper;
 import com.wjybxx.fastjgame.net.common.ProtoBufMessageSerializer;
 import com.wjybxx.fastjgame.protobuffer.p_enum;
 
-import java.io.IOException;
-
 import static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello;
 
 /**
@@ -35,22 +33,22 @@ import static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello;
 public class ProtoBufTest {
 
     public static void main(String[] args) throws Exception {
-        Hello hello=Hello.newBuilder()
-                .setRoleTye(p_enum.RoleType.ROLE_TYPE_CODER)
-                .setName("wjybxx")
-                .build();
-
-        System.out.println(hello.toString());
-
-        // 初始话序列化工具(提供运行时的性能)
-        ProtoBufHashMappingStrategy mappingStrategy = new ProtoBufHashMappingStrategy();
-        MessageMapper messageMapper = new MessageMapper(mappingStrategy.mapping());
-        ProtoBufMessageSerializer serializer = new ProtoBufMessageSerializer();
-        serializer.init(messageMapper);
-
-        byte[] messageBytes = serializer.serialize(hello);
-        Hello message = serializer.deserialize(hello.getClass(), messageBytes);
-
-        System.out.println(message);
+//        Hello hello=Hello.newBuilder()
+//                .setRoleTye(p_enum.RoleType.ROLE_TYPE_CODER)
+//                .setName("wjybxx")
+//                .build();
+//
+//        System.out.println(hello.toString());
+//
+//        // 初始话序列化工具(提供运行时的性能)
+//        ProtoBufHashMappingStrategy mappingStrategy = new ProtoBufHashMappingStrategy();
+//        MessageMapper messageMapper = new MessageMapper(mappingStrategy.mapping());
+//        ProtoBufMessageSerializer serializer = new ProtoBufMessageSerializer();
+//        serializer.init(messageMapper);
+//
+//        byte[] messageBytes = serializer.serialize(hello);
+//        Hello message = serializer.deserialize(hello.getClass(), messageBytes);
+//
+//        System.out.println(message);
     }
 }

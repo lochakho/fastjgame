@@ -16,6 +16,9 @@
 
 package com.wjybxx.fastjgame.utils;
 
+import com.google.gson.GsonBuilder;
+import com.wjybxx.fastjgame.core.SceneProcessType;
+import com.wjybxx.fastjgame.net.common.RoleType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +54,7 @@ public class GameUtils {
     }
 
     /**
-     * 安全的执行一个任务，不抛出异常。
+     * 安全的执行一个任务，只是将错误打印到日志，不抛出异常。
      * {@code io.netty.channel.SingleThreadEventLoop#safeExecute(Runnable)}
      * @param task 要执行的任务，可以将要执行的方法封装为 ()-> safeExecute()
      */
@@ -79,5 +82,80 @@ public class GameUtils {
      */
     public static int parseIntFromStringBytes(byte[] bytes){
         return Integer.parseInt(new String(bytes,StandardCharsets.UTF_8));
+    }
+
+    /**
+     * 序列化为json
+     * @param obj 普通对象，若包含复杂对象需要自己管理
+     * @return 序列化后的json字符串
+     */
+    public static String serializeToJson(Object obj){
+        return new GsonBuilder()
+                .create()
+                .toJson(obj);
+    }
+
+    /**
+     * 从json字符串中解析对象，如果是复杂对象，需要自己管理
+     * @param json json字符串
+     * @param clazz json字符串对应的类
+     * @param <T> 对象类型
+     * @return 反序列化得到的对象
+     */
+    public static <T> T parseFromJson(String json,Class<T> clazz){
+        return new GsonBuilder()
+                .create()
+                .fromJson(json,clazz);
+    }
+
+    /**
+     * 为指定scene进程创建一个有意义的节点名字，用于注册到zookeeper
+     * @param processType 进程类型
+     * @param warzoneId 战区id
+     * @param serverId 几服
+     * @param worldGuid 进程guid
+     * @return 唯一的有意义的名字
+     */
+    public static String buildSceneNodeName(SceneProcessType processType, int warzoneId, int serverId, long worldGuid){
+        return RoleType.SCENE_SERVER  + "-" + processType.name() + "-" + warzoneId + "-" + serverId + "-" + worldGuid;
+    }
+
+    /**
+     * 为指定服创建一个有意义的节点名字
+     * @param warzoneId 战区id
+     * @param serverId 几服
+     * @param worldGuid 该进程guid
+     * @return 唯一的有意义的名字
+     */
+    public static String buildGameNodeName(int warzoneId, int serverId,long worldGuid){
+        return RoleType.GAME_SERVER + "-" + warzoneId + "-" + serverId + "-" + worldGuid;
+    }
+
+    /**
+     * 为战区创建一个有意义的节点名字
+     * @param warzoneId 战区id
+     * @param worldGuid 该进程guid
+     * @return 唯一的有意义的名字
+     */
+    public static String buildWarzoneNodeName(int warzoneId,long worldGuid){
+        return RoleType.WARZONE_SERVER + "-" + warzoneId + "-" + worldGuid;
+    }
+
+    /**
+     * 通过服务器的节点名字解析服务器的类型
+     * @param nodeName 服务器节点名字
+     * @return 返回服务器的类型
+     */
+    public static RoleType parseServerType(String nodeName){
+        return RoleType.valueOf(nodeName.split("-",2)[0]);
+    }
+
+    /**
+     * 通过场景节点的名字解析场景进程的类型
+     * @param sceneNodeName scene节点的名字
+     * @return scene进程的类型
+     */
+    public static SceneProcessType parseSceneType(String sceneNodeName){
+        return SceneProcessType.valueOf(sceneNodeName.split("-",3)[1]);
     }
 }

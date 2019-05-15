@@ -30,22 +30,7 @@ public class ZkPathMrg {
 
     @Inject
     public ZkPathMrg() {
-    }
 
-    /**
-     * 获取全局锁路径
-     * @return
-     */
-    private String globalLockPath() {
-        return "/globalLock";
-    }
-
-    /**
-     * 返回全局guidIndex所在路径
-     * @return
-     */
-    public String guidIndexPath(){
-        return "/mutex/guid/guidIndex";
     }
 
     /**
@@ -77,6 +62,31 @@ public class ZkPathMrg {
             throw new IllegalArgumentException("path " + path + " is root parent");
         }
         return path.substring(0,delimiterIndex);
+    }
+
+    /**
+     * 获取全局锁路径
+     * @return
+     */
+    private String globalLockPath() {
+        return "/globalLock";
+    }
+
+    /**
+     * 返回全局guidIndex所在路径
+     * @return
+     */
+    public String guidIndexPath(){
+        return "/mutex/guid/guidIndex";
+    }
+
+    /**
+     * 同一个战区下的服务器注册在同一节点下
+     * @param warzoneId 战区id
+     * @return
+     */
+    public String onlineParentPath(int warzoneId){
+        return "/online/" + warzoneId + "/";
     }
 
 }

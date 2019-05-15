@@ -34,12 +34,18 @@ public class SceneInGameInfo {
      */
     private final long sceneProcessGuid;
     /**
+     * 分配该场景进程的频道id。
+     * 该channel和IO什么的没任何关系，别混淆了。
+     */
+    private final int chanelId;
+    /**
      * 进程类型(本服/跨服)
      */
     private final SceneProcessType processType;
 
     /**
      * 配置的期望启动的区域，尽可能的都启动它们，且不启动额外的区域。
+     * (本服scene进程才会有)
      */
     private final Set<SceneRegion> configuredRegions;
     /**
@@ -50,12 +56,14 @@ public class SceneInGameInfo {
      */
     private final Set<SceneRegion> activeRegions;
     /**
-     * 在线玩家数量计数器
+     * 在线玩家数量计数器。
+     * 本服玩家在当前scene的数量。
      */
     private final IntSequencer onlinePlayerSequencer=new IntSequencer(0);
     
-    public SceneInGameInfo(long sceneProcessGuid, SceneProcessType processType, Set<SceneRegion> configuredRegions, Set<SceneRegion> activeRegions) {
+    public SceneInGameInfo(long sceneProcessGuid, int chanelId, SceneProcessType processType, Set<SceneRegion> configuredRegions, Set<SceneRegion> activeRegions) {
         this.sceneProcessGuid = sceneProcessGuid;
+        this.chanelId = chanelId;
         this.processType = processType;
         this.configuredRegions = configuredRegions;
         this.activeRegions = activeRegions;
@@ -63,6 +71,10 @@ public class SceneInGameInfo {
 
     public long getSceneProcessGuid() {
         return sceneProcessGuid;
+    }
+
+    public int getChanelId() {
+        return chanelId;
     }
 
     public SceneProcessType getProcessType() {

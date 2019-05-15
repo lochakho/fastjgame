@@ -17,6 +17,6 @@ public class EGWorldCoreModule extends AbstractModule {
     protected void configure() {
         binder().requireExplicitBindings();
         bind(WorldInfoMrg.class).to(EGWorldCoreInfoMrg.class).in(Singleton.class);
-        bind(World.class).to(EgCoreWorld.class).in(Singleton.class);
+        bind(World.class).to(EgWorld.class).in(Singleton.class);
     }
 }

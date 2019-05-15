@@ -78,11 +78,13 @@ public enum RoleType {
     private static final Int2ObjectMap<RoleType> mapper;
 
     static {
-        Int2ObjectOpenHashMap<RoleType> modifiableMap = new Int2ObjectOpenHashMap<>();
+        mapper = new Int2ObjectOpenHashMap<>(values().length+1,1);
         for (RoleType roleType:RoleType.values()){
-            modifiableMap.put(roleType.number,roleType);
+            if (mapper.containsKey(roleType.number)){
+                throw new IllegalArgumentException("number " + roleType.number + " is duplicate.");
+            }
+            mapper.put(roleType.number,roleType);
         }
-        mapper= Int2ObjectMaps.unmodifiable(modifiableMap);
     }
 
     public static RoleType forNumber(int number){

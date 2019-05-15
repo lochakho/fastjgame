@@ -12,5 +12,13 @@
 
     <artifactId>game-gameserver</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.wjybxx.fastjgame</groupId>
+            <artifactId>game-core</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 </project>

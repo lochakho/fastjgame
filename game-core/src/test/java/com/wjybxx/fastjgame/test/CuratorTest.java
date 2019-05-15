@@ -8,6 +8,7 @@ import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,8 +25,8 @@ public class CuratorTest {
         CuratorMrg curatorMrg = new CuratorMrg(gameConfigMrg, zkPathMrg);
         curatorMrg.start();
 
-        Map<String, ChildData> childrenData = curatorMrg.watchChildren("/mutex", CuratorTest::onEvent);
-        childrenData.values().forEach(CuratorTest::printChild);
+        List<ChildData> childrenData = curatorMrg.watchChildren("/mutex", CuratorTest::onEvent);
+        childrenData.forEach(CuratorTest::printChild);
     }
 
     private static void onEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception{

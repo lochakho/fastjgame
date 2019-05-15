@@ -26,7 +26,14 @@ package com.wjybxx.fastjgame.protobuffer;
  */
 public enum MessageEnum {
 
-    HELLO(69609650,"com.wjybxx.fastjgame.protobuffer","p_game_scene","Hello"),
+    P_GAME_LOCAL_SCENE_HELLO(232500781,"com.wjybxx.fastjgame.protobuffer","p_game_scene","p_game_local_scene_hello"),
+    P_GAME_LOCAL_SCENE_HELLO_RESULT(1855404655,"com.wjybxx.fastjgame.protobuffer","p_game_scene","p_game_local_scene_hello_result"),
+    P_GAME_CROSS_SCENE_HELLO(2047790978,"com.wjybxx.fastjgame.protobuffer","p_game_scene","p_game_cross_scene_hello"),
+    P_GAME_CROSS_SCENE_HELLO_RESULT(-141500550,"com.wjybxx.fastjgame.protobuffer","p_game_scene","p_game_cross_scene_hello_result"),
+    P_GAME_COMMAND_LOCAL_SCENE_START(-1697102903,"com.wjybxx.fastjgame.protobuffer","p_sync_game_scene","p_game_command_local_scene_start"),
+    P_GAME_COMMAND_LOCAL_SCENE_START_RESULT(-361734829,"com.wjybxx.fastjgame.protobuffer","p_sync_game_scene","p_game_command_local_scene_start_result"),
+    P_GAME_COMMAND_SCENE_ACTIVE_REGIONS(2010428779,"com.wjybxx.fastjgame.protobuffer","p_sync_game_scene","p_game_command_scene_active_regions"),
+    P_GAME_COMMAND_SCENE_ACTIVE_REGIONS_RESULT(-616484495,"com.wjybxx.fastjgame.protobuffer","p_sync_game_scene","p_game_command_scene_active_regions_result"),
     ;
     /**
      * 消息id，必须唯一

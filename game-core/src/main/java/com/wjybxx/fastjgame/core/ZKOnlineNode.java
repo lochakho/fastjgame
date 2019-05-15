@@ -26,42 +26,55 @@ package com.wjybxx.fastjgame.core;
 public abstract class ZKOnlineNode {
 
     /**
-     * 绑定的tcp端口信息 host:port
+     * 服务器之间通信用的tcp端口信息，格式  host:port
+     * (可以和对外开放的端口是同一个，如果与前端通信也用protoBuffer)
      */
-    private final String tcpAddress;
+    private final String innerTcpAddress;
     /**
-     * 绑定的websocket端口信息
+     * 费武器之间同步rpc调用端口信息
      */
-    private final String wsAddress;
+    private final String innerRpcAddress;
+
     /**
-     * 绑定的http端口信息
+     * 用于GM等工具而绑定的http端口信息
      */
-    private final String httpAddress;
+    private final String innerHttpAddress;
+
     /**
-     * 同步rpc调用端口信息
+     * 对外开放的绑定的tcp端口信息(与玩家通信用)
      */
-    private final String syncRpcAddress;
+    private final String outerTcpAddress;
+    /**
+     * 对外开放的绑定的websocket端口信息(与玩家通信用)
+     */
+    private final String outerWebsocketAddress;
 
-    public ZKOnlineNode(String tcpAddress, String wsAddress, String httpAddress, String syncRpcAddress) {
-        this.tcpAddress = tcpAddress;
-        this.wsAddress = wsAddress;
-        this.httpAddress = httpAddress;
-        this.syncRpcAddress = syncRpcAddress;
+    public ZKOnlineNode(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress,
+                        String outerTcpAddress, String outerWebsocketAddress) {
+        this.innerTcpAddress = innerTcpAddress;
+        this.innerRpcAddress = innerRpcAddress;
+        this.innerHttpAddress = innerHttpAddress;
+        this.outerTcpAddress = outerTcpAddress;
+        this.outerWebsocketAddress = outerWebsocketAddress;
     }
 
-    public String getTcpAddress() {
-        return tcpAddress;
+    public String getInnerTcpAddress() {
+        return innerTcpAddress;
     }
 
-    public String getWsAddress() {
-        return wsAddress;
+    public String getInnerRpcAddress() {
+        return innerRpcAddress;
     }
 
-    public String getHttpAddress() {
-        return httpAddress;
+    public String getInnerHttpAddress() {
+        return innerHttpAddress;
     }
 
-    public String getSyncRpcAddress() {
-        return syncRpcAddress;
+    public String getOuterTcpAddress() {
+        return outerTcpAddress;
+    }
+
+    public String getOuterWebsocketAddress() {
+        return outerWebsocketAddress;
     }
 }

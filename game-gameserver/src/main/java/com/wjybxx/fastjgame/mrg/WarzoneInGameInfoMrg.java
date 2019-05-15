@@ -17,27 +17,34 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.core.ZKOnlineWarzoneNode;
 
 /**
- * WorldCore的worldGuid通过guidMrg生成
+ * Warzone在Game中的连接管理等控制器
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/13 10:30
+ * @date 2019/5/15 23:11
  * @github - https://github.com/hl845740757
  */
-public abstract class WorldCoreInfoMrg extends WorldInfoMrg{
-    /**
-     * 游戏世界guid，也是服务器进程guid。
-     */
-    private long worldGuid;
+public class WarzoneInGameInfoMrg {
 
     @Inject
-    public WorldCoreInfoMrg(GuidMrg guidMrg) {
-        worldGuid=guidMrg.generateGuid();
+    public WarzoneInGameInfoMrg() {
+
     }
 
-    @Override
-    public final long getWorldGuid() {
-        return worldGuid;
+    /**
+     * 发现战区出现(zk上出现了该服务器对应的战区节点)
+     * @param zkOnlineWarzoneNode 战区节点信息
+     */
+    public void onDiscoverWarzone(ZKOnlineWarzoneNode zkOnlineWarzoneNode){
+
+    }
+
+    /**
+     * 发现战区断开连接(异步tcp会话断掉，或zk节点消失)
+     */
+    public void onWarzoneDisconnect(){
+
     }
 }

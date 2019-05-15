@@ -39,6 +39,10 @@ public class GameInSceneInfo {
      */
     private final int serverId;
     /**
+     * 我被分配的频道
+     */
+    private final int channelId;
+    /**
      * 配置的期望启动的区域，尽可能的都启动它们，且不启动额外的区域。
      */
     private final Set<SceneRegion> configuredRegions;
@@ -54,9 +58,10 @@ public class GameInSceneInfo {
      */
     private final IntSequencer onlinePlayerSequencer=new IntSequencer(0);
 
-    public GameInSceneInfo(long gameProcessGuid, int serverId, Set<SceneRegion> configuredRegions, Set<SceneRegion> activeRegions) {
+    public GameInSceneInfo(long gameProcessGuid, int serverId, int channelId, Set<SceneRegion> configuredRegions, Set<SceneRegion> activeRegions) {
         this.gameProcessGuid = gameProcessGuid;
         this.serverId = serverId;
+        this.channelId = channelId;
         this.configuredRegions = configuredRegions;
         this.activeRegions = activeRegions;
     }
@@ -67,6 +72,10 @@ public class GameInSceneInfo {
 
     public int getServerId() {
         return serverId;
+    }
+
+    public int getChannelId() {
+        return channelId;
     }
 
     public Set<SceneRegion> getConfiguredRegions() {

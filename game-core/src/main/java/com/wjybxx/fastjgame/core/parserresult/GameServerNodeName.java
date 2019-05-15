@@ -14,30 +14,35 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.mrg;
-
-import com.google.inject.Inject;
+package com.wjybxx.fastjgame.core.parserresult;
 
 /**
- * WorldCore的worldGuid通过guidMrg生成
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/13 10:30
+ * @date 2019/5/16 0:14
  * @github - https://github.com/hl845740757
  */
-public abstract class WorldCoreInfoMrg extends WorldInfoMrg{
-    /**
-     * 游戏世界guid，也是服务器进程guid。
-     */
-    private long worldGuid;
+public class GameServerNodeName {
 
-    @Inject
-    public WorldCoreInfoMrg(GuidMrg guidMrg) {
-        worldGuid=guidMrg.generateGuid();
+    private final int warzoneId;
+    private final int serverId;
+    private final long gameProcessGuid;
+
+    public GameServerNodeName(int warzoneId, int serverId, long gameProcessGuid) {
+        this.warzoneId = warzoneId;
+        this.serverId = serverId;
+        this.gameProcessGuid = gameProcessGuid;
     }
 
-    @Override
-    public final long getWorldGuid() {
-        return worldGuid;
+    public int getWarzoneId() {
+        return warzoneId;
+    }
+
+    public int getServerId() {
+        return serverId;
+    }
+
+    public long getGameProcessGuid() {
+        return gameProcessGuid;
     }
 }

@@ -14,48 +14,60 @@ public final class p_game_scene {
     registerAllExtensions(
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
-  public interface HelloOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:fastjgame.Hello)
+  public interface p_game_local_scene_helloOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:fastjgame.p_game_local_scene_hello)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.fastjgame.RoleType roleTye = 1;</code>
+     * <pre>
+     * 服务器id，用于核对
+     * </pre>
+     *
+     * <code>int32 serverId = 1;</code>
      */
-    int getRoleTyeValue();
-    /**
-     * <code>.fastjgame.RoleType roleTye = 1;</code>
-     */
-    com.wjybxx.fastjgame.protobuffer.p_enum.RoleType getRoleTye();
+    int getServerId();
 
     /**
-     * <code>string name = 2;</code>
+     * <code>string innerTcpAddress = 2;</code>
      */
-    java.lang.String getName();
+    java.lang.String getInnerTcpAddress();
     /**
-     * <code>string name = 2;</code>
+     * <code>string innerTcpAddress = 2;</code>
      */
     com.google.protobuf.ByteString
-        getNameBytes();
+        getInnerTcpAddressBytes();
+
+    /**
+     * <code>string innerSyncRpcAddress = 3;</code>
+     */
+    java.lang.String getInnerSyncRpcAddress();
+    /**
+     * <code>string innerSyncRpcAddress = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getInnerSyncRpcAddressBytes();
   }
   /**
    * <pre>
-   * 消息的命名格式由团队习惯决定
+   * gameserver向sceneserver打招呼，期望获得scene的一些基本信息
+   * 为何要主动告诉scene地址呢，减少scene使用zookeeper的压力
    * </pre>
    *
-   * Protobuf type {@code fastjgame.Hello}
+   * Protobuf type {@code fastjgame.p_game_local_scene_hello}
    */
-  public  static final class Hello extends
+  public  static final class p_game_local_scene_hello extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:fastjgame.Hello)
-      HelloOrBuilder {
+      // @@protoc_insertion_point(message_implements:fastjgame.p_game_local_scene_hello)
+      p_game_local_scene_helloOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use Hello.newBuilder() to construct.
-    private Hello(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use p_game_local_scene_hello.newBuilder() to construct.
+    private p_game_local_scene_hello(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private Hello() {
-      roleTye_ = 0;
-      name_ = "";
+    private p_game_local_scene_hello() {
+      serverId_ = 0;
+      innerTcpAddress_ = "";
+      innerSyncRpcAddress_ = "";
     }
 
     @java.lang.Override
@@ -63,7 +75,7 @@ public final class p_game_scene {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private Hello(
+    private p_game_local_scene_hello(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -90,15 +102,20 @@ public final class p_game_scene {
               break;
             }
             case 8: {
-              int rawValue = input.readEnum();
 
-              roleTye_ = rawValue;
+              serverId_ = input.readInt32();
               break;
             }
             case 18: {
               java.lang.String s = input.readStringRequireUtf8();
 
-              name_ = s;
+              innerTcpAddress_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              innerSyncRpcAddress_ = s;
               break;
             }
           }
@@ -115,60 +132,91 @@ public final class p_game_scene {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_Hello_descriptor;
+      return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_local_scene_hello_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_Hello_fieldAccessorTable
+      return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_local_scene_hello_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello.class, com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello.Builder.class);
+              com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello.class, com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello.Builder.class);
     }
 
-    public static final int ROLETYE_FIELD_NUMBER = 1;
-    private int roleTye_;
+    public static final int SERVERID_FIELD_NUMBER = 1;
+    private int serverId_;
     /**
-     * <code>.fastjgame.RoleType roleTye = 1;</code>
+     * <pre>
+     * 服务器id，用于核对
+     * </pre>
+     *
+     * <code>int32 serverId = 1;</code>
      */
-    public int getRoleTyeValue() {
-      return roleTye_;
-    }
-    /**
-     * <code>.fastjgame.RoleType roleTye = 1;</code>
-     */
-    public com.wjybxx.fastjgame.protobuffer.p_enum.RoleType getRoleTye() {
-      com.wjybxx.fastjgame.protobuffer.p_enum.RoleType result = com.wjybxx.fastjgame.protobuffer.p_enum.RoleType.valueOf(roleTye_);
-      return result == null ? com.wjybxx.fastjgame.protobuffer.p_enum.RoleType.UNRECOGNIZED : result;
+    public int getServerId() {
+      return serverId_;
     }
 
-    public static final int NAME_FIELD_NUMBER = 2;
-    private volatile java.lang.Object name_;
+    public static final int INNERTCPADDRESS_FIELD_NUMBER = 2;
+    private volatile java.lang.Object innerTcpAddress_;
     /**
-     * <code>string name = 2;</code>
+     * <code>string innerTcpAddress = 2;</code>
      */
-    public java.lang.String getName() {
-      java.lang.Object ref = name_;
+    public java.lang.String getInnerTcpAddress() {
+      java.lang.Object ref = innerTcpAddress_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        name_ = s;
+        innerTcpAddress_ = s;
         return s;
       }
     }
     /**
-     * <code>string name = 2;</code>
+     * <code>string innerTcpAddress = 2;</code>
      */
     public com.google.protobuf.ByteString
-        getNameBytes() {
-      java.lang.Object ref = name_;
+        getInnerTcpAddressBytes() {
+      java.lang.Object ref = innerTcpAddress_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        name_ = b;
+        innerTcpAddress_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int INNERSYNCRPCADDRESS_FIELD_NUMBER = 3;
+    private volatile java.lang.Object innerSyncRpcAddress_;
+    /**
+     * <code>string innerSyncRpcAddress = 3;</code>
+     */
+    public java.lang.String getInnerSyncRpcAddress() {
+      java.lang.Object ref = innerSyncRpcAddress_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        innerSyncRpcAddress_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string innerSyncRpcAddress = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getInnerSyncRpcAddressBytes() {
+      java.lang.Object ref = innerSyncRpcAddress_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        innerSyncRpcAddress_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -187,11 +235,14 @@ public final class p_game_scene {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (roleTye_ != com.wjybxx.fastjgame.protobuffer.p_enum.RoleType.ROLE_TYPE_INVALID.getNumber()) {
-        output.writeEnum(1, roleTye_);
+      if (serverId_ != 0) {
+        output.writeInt32(1, serverId_);
       }
-      if (!getNameBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, name_);
+      if (!getInnerTcpAddressBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, innerTcpAddress_);
+      }
+      if (!getInnerSyncRpcAddressBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, innerSyncRpcAddress_);
       }
       unknownFields.writeTo(output);
     }
@@ -201,12 +252,15 @@ public final class p_game_scene {
       if (size != -1) return size;
 
       size = 0;
-      if (roleTye_ != com.wjybxx.fastjgame.protobuffer.p_enum.RoleType.ROLE_TYPE_INVALID.getNumber()) {
+      if (serverId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, roleTye_);
+          .computeInt32Size(1, serverId_);
       }
-      if (!getNameBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, name_);
+      if (!getInnerTcpAddressBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, innerTcpAddress_);
+      }
+      if (!getInnerSyncRpcAddressBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, innerSyncRpcAddress_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -218,15 +272,18 @@ public final class p_game_scene {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello)) {
+      if (!(obj instanceof com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello)) {
         return super.equals(obj);
       }
-      com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello other = (com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello) obj;
+      com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello other = (com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello) obj;
 
       boolean result = true;
-      result = result && roleTye_ == other.roleTye_;
-      result = result && getName()
-          .equals(other.getName());
+      result = result && (getServerId()
+          == other.getServerId());
+      result = result && getInnerTcpAddress()
+          .equals(other.getInnerTcpAddress());
+      result = result && getInnerSyncRpcAddress()
+          .equals(other.getInnerSyncRpcAddress());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -238,78 +295,80 @@ public final class p_game_scene {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + ROLETYE_FIELD_NUMBER;
-      hash = (53 * hash) + roleTye_;
-      hash = (37 * hash) + NAME_FIELD_NUMBER;
-      hash = (53 * hash) + getName().hashCode();
+      hash = (37 * hash) + SERVERID_FIELD_NUMBER;
+      hash = (53 * hash) + getServerId();
+      hash = (37 * hash) + INNERTCPADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getInnerTcpAddress().hashCode();
+      hash = (37 * hash) + INNERSYNCRPCADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getInnerSyncRpcAddress().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
 
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseFrom(
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseFrom(
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseFrom(
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseFrom(
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseFrom(byte[] data)
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseFrom(
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseFrom(java.io.InputStream input)
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseFrom(
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseDelimitedFrom(java.io.InputStream input)
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseDelimitedFrom(
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseFrom(
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parseFrom(
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -321,7 +380,7 @@ public final class p_game_scene {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello prototype) {
+    public static Builder newBuilder(com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -337,28 +396,29 @@ public final class p_game_scene {
     }
     /**
      * <pre>
-     * 消息的命名格式由团队习惯决定
+     * gameserver向sceneserver打招呼，期望获得scene的一些基本信息
+     * 为何要主动告诉scene地址呢，减少scene使用zookeeper的压力
      * </pre>
      *
-     * Protobuf type {@code fastjgame.Hello}
+     * Protobuf type {@code fastjgame.p_game_local_scene_hello}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:fastjgame.Hello)
-        com.wjybxx.fastjgame.protobuffer.p_game_scene.HelloOrBuilder {
+        // @@protoc_insertion_point(builder_implements:fastjgame.p_game_local_scene_hello)
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_helloOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_Hello_descriptor;
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_local_scene_hello_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_Hello_fieldAccessorTable
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_local_scene_hello_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello.class, com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello.Builder.class);
+                com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello.class, com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello.Builder.class);
       }
 
-      // Construct using com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello.newBuilder()
+      // Construct using com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -375,34 +435,37 @@ public final class p_game_scene {
       }
       public Builder clear() {
         super.clear();
-        roleTye_ = 0;
+        serverId_ = 0;
 
-        name_ = "";
+        innerTcpAddress_ = "";
+
+        innerSyncRpcAddress_ = "";
 
         return this;
       }
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_Hello_descriptor;
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_local_scene_hello_descriptor;
       }
 
-      public com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello getDefaultInstanceForType() {
-        return com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello.getDefaultInstance();
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello getDefaultInstanceForType() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello.getDefaultInstance();
       }
 
-      public com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello build() {
-        com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello result = buildPartial();
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello build() {
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello buildPartial() {
-        com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello result = new com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello(this);
-        result.roleTye_ = roleTye_;
-        result.name_ = name_;
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello buildPartial() {
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello result = new com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello(this);
+        result.serverId_ = serverId_;
+        result.innerTcpAddress_ = innerTcpAddress_;
+        result.innerSyncRpcAddress_ = innerSyncRpcAddress_;
         onBuilt();
         return result;
       }
@@ -434,21 +497,25 @@ public final class p_game_scene {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello) {
-          return mergeFrom((com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello)other);
+        if (other instanceof com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello) {
+          return mergeFrom((com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello other) {
-        if (other == com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello.getDefaultInstance()) return this;
-        if (other.roleTye_ != 0) {
-          setRoleTyeValue(other.getRoleTyeValue());
+      public Builder mergeFrom(com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello other) {
+        if (other == com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello.getDefaultInstance()) return this;
+        if (other.getServerId() != 0) {
+          setServerId(other.getServerId());
         }
-        if (!other.getName().isEmpty()) {
-          name_ = other.name_;
+        if (!other.getInnerTcpAddress().isEmpty()) {
+          innerTcpAddress_ = other.innerTcpAddress_;
+          onChanged();
+        }
+        if (!other.getInnerSyncRpcAddress().isEmpty()) {
+          innerSyncRpcAddress_ = other.innerSyncRpcAddress_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -464,11 +531,11 @@ public final class p_game_scene {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello parsedMessage = null;
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello) e.getUnfinishedMessage();
+          parsedMessage = (com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -478,115 +545,178 @@ public final class p_game_scene {
         return this;
       }
 
-      private int roleTye_ = 0;
+      private int serverId_ ;
       /**
-       * <code>.fastjgame.RoleType roleTye = 1;</code>
+       * <pre>
+       * 服务器id，用于核对
+       * </pre>
+       *
+       * <code>int32 serverId = 1;</code>
        */
-      public int getRoleTyeValue() {
-        return roleTye_;
+      public int getServerId() {
+        return serverId_;
       }
       /**
-       * <code>.fastjgame.RoleType roleTye = 1;</code>
+       * <pre>
+       * 服务器id，用于核对
+       * </pre>
+       *
+       * <code>int32 serverId = 1;</code>
        */
-      public Builder setRoleTyeValue(int value) {
-        roleTye_ = value;
+      public Builder setServerId(int value) {
+        
+        serverId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>.fastjgame.RoleType roleTye = 1;</code>
+       * <pre>
+       * 服务器id，用于核对
+       * </pre>
+       *
+       * <code>int32 serverId = 1;</code>
        */
-      public com.wjybxx.fastjgame.protobuffer.p_enum.RoleType getRoleTye() {
-        com.wjybxx.fastjgame.protobuffer.p_enum.RoleType result = com.wjybxx.fastjgame.protobuffer.p_enum.RoleType.valueOf(roleTye_);
-        return result == null ? com.wjybxx.fastjgame.protobuffer.p_enum.RoleType.UNRECOGNIZED : result;
-      }
-      /**
-       * <code>.fastjgame.RoleType roleTye = 1;</code>
-       */
-      public Builder setRoleTye(com.wjybxx.fastjgame.protobuffer.p_enum.RoleType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
+      public Builder clearServerId() {
         
-        roleTye_ = value.getNumber();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>.fastjgame.RoleType roleTye = 1;</code>
-       */
-      public Builder clearRoleTye() {
-        
-        roleTye_ = 0;
+        serverId_ = 0;
         onChanged();
         return this;
       }
 
-      private java.lang.Object name_ = "";
+      private java.lang.Object innerTcpAddress_ = "";
       /**
-       * <code>string name = 2;</code>
+       * <code>string innerTcpAddress = 2;</code>
        */
-      public java.lang.String getName() {
-        java.lang.Object ref = name_;
+      public java.lang.String getInnerTcpAddress() {
+        java.lang.Object ref = innerTcpAddress_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          name_ = s;
+          innerTcpAddress_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string name = 2;</code>
+       * <code>string innerTcpAddress = 2;</code>
        */
       public com.google.protobuf.ByteString
-          getNameBytes() {
-        java.lang.Object ref = name_;
+          getInnerTcpAddressBytes() {
+        java.lang.Object ref = innerTcpAddress_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
-          name_ = b;
+          innerTcpAddress_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string name = 2;</code>
+       * <code>string innerTcpAddress = 2;</code>
        */
-      public Builder setName(
+      public Builder setInnerTcpAddress(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        name_ = value;
+        innerTcpAddress_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string name = 2;</code>
+       * <code>string innerTcpAddress = 2;</code>
        */
-      public Builder clearName() {
+      public Builder clearInnerTcpAddress() {
         
-        name_ = getDefaultInstance().getName();
+        innerTcpAddress_ = getDefaultInstance().getInnerTcpAddress();
         onChanged();
         return this;
       }
       /**
-       * <code>string name = 2;</code>
+       * <code>string innerTcpAddress = 2;</code>
        */
-      public Builder setNameBytes(
+      public Builder setInnerTcpAddressBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
         
-        name_ = value;
+        innerTcpAddress_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object innerSyncRpcAddress_ = "";
+      /**
+       * <code>string innerSyncRpcAddress = 3;</code>
+       */
+      public java.lang.String getInnerSyncRpcAddress() {
+        java.lang.Object ref = innerSyncRpcAddress_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          innerSyncRpcAddress_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string innerSyncRpcAddress = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getInnerSyncRpcAddressBytes() {
+        java.lang.Object ref = innerSyncRpcAddress_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          innerSyncRpcAddress_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string innerSyncRpcAddress = 3;</code>
+       */
+      public Builder setInnerSyncRpcAddress(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        innerSyncRpcAddress_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string innerSyncRpcAddress = 3;</code>
+       */
+      public Builder clearInnerSyncRpcAddress() {
+        
+        innerSyncRpcAddress_ = getDefaultInstance().getInnerSyncRpcAddress();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string innerSyncRpcAddress = 3;</code>
+       */
+      public Builder setInnerSyncRpcAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        innerSyncRpcAddress_ = value;
         onChanged();
         return this;
       }
@@ -601,49 +731,2011 @@ public final class p_game_scene {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:fastjgame.Hello)
+      // @@protoc_insertion_point(builder_scope:fastjgame.p_game_local_scene_hello)
     }
 
-    // @@protoc_insertion_point(class_scope:fastjgame.Hello)
-    private static final com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:fastjgame.p_game_local_scene_hello)
+    private static final com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello();
+      DEFAULT_INSTANCE = new com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello();
     }
 
-    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello getDefaultInstance() {
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<Hello>
-        PARSER = new com.google.protobuf.AbstractParser<Hello>() {
-      public Hello parsePartialFrom(
+    private static final com.google.protobuf.Parser<p_game_local_scene_hello>
+        PARSER = new com.google.protobuf.AbstractParser<p_game_local_scene_hello>() {
+      public p_game_local_scene_hello parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Hello(input, extensionRegistry);
+        return new p_game_local_scene_hello(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<Hello> parser() {
+    public static com.google.protobuf.Parser<p_game_local_scene_hello> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Hello> getParserForType() {
+    public com.google.protobuf.Parser<p_game_local_scene_hello> getParserForType() {
       return PARSER;
     }
 
-    public com.wjybxx.fastjgame.protobuffer.p_game_scene.Hello getDefaultInstanceForType() {
+    public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface p_game_local_scene_hello_resultOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:fastjgame.p_game_local_scene_hello_result)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 配置(或启动参数)中的支持的区域
+     * </pre>
+     *
+     * <code>repeated int32 configuredRegions = 1;</code>
+     */
+    java.util.List<java.lang.Integer> getConfiguredRegionsList();
+    /**
+     * <pre>
+     * 配置(或启动参数)中的支持的区域
+     * </pre>
+     *
+     * <code>repeated int32 configuredRegions = 1;</code>
+     */
+    int getConfiguredRegionsCount();
+    /**
+     * <pre>
+     * 配置(或启动参数)中的支持的区域
+     * </pre>
+     *
+     * <code>repeated int32 configuredRegions = 1;</code>
+     */
+    int getConfiguredRegions(int index);
+  }
+  /**
+   * <pre>
+   * scene返回的信息
+   * </pre>
+   *
+   * Protobuf type {@code fastjgame.p_game_local_scene_hello_result}
+   */
+  public  static final class p_game_local_scene_hello_result extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:fastjgame.p_game_local_scene_hello_result)
+      p_game_local_scene_hello_resultOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use p_game_local_scene_hello_result.newBuilder() to construct.
+    private p_game_local_scene_hello_result(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private p_game_local_scene_hello_result() {
+      configuredRegions_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private p_game_local_scene_hello_result(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                configuredRegions_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              configuredRegions_.add(input.readInt32());
+              break;
+            }
+            case 10: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
+                configuredRegions_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                configuredRegions_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          configuredRegions_ = java.util.Collections.unmodifiableList(configuredRegions_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_local_scene_hello_result_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_local_scene_hello_result_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result.class, com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result.Builder.class);
+    }
+
+    public static final int CONFIGUREDREGIONS_FIELD_NUMBER = 1;
+    private java.util.List<java.lang.Integer> configuredRegions_;
+    /**
+     * <pre>
+     * 配置(或启动参数)中的支持的区域
+     * </pre>
+     *
+     * <code>repeated int32 configuredRegions = 1;</code>
+     */
+    public java.util.List<java.lang.Integer>
+        getConfiguredRegionsList() {
+      return configuredRegions_;
+    }
+    /**
+     * <pre>
+     * 配置(或启动参数)中的支持的区域
+     * </pre>
+     *
+     * <code>repeated int32 configuredRegions = 1;</code>
+     */
+    public int getConfiguredRegionsCount() {
+      return configuredRegions_.size();
+    }
+    /**
+     * <pre>
+     * 配置(或启动参数)中的支持的区域
+     * </pre>
+     *
+     * <code>repeated int32 configuredRegions = 1;</code>
+     */
+    public int getConfiguredRegions(int index) {
+      return configuredRegions_.get(index);
+    }
+    private int configuredRegionsMemoizedSerializedSize = -1;
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (getConfiguredRegionsList().size() > 0) {
+        output.writeUInt32NoTag(10);
+        output.writeUInt32NoTag(configuredRegionsMemoizedSerializedSize);
+      }
+      for (int i = 0; i < configuredRegions_.size(); i++) {
+        output.writeInt32NoTag(configuredRegions_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < configuredRegions_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(configuredRegions_.get(i));
+        }
+        size += dataSize;
+        if (!getConfiguredRegionsList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        configuredRegionsMemoizedSerializedSize = dataSize;
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result)) {
+        return super.equals(obj);
+      }
+      com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result other = (com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result) obj;
+
+      boolean result = true;
+      result = result && getConfiguredRegionsList()
+          .equals(other.getConfiguredRegionsList());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getConfiguredRegionsCount() > 0) {
+        hash = (37 * hash) + CONFIGUREDREGIONS_FIELD_NUMBER;
+        hash = (53 * hash) + getConfiguredRegionsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * scene返回的信息
+     * </pre>
+     *
+     * Protobuf type {@code fastjgame.p_game_local_scene_hello_result}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:fastjgame.p_game_local_scene_hello_result)
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_resultOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_local_scene_hello_result_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_local_scene_hello_result_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result.class, com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result.Builder.class);
+      }
+
+      // Construct using com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        configuredRegions_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_local_scene_hello_result_descriptor;
+      }
+
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result getDefaultInstanceForType() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result.getDefaultInstance();
+      }
+
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result build() {
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result buildPartial() {
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result result = new com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          configuredRegions_ = java.util.Collections.unmodifiableList(configuredRegions_);
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.configuredRegions_ = configuredRegions_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result) {
+          return mergeFrom((com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result other) {
+        if (other == com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result.getDefaultInstance()) return this;
+        if (!other.configuredRegions_.isEmpty()) {
+          if (configuredRegions_.isEmpty()) {
+            configuredRegions_ = other.configuredRegions_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureConfiguredRegionsIsMutable();
+            configuredRegions_.addAll(other.configuredRegions_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<java.lang.Integer> configuredRegions_ = java.util.Collections.emptyList();
+      private void ensureConfiguredRegionsIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          configuredRegions_ = new java.util.ArrayList<java.lang.Integer>(configuredRegions_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <pre>
+       * 配置(或启动参数)中的支持的区域
+       * </pre>
+       *
+       * <code>repeated int32 configuredRegions = 1;</code>
+       */
+      public java.util.List<java.lang.Integer>
+          getConfiguredRegionsList() {
+        return java.util.Collections.unmodifiableList(configuredRegions_);
+      }
+      /**
+       * <pre>
+       * 配置(或启动参数)中的支持的区域
+       * </pre>
+       *
+       * <code>repeated int32 configuredRegions = 1;</code>
+       */
+      public int getConfiguredRegionsCount() {
+        return configuredRegions_.size();
+      }
+      /**
+       * <pre>
+       * 配置(或启动参数)中的支持的区域
+       * </pre>
+       *
+       * <code>repeated int32 configuredRegions = 1;</code>
+       */
+      public int getConfiguredRegions(int index) {
+        return configuredRegions_.get(index);
+      }
+      /**
+       * <pre>
+       * 配置(或启动参数)中的支持的区域
+       * </pre>
+       *
+       * <code>repeated int32 configuredRegions = 1;</code>
+       */
+      public Builder setConfiguredRegions(
+          int index, int value) {
+        ensureConfiguredRegionsIsMutable();
+        configuredRegions_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 配置(或启动参数)中的支持的区域
+       * </pre>
+       *
+       * <code>repeated int32 configuredRegions = 1;</code>
+       */
+      public Builder addConfiguredRegions(int value) {
+        ensureConfiguredRegionsIsMutable();
+        configuredRegions_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 配置(或启动参数)中的支持的区域
+       * </pre>
+       *
+       * <code>repeated int32 configuredRegions = 1;</code>
+       */
+      public Builder addAllConfiguredRegions(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureConfiguredRegionsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, configuredRegions_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 配置(或启动参数)中的支持的区域
+       * </pre>
+       *
+       * <code>repeated int32 configuredRegions = 1;</code>
+       */
+      public Builder clearConfiguredRegions() {
+        configuredRegions_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:fastjgame.p_game_local_scene_hello_result)
+    }
+
+    // @@protoc_insertion_point(class_scope:fastjgame.p_game_local_scene_hello_result)
+    private static final com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result();
+    }
+
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<p_game_local_scene_hello_result>
+        PARSER = new com.google.protobuf.AbstractParser<p_game_local_scene_hello_result>() {
+      public p_game_local_scene_hello_result parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new p_game_local_scene_hello_result(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<p_game_local_scene_hello_result> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<p_game_local_scene_hello_result> getParserForType() {
+      return PARSER;
+    }
+
+    public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_local_scene_hello_result getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface p_game_cross_scene_helloOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:fastjgame.p_game_cross_scene_hello)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 服务器id，用于核对
+     * </pre>
+     *
+     * <code>int32 serverId = 1;</code>
+     */
+    int getServerId();
+
+    /**
+     * <code>string innerTcpAddress = 2;</code>
+     */
+    java.lang.String getInnerTcpAddress();
+    /**
+     * <code>string innerTcpAddress = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getInnerTcpAddressBytes();
+
+    /**
+     * <code>string innerSyncRpcAddress = 3;</code>
+     */
+    java.lang.String getInnerSyncRpcAddress();
+    /**
+     * <code>string innerSyncRpcAddress = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getInnerSyncRpcAddressBytes();
+  }
+  /**
+   * <pre>
+   *gameserver向跨服scene进程打招呼
+   * </pre>
+   *
+   * Protobuf type {@code fastjgame.p_game_cross_scene_hello}
+   */
+  public  static final class p_game_cross_scene_hello extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:fastjgame.p_game_cross_scene_hello)
+      p_game_cross_scene_helloOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use p_game_cross_scene_hello.newBuilder() to construct.
+    private p_game_cross_scene_hello(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private p_game_cross_scene_hello() {
+      serverId_ = 0;
+      innerTcpAddress_ = "";
+      innerSyncRpcAddress_ = "";
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private p_game_cross_scene_hello(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+
+              serverId_ = input.readInt32();
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              innerTcpAddress_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              innerSyncRpcAddress_ = s;
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_cross_scene_hello_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_cross_scene_hello_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello.class, com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello.Builder.class);
+    }
+
+    public static final int SERVERID_FIELD_NUMBER = 1;
+    private int serverId_;
+    /**
+     * <pre>
+     * 服务器id，用于核对
+     * </pre>
+     *
+     * <code>int32 serverId = 1;</code>
+     */
+    public int getServerId() {
+      return serverId_;
+    }
+
+    public static final int INNERTCPADDRESS_FIELD_NUMBER = 2;
+    private volatile java.lang.Object innerTcpAddress_;
+    /**
+     * <code>string innerTcpAddress = 2;</code>
+     */
+    public java.lang.String getInnerTcpAddress() {
+      java.lang.Object ref = innerTcpAddress_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        innerTcpAddress_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string innerTcpAddress = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getInnerTcpAddressBytes() {
+      java.lang.Object ref = innerTcpAddress_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        innerTcpAddress_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int INNERSYNCRPCADDRESS_FIELD_NUMBER = 3;
+    private volatile java.lang.Object innerSyncRpcAddress_;
+    /**
+     * <code>string innerSyncRpcAddress = 3;</code>
+     */
+    public java.lang.String getInnerSyncRpcAddress() {
+      java.lang.Object ref = innerSyncRpcAddress_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        innerSyncRpcAddress_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string innerSyncRpcAddress = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getInnerSyncRpcAddressBytes() {
+      java.lang.Object ref = innerSyncRpcAddress_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        innerSyncRpcAddress_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (serverId_ != 0) {
+        output.writeInt32(1, serverId_);
+      }
+      if (!getInnerTcpAddressBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, innerTcpAddress_);
+      }
+      if (!getInnerSyncRpcAddressBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, innerSyncRpcAddress_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (serverId_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, serverId_);
+      }
+      if (!getInnerTcpAddressBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, innerTcpAddress_);
+      }
+      if (!getInnerSyncRpcAddressBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, innerSyncRpcAddress_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello)) {
+        return super.equals(obj);
+      }
+      com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello other = (com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello) obj;
+
+      boolean result = true;
+      result = result && (getServerId()
+          == other.getServerId());
+      result = result && getInnerTcpAddress()
+          .equals(other.getInnerTcpAddress());
+      result = result && getInnerSyncRpcAddress()
+          .equals(other.getInnerSyncRpcAddress());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + SERVERID_FIELD_NUMBER;
+      hash = (53 * hash) + getServerId();
+      hash = (37 * hash) + INNERTCPADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getInnerTcpAddress().hashCode();
+      hash = (37 * hash) + INNERSYNCRPCADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getInnerSyncRpcAddress().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     *gameserver向跨服scene进程打招呼
+     * </pre>
+     *
+     * Protobuf type {@code fastjgame.p_game_cross_scene_hello}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:fastjgame.p_game_cross_scene_hello)
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_helloOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_cross_scene_hello_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_cross_scene_hello_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello.class, com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello.Builder.class);
+      }
+
+      // Construct using com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        serverId_ = 0;
+
+        innerTcpAddress_ = "";
+
+        innerSyncRpcAddress_ = "";
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_cross_scene_hello_descriptor;
+      }
+
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello getDefaultInstanceForType() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello.getDefaultInstance();
+      }
+
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello build() {
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello buildPartial() {
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello result = new com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello(this);
+        result.serverId_ = serverId_;
+        result.innerTcpAddress_ = innerTcpAddress_;
+        result.innerSyncRpcAddress_ = innerSyncRpcAddress_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello) {
+          return mergeFrom((com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello other) {
+        if (other == com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello.getDefaultInstance()) return this;
+        if (other.getServerId() != 0) {
+          setServerId(other.getServerId());
+        }
+        if (!other.getInnerTcpAddress().isEmpty()) {
+          innerTcpAddress_ = other.innerTcpAddress_;
+          onChanged();
+        }
+        if (!other.getInnerSyncRpcAddress().isEmpty()) {
+          innerSyncRpcAddress_ = other.innerSyncRpcAddress_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int serverId_ ;
+      /**
+       * <pre>
+       * 服务器id，用于核对
+       * </pre>
+       *
+       * <code>int32 serverId = 1;</code>
+       */
+      public int getServerId() {
+        return serverId_;
+      }
+      /**
+       * <pre>
+       * 服务器id，用于核对
+       * </pre>
+       *
+       * <code>int32 serverId = 1;</code>
+       */
+      public Builder setServerId(int value) {
+        
+        serverId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 服务器id，用于核对
+       * </pre>
+       *
+       * <code>int32 serverId = 1;</code>
+       */
+      public Builder clearServerId() {
+        
+        serverId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object innerTcpAddress_ = "";
+      /**
+       * <code>string innerTcpAddress = 2;</code>
+       */
+      public java.lang.String getInnerTcpAddress() {
+        java.lang.Object ref = innerTcpAddress_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          innerTcpAddress_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string innerTcpAddress = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getInnerTcpAddressBytes() {
+        java.lang.Object ref = innerTcpAddress_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          innerTcpAddress_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string innerTcpAddress = 2;</code>
+       */
+      public Builder setInnerTcpAddress(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        innerTcpAddress_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string innerTcpAddress = 2;</code>
+       */
+      public Builder clearInnerTcpAddress() {
+        
+        innerTcpAddress_ = getDefaultInstance().getInnerTcpAddress();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string innerTcpAddress = 2;</code>
+       */
+      public Builder setInnerTcpAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        innerTcpAddress_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object innerSyncRpcAddress_ = "";
+      /**
+       * <code>string innerSyncRpcAddress = 3;</code>
+       */
+      public java.lang.String getInnerSyncRpcAddress() {
+        java.lang.Object ref = innerSyncRpcAddress_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          innerSyncRpcAddress_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string innerSyncRpcAddress = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getInnerSyncRpcAddressBytes() {
+        java.lang.Object ref = innerSyncRpcAddress_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          innerSyncRpcAddress_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string innerSyncRpcAddress = 3;</code>
+       */
+      public Builder setInnerSyncRpcAddress(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        innerSyncRpcAddress_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string innerSyncRpcAddress = 3;</code>
+       */
+      public Builder clearInnerSyncRpcAddress() {
+        
+        innerSyncRpcAddress_ = getDefaultInstance().getInnerSyncRpcAddress();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string innerSyncRpcAddress = 3;</code>
+       */
+      public Builder setInnerSyncRpcAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        innerSyncRpcAddress_ = value;
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:fastjgame.p_game_cross_scene_hello)
+    }
+
+    // @@protoc_insertion_point(class_scope:fastjgame.p_game_cross_scene_hello)
+    private static final com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello();
+    }
+
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<p_game_cross_scene_hello>
+        PARSER = new com.google.protobuf.AbstractParser<p_game_cross_scene_hello>() {
+      public p_game_cross_scene_hello parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new p_game_cross_scene_hello(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<p_game_cross_scene_hello> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<p_game_cross_scene_hello> getParserForType() {
+      return PARSER;
+    }
+
+    public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface p_game_cross_scene_hello_resultOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:fastjgame.p_game_cross_scene_hello_result)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated int32 activeRegions = 1;</code>
+     */
+    java.util.List<java.lang.Integer> getActiveRegionsList();
+    /**
+     * <code>repeated int32 activeRegions = 1;</code>
+     */
+    int getActiveRegionsCount();
+    /**
+     * <code>repeated int32 activeRegions = 1;</code>
+     */
+    int getActiveRegions(int index);
+  }
+  /**
+   * <pre>
+   * 跨服scene通知该gameserver我启动了哪些区域
+   * 跨服场景的region不由gameserver协调(由它们自己协调，抢占zk节点)
+   * </pre>
+   *
+   * Protobuf type {@code fastjgame.p_game_cross_scene_hello_result}
+   */
+  public  static final class p_game_cross_scene_hello_result extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:fastjgame.p_game_cross_scene_hello_result)
+      p_game_cross_scene_hello_resultOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use p_game_cross_scene_hello_result.newBuilder() to construct.
+    private p_game_cross_scene_hello_result(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private p_game_cross_scene_hello_result() {
+      activeRegions_ = java.util.Collections.emptyList();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private p_game_cross_scene_hello_result(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                activeRegions_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              activeRegions_.add(input.readInt32());
+              break;
+            }
+            case 10: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
+                activeRegions_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                activeRegions_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          activeRegions_ = java.util.Collections.unmodifiableList(activeRegions_);
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_cross_scene_hello_result_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_cross_scene_hello_result_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result.class, com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result.Builder.class);
+    }
+
+    public static final int ACTIVEREGIONS_FIELD_NUMBER = 1;
+    private java.util.List<java.lang.Integer> activeRegions_;
+    /**
+     * <code>repeated int32 activeRegions = 1;</code>
+     */
+    public java.util.List<java.lang.Integer>
+        getActiveRegionsList() {
+      return activeRegions_;
+    }
+    /**
+     * <code>repeated int32 activeRegions = 1;</code>
+     */
+    public int getActiveRegionsCount() {
+      return activeRegions_.size();
+    }
+    /**
+     * <code>repeated int32 activeRegions = 1;</code>
+     */
+    public int getActiveRegions(int index) {
+      return activeRegions_.get(index);
+    }
+    private int activeRegionsMemoizedSerializedSize = -1;
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (getActiveRegionsList().size() > 0) {
+        output.writeUInt32NoTag(10);
+        output.writeUInt32NoTag(activeRegionsMemoizedSerializedSize);
+      }
+      for (int i = 0; i < activeRegions_.size(); i++) {
+        output.writeInt32NoTag(activeRegions_.get(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < activeRegions_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(activeRegions_.get(i));
+        }
+        size += dataSize;
+        if (!getActiveRegionsList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        activeRegionsMemoizedSerializedSize = dataSize;
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result)) {
+        return super.equals(obj);
+      }
+      com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result other = (com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result) obj;
+
+      boolean result = true;
+      result = result && getActiveRegionsList()
+          .equals(other.getActiveRegionsList());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getActiveRegionsCount() > 0) {
+        hash = (37 * hash) + ACTIVEREGIONS_FIELD_NUMBER;
+        hash = (53 * hash) + getActiveRegionsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * 跨服scene通知该gameserver我启动了哪些区域
+     * 跨服场景的region不由gameserver协调(由它们自己协调，抢占zk节点)
+     * </pre>
+     *
+     * Protobuf type {@code fastjgame.p_game_cross_scene_hello_result}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:fastjgame.p_game_cross_scene_hello_result)
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_resultOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_cross_scene_hello_result_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_cross_scene_hello_result_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result.class, com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result.Builder.class);
+      }
+
+      // Construct using com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        activeRegions_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.internal_static_fastjgame_p_game_cross_scene_hello_result_descriptor;
+      }
+
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result getDefaultInstanceForType() {
+        return com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result.getDefaultInstance();
+      }
+
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result build() {
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result buildPartial() {
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result result = new com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          activeRegions_ = java.util.Collections.unmodifiableList(activeRegions_);
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.activeRegions_ = activeRegions_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result) {
+          return mergeFrom((com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result other) {
+        if (other == com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result.getDefaultInstance()) return this;
+        if (!other.activeRegions_.isEmpty()) {
+          if (activeRegions_.isEmpty()) {
+            activeRegions_ = other.activeRegions_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureActiveRegionsIsMutable();
+            activeRegions_.addAll(other.activeRegions_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private java.util.List<java.lang.Integer> activeRegions_ = java.util.Collections.emptyList();
+      private void ensureActiveRegionsIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          activeRegions_ = new java.util.ArrayList<java.lang.Integer>(activeRegions_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated int32 activeRegions = 1;</code>
+       */
+      public java.util.List<java.lang.Integer>
+          getActiveRegionsList() {
+        return java.util.Collections.unmodifiableList(activeRegions_);
+      }
+      /**
+       * <code>repeated int32 activeRegions = 1;</code>
+       */
+      public int getActiveRegionsCount() {
+        return activeRegions_.size();
+      }
+      /**
+       * <code>repeated int32 activeRegions = 1;</code>
+       */
+      public int getActiveRegions(int index) {
+        return activeRegions_.get(index);
+      }
+      /**
+       * <code>repeated int32 activeRegions = 1;</code>
+       */
+      public Builder setActiveRegions(
+          int index, int value) {
+        ensureActiveRegionsIsMutable();
+        activeRegions_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 activeRegions = 1;</code>
+       */
+      public Builder addActiveRegions(int value) {
+        ensureActiveRegionsIsMutable();
+        activeRegions_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 activeRegions = 1;</code>
+       */
+      public Builder addAllActiveRegions(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureActiveRegionsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, activeRegions_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 activeRegions = 1;</code>
+       */
+      public Builder clearActiveRegions() {
+        activeRegions_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:fastjgame.p_game_cross_scene_hello_result)
+    }
+
+    // @@protoc_insertion_point(class_scope:fastjgame.p_game_cross_scene_hello_result)
+    private static final com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result();
+    }
+
+    public static com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<p_game_cross_scene_hello_result>
+        PARSER = new com.google.protobuf.AbstractParser<p_game_cross_scene_hello_result>() {
+      public p_game_cross_scene_hello_result parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new p_game_cross_scene_hello_result(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<p_game_cross_scene_hello_result> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<p_game_cross_scene_hello_result> getParserForType() {
+      return PARSER;
+    }
+
+    public com.wjybxx.fastjgame.protobuffer.p_game_scene.p_game_cross_scene_hello_result getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_fastjgame_Hello_descriptor;
+    internal_static_fastjgame_p_game_local_scene_hello_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_fastjgame_Hello_fieldAccessorTable;
+      internal_static_fastjgame_p_game_local_scene_hello_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_fastjgame_p_game_local_scene_hello_result_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_fastjgame_p_game_local_scene_hello_result_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_fastjgame_p_game_cross_scene_hello_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_fastjgame_p_game_cross_scene_hello_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_fastjgame_p_game_cross_scene_hello_result_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_fastjgame_p_game_cross_scene_hello_result_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -654,10 +2746,17 @@ public final class p_game_scene {
   static {
     java.lang.String[] descriptorData = {
       "\n\022p_game_scene.proto\022\tfastjgame\032\014p_enum." +
-      "proto\032\016p_struct.proto\";\n\005Hello\022$\n\007roleTy" +
-      "e\030\001 \001(\0162\023.fastjgame.RoleType\022\014\n\004name\030\002 \001" +
-      "(\tB2\n com.wjybxx.fastjgame.protobufferB\014" +
-      "p_game_sceneH\001b\006proto3"
+      "proto\032\016p_struct.proto\"b\n\030p_game_local_sc" +
+      "ene_hello\022\020\n\010serverId\030\001 \001(\005\022\027\n\017innerTcpA" +
+      "ddress\030\002 \001(\t\022\033\n\023innerSyncRpcAddress\030\003 \001(" +
+      "\t\"<\n\037p_game_local_scene_hello_result\022\031\n\021" +
+      "configuredRegions\030\001 \003(\005\"b\n\030p_game_cross_" +
+      "scene_hello\022\020\n\010serverId\030\001 \001(\005\022\027\n\017innerTc" +
+      "pAddress\030\002 \001(\t\022\033\n\023innerSyncRpcAddress\030\003 " +
+      "\001(\t\"8\n\037p_game_cross_scene_hello_result\022\025" +
+      "\n\ractiveRegions\030\001 \003(\005B2\n com.wjybxx.fast" +
+      "jgame.protobufferB\014p_game_sceneH\001b\006proto" +
+      "3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -673,12 +2772,30 @@ public final class p_game_scene {
           com.wjybxx.fastjgame.protobuffer.p_enum.getDescriptor(),
           com.wjybxx.fastjgame.protobuffer.p_struct.getDescriptor(),
         }, assigner);
-    internal_static_fastjgame_Hello_descriptor =
+    internal_static_fastjgame_p_game_local_scene_hello_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_fastjgame_Hello_fieldAccessorTable = new
+    internal_static_fastjgame_p_game_local_scene_hello_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_fastjgame_Hello_descriptor,
-        new java.lang.String[] { "RoleTye", "Name", });
+        internal_static_fastjgame_p_game_local_scene_hello_descriptor,
+        new java.lang.String[] { "ServerId", "InnerTcpAddress", "InnerSyncRpcAddress", });
+    internal_static_fastjgame_p_game_local_scene_hello_result_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_fastjgame_p_game_local_scene_hello_result_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_fastjgame_p_game_local_scene_hello_result_descriptor,
+        new java.lang.String[] { "ConfiguredRegions", });
+    internal_static_fastjgame_p_game_cross_scene_hello_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_fastjgame_p_game_cross_scene_hello_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_fastjgame_p_game_cross_scene_hello_descriptor,
+        new java.lang.String[] { "ServerId", "InnerTcpAddress", "InnerSyncRpcAddress", });
+    internal_static_fastjgame_p_game_cross_scene_hello_result_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_fastjgame_p_game_cross_scene_hello_result_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_fastjgame_p_game_cross_scene_hello_result_descriptor,
+        new java.lang.String[] { "ActiveRegions", });
     com.wjybxx.fastjgame.protobuffer.p_enum.getDescriptor();
     com.wjybxx.fastjgame.protobuffer.p_struct.getDescriptor();
   }

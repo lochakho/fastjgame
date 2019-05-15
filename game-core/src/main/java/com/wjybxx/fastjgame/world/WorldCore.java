@@ -20,12 +20,13 @@ import com.google.inject.Inject;
 import com.wjybxx.fastjgame.mrg.*;
 
 /**
+ * 名字真实不好起，超类负责一些公共的核心逻辑。
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/12 12:25
  * @github - https://github.com/hl845740757
  */
-public abstract class CoreWorld extends World{
+public abstract class WorldCore extends World{
 
     protected final ZkPathMrg zkPathMrg;
     protected final CuratorMrg curatorMrg;
@@ -33,7 +34,7 @@ public abstract class CoreWorld extends World{
     protected final GuidMrg guidMrg;
 
     @Inject
-    public CoreWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
+    public WorldCore(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
         super(worldWrapper);
         zkPathMrg=coreWrapper.getZkPathMrg();
         curatorMrg=coreWrapper.getCuratorMrg();
@@ -42,14 +43,39 @@ public abstract class CoreWorld extends World{
     }
 
     @Override
-    protected void worldStartImp() throws Exception {
+    protected final void worldStartImp() throws Exception {
+        startCore();
+
+        startHook();
+    }
+
+    private void startCore() throws Exception {
         curatorMrg.start();
     }
 
+    /**
+     * 启动游戏服务器
+     */
+    protected abstract void startHook() throws Exception;
+
     @Override
-    protected void tickImp(long curMillTime) {
+    protected final void tickImp(long curMillTime) {
+        tickCore();
+        tickHook();
+    }
+
+    /**
+     * 超类tick逻辑
+     */
+    private void tickCore(){
 
     }
+
+    /**
+     * 子类tick钩子
+     */
+    protected abstract void tickHook();
+
 
     @Override
     protected void beforeShutdown() throws Exception {

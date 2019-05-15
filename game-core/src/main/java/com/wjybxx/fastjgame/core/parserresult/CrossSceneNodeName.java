@@ -14,30 +14,31 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.mrg;
-
-import com.google.inject.Inject;
+package com.wjybxx.fastjgame.core.parserresult;
 
 /**
- * WorldCore的worldGuid通过guidMrg生成
+ * 跨服场景节点名字
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/13 10:30
+ * @date 2019/5/16 0:19
  * @github - https://github.com/hl845740757
  */
-public abstract class WorldCoreInfoMrg extends WorldInfoMrg{
-    /**
-     * 游戏世界guid，也是服务器进程guid。
-     */
-    private long worldGuid;
+public class CrossSceneNodeName {
 
-    @Inject
-    public WorldCoreInfoMrg(GuidMrg guidMrg) {
-        worldGuid=guidMrg.generateGuid();
+    private final int warzoneId;
+
+    private final long sceneProcessGuid;
+
+    public CrossSceneNodeName(int warzoneId, long sceneProcessGuid) {
+        this.warzoneId = warzoneId;
+        this.sceneProcessGuid = sceneProcessGuid;
     }
 
-    @Override
-    public final long getWorldGuid() {
-        return worldGuid;
+    public int getWarzoneId() {
+        return warzoneId;
+    }
+
+    public long getSceneProcessGuid() {
+        return sceneProcessGuid;
     }
 }

@@ -9,7 +9,7 @@
         <artifactId>game-parent</artifactId>
         <version>1.0</version>
     </parent>
-    
+
     <artifactId>game-warzoneserver</artifactId>
 
     <dependencies>

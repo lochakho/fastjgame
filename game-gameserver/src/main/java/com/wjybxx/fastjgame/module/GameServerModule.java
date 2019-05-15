@@ -14,30 +14,21 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.mrg;
+package com.wjybxx.fastjgame.module;
 
-import com.google.inject.Inject;
+import com.google.inject.AbstractModule;
 
 /**
- * WorldCore的worldGuid通过guidMrg生成
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/13 10:30
+ * @date 2019/5/15 23:07
  * @github - https://github.com/hl845740757
  */
-public abstract class WorldCoreInfoMrg extends WorldInfoMrg{
-    /**
-     * 游戏世界guid，也是服务器进程guid。
-     */
-    private long worldGuid;
-
-    @Inject
-    public WorldCoreInfoMrg(GuidMrg guidMrg) {
-        worldGuid=guidMrg.generateGuid();
-    }
+public class GameServerModule extends AbstractModule {
 
     @Override
-    public final long getWorldGuid() {
-        return worldGuid;
+    protected void configure() {
+        super.configure();
+        binder().requireExplicitBindings();
     }
 }

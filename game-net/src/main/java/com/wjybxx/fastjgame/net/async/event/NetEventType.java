@@ -83,8 +83,8 @@ public enum NetEventType {
 
     /**
      * 通过网络包中的pkgType找到对应的枚举。
-     * @param pkgType
-     * @return
+     * @param pkgType 包类型
+     * @return 包类型对应的枚举
      */
     public static NetEventType forNumber(byte pkgType){
         if (pkgType<1 || pkgType>sortValues.length){

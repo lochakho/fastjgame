@@ -26,7 +26,8 @@ package com.wjybxx.fastjgame.core;
  */
 public class ZKOnlineWarzoneNode extends ZKOnlineNode{
 
-    public ZKOnlineWarzoneNode(String tcpAddress, String wsAddress, String httpAddress, String syncRpcAddress) {
-        super(tcpAddress, wsAddress, httpAddress, syncRpcAddress);
+    public ZKOnlineWarzoneNode(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress,
+                               String outerTcpAddress, String outerWebsocketAddress) {
+        super(innerTcpAddress, innerRpcAddress, innerHttpAddress, outerTcpAddress, outerWebsocketAddress);
     }
 }

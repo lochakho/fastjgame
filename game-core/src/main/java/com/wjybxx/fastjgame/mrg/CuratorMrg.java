@@ -385,7 +385,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
      * @return 当前孩子节点数据
      * @throws Exception
      */
-    public Map<String, ChildData> watchChildren(String path, @Nonnull PathChildrenCacheListener listener) throws Exception {
+    public List<ChildData> watchChildren(String path, @Nonnull PathChildrenCacheListener listener) throws Exception {
         // CloseableExecutorService这个还是不共享的好
         CloseableExecutorService watcherService = new CloseableExecutorService(watcherExecutor, false);
         // 指定pathChildrenCache接收事件的线程，复用线程池，以节省开销。
@@ -467,7 +467,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
         private boolean inited=false;
 
         private final CountDownLatch countDownLatch=new CountDownLatch(1);
-        private Map<String,ChildData> initChildData=new LinkedHashMap<>();
+        private List<ChildData> initChildData;
 
         private InitCaptureListener(PathChildrenCacheListener after) {
             this.after = after;
@@ -477,6 +477,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
         public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
             if (event.getType() == PathChildrenCacheEvent.Type.INITIALIZED){
                 inited=true;
+                initChildData=event.getInitialData();
                 countDownLatch.countDown();
                 // 在这里移除自己，注册after的话会导致after也收到init事件.
                 return;
@@ -490,10 +491,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
             switch (event.getType()){
                 case CHILD_ADDED:
                 case CHILD_UPDATED:
-                    initChildData.put(event.getData().getPath(),event.getData());
-                    break;
                 case CHILD_REMOVED:
-                    initChildData.remove(event.getData().getPath());
                     break;
                     default:
                         after.childEvent(client,event);
@@ -514,7 +512,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
          * 当你从{@link #awaitWithHeartBeat(long, TimeUnit)}成功返回后，可获取初始化数据
          * @return 初始化的数据的一个快照
          */
-        Map<String,ChildData> getInitChildData() {
+        List<ChildData> getInitChildData() {
             return initChildData;
         }
     }

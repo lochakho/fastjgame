@@ -17,27 +17,37 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.net.common.RoleType;
 
 /**
- * WorldCore的worldGuid通过guidMrg生成
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/13 10:30
+ * @date 2019/5/15 23:30
  * @github - https://github.com/hl845740757
  */
-public abstract class WorldCoreInfoMrg extends WorldInfoMrg{
+public class GameWorldInfoMrg extends WorldCoreInfoMrg{
     /**
-     * 游戏世界guid，也是服务器进程guid。
+     * 从属的战区
      */
-    private long worldGuid;
+    private int warzoneId;
 
     @Inject
-    public WorldCoreInfoMrg(GuidMrg guidMrg) {
-        worldGuid=guidMrg.generateGuid();
+    public GameWorldInfoMrg(GuidMrg guidMrg) {
+        super(guidMrg);
     }
 
     @Override
-    public final long getWorldGuid() {
-        return worldGuid;
+    protected void initImp(ConfigWrapper startArgs) throws Exception {
+        warzoneId=startArgs.getAsInt("warzoneId");
+    }
+
+    @Override
+    public RoleType getWorldType() {
+        return RoleType.GAME_SERVER;
+    }
+
+    public int getWarzoneId() {
+        return warzoneId;
     }
 }

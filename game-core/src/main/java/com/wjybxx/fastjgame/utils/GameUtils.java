@@ -107,17 +107,36 @@ public class GameUtils {
                 .create()
                 .fromJson(json,clazz);
     }
+    /**
+     * 从json字符串UTF-8编码后的字节数组中解析对象，如果是复杂对象，需要自己管理
+     * @param json json字符串UTF-8编码后的字节数组
+     * @param clazz json字节数组对应的类
+     * @param <T> 对象类型
+     * @return 反序列化得到的对象
+     */
+    public static <T> T parseFromJson(byte[] json,Class<T> clazz){
+        return parseFromJson(new String(json,StandardCharsets.UTF_8),clazz);
+    }
 
     /**
-     * 为指定scene进程创建一个有意义的节点名字，用于注册到zookeeper
-     * @param processType 进程类型
+     * 为指定本服scene进程创建一个有意义的节点名字，用于注册到zookeeper
      * @param warzoneId 战区id
      * @param serverId 几服
      * @param worldGuid 进程guid
      * @return 唯一的有意义的名字
      */
-    public static String buildSceneNodeName(SceneProcessType processType, int warzoneId, int serverId, long worldGuid){
-        return RoleType.SCENE_SERVER  + "-" + processType.name() + "-" + warzoneId + "-" + serverId + "-" + worldGuid;
+    public static String buildLocalSceneNodeName(int warzoneId, int serverId, long worldGuid){
+        return RoleType.SCENE_SERVER  + "-" + SceneProcessType.LOCAL.name() + "-" + warzoneId + "-" + serverId + "-" + worldGuid;
+    }
+
+    /**
+     * 为跨服节点创建一个有意义的节点名字，用于注册到zookeeper
+     * @param warzoneId 战区id
+     * @param worldGuid 进程guid
+     * @return 唯一的有意义的名字
+     */
+    public static String buildCrossSceneNodeName(int warzoneId, long worldGuid){
+        return RoleType.SCENE_SERVER  + "-" + SceneProcessType.CROSS.name() + "-" + warzoneId + "-" + worldGuid;
     }
 
     /**
@@ -142,6 +161,15 @@ public class GameUtils {
     }
 
     /**
+     *
+     * @param path
+     * @return
+     */
+    public static int parseWarzoneIdFromWarzoneNode(String path) {
+        return 0;
+    }
+
+    /**
      * 通过服务器的节点名字解析服务器的类型
      * @param nodeName 服务器节点名字
      * @return 返回服务器的类型
@@ -158,4 +186,5 @@ public class GameUtils {
     public static SceneProcessType parseSceneType(String sceneNodeName){
         return SceneProcessType.valueOf(sceneNodeName.split("-",3)[1]);
     }
+
 }

@@ -1,20 +1,4 @@
-/*
- * Copyright 2019 wjybxx
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.wjybxx.fastjgame.world;
+package com.wjybxx.fastjgame.component;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.mrg.WorldCoreWrapper;
@@ -22,20 +6,24 @@ import com.wjybxx.fastjgame.mrg.WorldWrapper;
 import com.wjybxx.fastjgame.net.async.S2CSession;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
+import com.wjybxx.fastjgame.world.WorldCore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
 /**
- * WarzoneServer
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/15 18:31
+ * @date 2019/5/13 10:46
  * @github - https://github.com/hl845740757
  */
-public class WarzoneWorld extends WorldCore {
+public class EgWorld extends WorldCore {
+
+    private static final Logger logger= LoggerFactory.getLogger(EgWorld.class);
 
     @Inject
-    public WarzoneWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
+    public EgWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
         super(worldWrapper, coreWrapper);
     }
 
@@ -62,13 +50,33 @@ public class WarzoneWorld extends WorldCore {
     @Nonnull
     @Override
     protected SessionLifecycleAware<S2CSession> newAsyncSessionLifecycleAware() {
-        return null;
+        return new SessionLifecycleAware<S2CSession>() {
+            @Override
+            public void onSessionConnected(S2CSession session) {
+
+            }
+
+            @Override
+            public void onSessionDisconnected(S2CSession session) {
+
+            }
+        };
     }
 
     @Nonnull
     @Override
     protected SessionLifecycleAware<SyncS2CSession> newSyncSessionLifeCycleAware() {
-        return null;
+        return new SessionLifecycleAware<SyncS2CSession>() {
+            @Override
+            public void onSessionConnected(SyncS2CSession syncS2CSession) {
+
+            }
+
+            @Override
+            public void onSessionDisconnected(SyncS2CSession syncS2CSession) {
+
+            }
+        };
     }
 
     @Override

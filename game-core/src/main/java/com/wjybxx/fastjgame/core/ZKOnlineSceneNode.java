@@ -25,7 +25,8 @@ package com.wjybxx.fastjgame.core;
  */
 public class ZKOnlineSceneNode extends ZKOnlineNode{
 
-    public ZKOnlineSceneNode(String tcpAddress, String wsAddress, String httpAddress, String syncRpcAddress) {
-        super(tcpAddress, wsAddress, httpAddress, syncRpcAddress);
+    public ZKOnlineSceneNode(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress,
+                             String outerTcpAddress, String outerWebsocketAddress) {
+        super(innerTcpAddress, innerRpcAddress, innerHttpAddress, outerTcpAddress, outerWebsocketAddress);
     }
 }

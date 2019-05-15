@@ -65,6 +65,17 @@ public class ZkPathMrg {
     }
 
     /**
+     * 寻找节点的名字，即最后一部分
+     * @param path
+     * @return
+     */
+    public String findNodeName(String path){
+        PathUtils.validatePath(path);
+        int delimiterIndex = path.lastIndexOf("/");
+        return path.substring(delimiterIndex+1);
+    }
+
+    /**
      * 获取全局锁路径
      * @return
      */

@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2019 wjybxx
  *
@@ -17,31 +18,34 @@
 package com.wjybxx.fastjgame.world;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.misc.ProtoBufHashMappingStrategy;
 import com.wjybxx.fastjgame.mrg.WorldCoreWrapper;
 import com.wjybxx.fastjgame.mrg.WorldWrapper;
 import com.wjybxx.fastjgame.net.async.S2CSession;
+import com.wjybxx.fastjgame.net.common.ProtoBufMessageSerializer;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
 
 import javax.annotation.Nonnull;
 
 /**
- * WarzoneServer
+ * GameServer
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/15 18:31
+ * @date 2019/5/15 22:43
  * @github - https://github.com/hl845740757
  */
-public class WarzoneWorld extends WorldCore {
+public class GameWorld extends WorldCore {
 
     @Inject
-    public WarzoneWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
+    public GameWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
         super(worldWrapper, coreWrapper);
     }
 
     @Override
     protected void registerCodecHelper() throws Exception {
-
+        registerCodecHelper("protoBuf",new ProtoBufHashMappingStrategy(),
+                new ProtoBufMessageSerializer());
     }
 
     @Override

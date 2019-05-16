@@ -18,11 +18,9 @@ package com.wjybxx.fastjgame.world;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.mrg.*;
-import com.wjybxx.fastjgame.mrg.async.AsyncNetServiceMrg;
 import com.wjybxx.fastjgame.mrg.async.C2SSessionMrg;
 import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncC2SSessionMrg;
-import com.wjybxx.fastjgame.mrg.sync.SyncNetServiceMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
 import com.wjybxx.fastjgame.net.async.ClientMessageHandler;
 import com.wjybxx.fastjgame.net.async.HttpRequestHandler;
@@ -55,14 +53,13 @@ public abstract class World {
 
     private static final Logger logger= LoggerFactory.getLogger(World.class);
 
+    protected final WorldWrapper worldWrapper;
     protected final MessageDispatcherMrg messageDispatcherMrg;
     protected final C2SSessionMrg c2SSessionMrg;
     protected final S2CSessionMrg s2CSessionMrg;
     protected final SystemTimeMrg systemTimeMrg;
     protected final DisruptorMrg disruptorMrg;
     protected final CodecHelperMrg codecHelperMrg;
-    protected final AsyncNetServiceMrg asyncNetServiceMrg;
-    protected final SyncNetServiceMrg syncNetServiceMrg;
     protected final NetConfigMrg netConfigMrg;
     protected final TokenMrg tokenMrg;
     protected final TimerMrg timerMrg;
@@ -76,14 +73,13 @@ public abstract class World {
 
     @Inject
     public World(WorldWrapper worldWrapper) {
+        this.worldWrapper=worldWrapper;
         messageDispatcherMrg=worldWrapper.getMessageDispatcherMrg();
         c2SSessionMrg = worldWrapper.getC2SSessionMrg();
         s2CSessionMrg = worldWrapper.getS2CSessionMrg();
         systemTimeMrg= worldWrapper.getSystemTimeMrg();
         disruptorMrg = worldWrapper.getDisruptorMrg();
         codecHelperMrg = worldWrapper.getCodecHelperMrg();
-        asyncNetServiceMrg = worldWrapper.getAsyncNetServiceMrg();
-        syncNetServiceMrg = worldWrapper.getSyncNetServiceMrg();
         netConfigMrg= worldWrapper.getNetConfigMrg();
         tokenMrg= worldWrapper.getTokenMrg();
         timerMrg= worldWrapper.getTimerMrg();
@@ -111,8 +107,8 @@ public abstract class World {
 
         globalExecutorMrg.start();
         // 启动netty线程(可保证线程安全性，netty线程可看见当前线程设置的值)
-        asyncNetServiceMrg.start();
-        syncNetServiceMrg.start();
+        worldWrapper.getAsyncNettyThreadMrg().start();
+        worldWrapper.getSyncNettyThreadMrg().start();
 
         // 子类自己的其它启动逻辑
         worldStartImp();
@@ -185,6 +181,8 @@ public abstract class World {
 
     /**
      * 注册要处理的同步请求
+     * 使用快捷方法{@link #registerSyncRequestHandler(Class, SyncRequestHandler)}注册，
+     * 或使用 {@link SyncRequestDispatcherMrg#registerHandler(Class, SyncRequestHandler)} 进行注册。
      */
     protected abstract void registerSyncRequestHandlers();
 
@@ -323,8 +321,8 @@ public abstract class World {
     private void shutdownNetWorld(){
         try {
             globalExecutorMrg.shutdown();
-            asyncNetServiceMrg.shutdown();
-            syncNetServiceMrg.shutdown();
+            worldWrapper.getAsyncNettyThreadMrg().shutdown();
+            worldWrapper.getSyncNettyThreadMrg().shutdown();
             httpClientMrg.shutdown();
         }finally {
             disruptorMrg.shutdown();

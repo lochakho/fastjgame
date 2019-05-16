@@ -20,7 +20,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.wjybxx.fastjgame.misc.AbstractThreadLifeCycleHelper;
-import com.wjybxx.fastjgame.module.GameNetModule;
+import com.wjybxx.fastjgame.module.NetModule;
 import com.wjybxx.fastjgame.mrg.DisruptorMrg;
 import com.wjybxx.fastjgame.mrg.WorldInfoMrg;
 import com.wjybxx.fastjgame.net.async.event.NetEventHandlerImp;
@@ -76,7 +76,7 @@ public class NetBootstrap<T extends NetBootstrap<T>> extends AbstractThreadLifeC
     protected final void startImp() throws Exception {
         verifyArgs();
 
-        modules.add(new GameNetModule());
+        modules.add(new NetModule());
         modules.addAll(childModules());
 
         Injector injector = Guice.createInjector(modules);

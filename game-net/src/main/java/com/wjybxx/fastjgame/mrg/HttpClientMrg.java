@@ -18,9 +18,14 @@ package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.misc.AbstractThreadLifeCycleHelper;
+import com.wjybxx.fastjgame.misc.HostAndPort;
+import com.wjybxx.fastjgame.misc.PortRange;
+import com.wjybxx.fastjgame.mrg.async.AsyncNettyThreadMrg;
 import com.wjybxx.fastjgame.net.async.OkHttpResponseHandler;
 import com.wjybxx.fastjgame.net.async.event.NetEventType;
 import com.wjybxx.fastjgame.net.async.transferobject.OkHttpResponseTO;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.socket.SocketChannel;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,23 +51,41 @@ public class HttpClientMrg extends AbstractThreadLifeCycleHelper {
 
     private final NetConfigMrg netConfigMrg;
     private final DisruptorMrg disruptorMrg;
+    private final AcceptorMrg acceptorMrg;
+    private final AsyncNettyThreadMrg asyncNettyThreadMrg;
     /**
      * 请注意查看{@link Dispatcher#executorService()}默认创建executorService的方式。
      */
     private final OkHttpClient okHttpClient;
 
     @Inject
-    public HttpClientMrg(NetConfigMrg netConfigMrg, DisruptorMrg disruptorMrg) {
+    public HttpClientMrg(NetConfigMrg netConfigMrg, DisruptorMrg disruptorMrg, AcceptorMrg acceptorMrg, AsyncNettyThreadMrg asyncNettyThreadMrg) {
         this.netConfigMrg = netConfigMrg;
         okHttpClient=new OkHttpClient.Builder()
                 .callTimeout(netConfigMrg.httpRequestTimeout(), TimeUnit.SECONDS)
                 .build();
         this.disruptorMrg = disruptorMrg;
+        this.acceptorMrg = acceptorMrg;
+        this.asyncNettyThreadMrg = asyncNettyThreadMrg;
     }
 
     @Override
     protected void startImp() {
         // nothing
+    }
+
+    /**
+     * @see AcceptorMrg#bind(NettyThreadMrg, boolean, int, ChannelInitializer)
+     */
+    public HostAndPort bind(boolean outer,int port,ChannelInitializer<SocketChannel> initializer){
+        return acceptorMrg.bind(asyncNettyThreadMrg,outer,port,initializer);
+    }
+
+    /**
+     * @see AcceptorMrg#bindRange(NettyThreadMrg, boolean, PortRange, ChannelInitializer)
+     */
+    public HostAndPort bindRange(boolean outer, PortRange portRange, ChannelInitializer<SocketChannel> initializer){
+        return acceptorMrg.bindRange(asyncNettyThreadMrg,outer,portRange,initializer);
     }
 
     @Override

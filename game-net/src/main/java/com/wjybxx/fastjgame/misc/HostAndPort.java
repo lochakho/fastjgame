@@ -35,7 +35,7 @@ public class HostAndPort {
      */
     private final int port;
 
-    private HostAndPort(String host, int port) {
+    public HostAndPort(String host, int port) {
         this.host = host;
         this.port = port;
     }

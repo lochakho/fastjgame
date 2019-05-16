@@ -17,7 +17,6 @@
 package com.wjybxx.fastjgame.net.common;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 /**
@@ -45,9 +44,9 @@ public enum RoleType {
      */
     LOGIN_SERVER(2),
     /**
-     * 游戏服
+     * 中心服务器
      */
-    GAME_SERVER(3),
+    CENTER_SERVER(3),
     /**
      * 场景服
      */

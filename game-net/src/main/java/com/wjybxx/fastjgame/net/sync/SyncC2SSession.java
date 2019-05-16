@@ -16,8 +16,9 @@
 
 package com.wjybxx.fastjgame.net.sync;
 
-import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
+import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.net.common.RoleType;
+import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 
@@ -44,11 +45,7 @@ public class SyncC2SSession {
     /**
      * 服务器的地址
      */
-    private final String host;
-    /**
-     * 服务器监听的端口
-     */
-    private final int port;
+    private final HostAndPort hostAndPort;
 
     private final Supplier<ChannelInitializer<SocketChannel>> initializerSupplier;
     /**
@@ -56,12 +53,11 @@ public class SyncC2SSession {
      */
     private final SessionLifecycleAware<SyncC2SSession> lifeCycleAware;
 
-    public SyncC2SSession(long serverGuid, RoleType roleType, String host, int port,
+    public SyncC2SSession(long serverGuid, RoleType roleType, HostAndPort hostAndPort,
                           Supplier<ChannelInitializer<SocketChannel>> initializerSupplier, SessionLifecycleAware<SyncC2SSession> lifeCycleAware) {
         this.serverGuid = serverGuid;
         this.roleType = roleType;
-        this.host = host;
-        this.port = port;
+        this.hostAndPort=hostAndPort;
         this.initializerSupplier=initializerSupplier;
         this.lifeCycleAware = lifeCycleAware;
     }
@@ -74,12 +70,8 @@ public class SyncC2SSession {
         return roleType;
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public int getPort() {
-        return port;
+    public HostAndPort getHostAndPort() {
+        return hostAndPort;
     }
 
     public Supplier<ChannelInitializer<SocketChannel>> getInitializerSupplier() {
@@ -95,8 +87,9 @@ public class SyncC2SSession {
         return "SyncC2SSession{" +
                 "serverGuid=" + serverGuid +
                 ", roleType=" + roleType +
-                ", host='" + host + '\'' +
-                ", port=" + port +
+                ", hostAndPort=" + hostAndPort +
+                ", initializerSupplier=" + initializerSupplier +
+                ", lifeCycleAware=" + lifeCycleAware +
                 '}';
     }
 }

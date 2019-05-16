@@ -1,0 +1,47 @@
+// CenterServer与SceneServer交互消息
+syntax = "proto3";
+package fastjgame;
+
+import "p_enum.proto";
+import "p_struct.proto";
+
+// optimize_for (file option): Can be set to SPEED, CODE_SIZE, or LITE_RUNTIME.
+option optimize_for=SPEED;
+
+// package属性是为了支持多语言的，在其他语言里，可能就是命名空间，因此建议定义清晰的java包名
+option java_package="com.wjybxx.fastjgame.protobuffer";
+option java_outer_classname = "p_center_scene";
+
+// 消息的命名格式由团队习惯决定
+
+// centerserver向sceneserver打招呼，期望获得scene的一些基本信息
+// 为何要主动告诉scene地址呢，减少scene使用zookeeper的压力
+message p_center_single_scene_hello{
+	// 服务器id，用于核对
+	int32 serverId=1;
+}
+
+// scene返回的信息
+message p_center_single_scene_hello_result{
+    // 分配给该scene的频道id
+    int32 channelId=1;
+    // 配置(或启动参数)中的支持的区域
+    repeated int32 configuredRegions=2;
+}
+
+//centerserver向跨服scene进程打招呼
+message p_center_cross_scene_hello{
+	// 服务器id，用于核对
+	int32 serverId=1;
+}
+
+// 跨服scene通知该centerserver我启动了哪些区域
+// 跨服场景暂时不做互斥，即使做，也不由centerserver协调(由它们自己协调，抢占zk节点)
+message p_center_cross_scene_hello_result{
+    // 分配给该scene的频道id
+    int32 channelId=1;
+    // 配置(或启动参数)中的支持的区域
+    repeated int32 configuredRegions=2;	
+	// 我成功启动了哪些区域
+    repeated int32 activeRegions=3;
+}

@@ -19,7 +19,7 @@ package com.wjybxx.fastjgame.mrg;
 import com.google.inject.Inject;
 
 /**
- * WorldCore的worldGuid通过guidMrg生成
+ * WorldCore的processGuid通过guidMrg生成
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/13 10:30
@@ -27,17 +27,17 @@ import com.google.inject.Inject;
  */
 public abstract class WorldCoreInfoMrg extends WorldInfoMrg{
     /**
-     * 游戏世界guid，也是服务器进程guid。
+     * 游戏世界进程guid
      */
-    private long worldGuid;
+    private long processGuid;
 
     @Inject
     public WorldCoreInfoMrg(GuidMrg guidMrg) {
-        worldGuid=guidMrg.generateGuid();
+        processGuid =guidMrg.generateGuid();
     }
 
     @Override
-    public final long getWorldGuid() {
-        return worldGuid;
+    public final long processGuid() {
+        return processGuid;
     }
 }

@@ -18,8 +18,10 @@ package com.wjybxx.fastjgame.mrg.sync;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.constants.NetConstants;
+import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.misc.IntSequencer;
 import com.wjybxx.fastjgame.misc.LongSequencer;
+import com.wjybxx.fastjgame.mrg.AcceptorMrg;
 import com.wjybxx.fastjgame.mrg.NetConfigMrg;
 import com.wjybxx.fastjgame.mrg.TokenMrg;
 import com.wjybxx.fastjgame.mrg.WorldInfoMrg;
@@ -68,7 +70,8 @@ public class SyncC2SSessionMrg {
     private static final Logger logger= LoggerFactory.getLogger(SyncC2SSessionMrg.class);
 
     private final WorldInfoMrg worldInfoMrg;
-    private final SyncNetServiceMrg syncNetServiceMrg;
+    private final AcceptorMrg acceptorMrg;
+    private final SyncNettyThreadMrg syncNettyThreadMrg;
     private final NetConfigMrg netConfigMrg;
     private final TokenMrg tokenMrg;
     /**
@@ -85,10 +88,11 @@ public class SyncC2SSessionMrg {
     private final LinkedBlockingQueue<SyncLogicResponseEvent> logicResponseQueue =new LinkedBlockingQueue<>();
 
     @Inject
-    public SyncC2SSessionMrg(WorldInfoMrg worldInfoMrg, SyncNetServiceMrg syncNetServiceMrg,
+    public SyncC2SSessionMrg(WorldInfoMrg worldInfoMrg, AcceptorMrg acceptorMrg, SyncNettyThreadMrg syncNettyThreadMrg,
                              NetConfigMrg netConfigMrg, TokenMrg tokenMrg) {
         this.worldInfoMrg = worldInfoMrg;
-        this.syncNetServiceMrg = syncNetServiceMrg;
+        this.acceptorMrg = acceptorMrg;
+        this.syncNettyThreadMrg = syncNettyThreadMrg;
         this.netConfigMrg = netConfigMrg;
         this.tokenMrg = tokenMrg;
     }
@@ -106,26 +110,26 @@ public class SyncC2SSessionMrg {
 
     /**
      * 注册一个rpc同步调用服务器。必须先注册才能发起请求。
+     * 这是一个阻塞方法，注册时便会发起第一次连接请求。
      * @param serverGuid 服务器标识
      * @param roleType 服务器角色类型(用于验证)
-     * @param host 服务器地址
-     * @param port 服务器端口
+     * @param hostAndPort 服务器地址
      * @param initializerSupplier initializer提供器，如果线程安全，可以总是返回同一个initializer。
      * @return 由注册信息创建的session
      */
     @Nullable
-    public SyncC2SSession registerServer(final long serverGuid, RoleType roleType, String host, int port,
+    public SyncC2SSession registerServer(final long serverGuid, RoleType roleType, HostAndPort hostAndPort,
                                Supplier<ChannelInitializer<SocketChannel>> initializerSupplier,
                                SessionLifecycleAware<SyncC2SSession> lifeCycleAware) {
         if (sessionMap.containsKey(serverGuid)){
             throw new IllegalArgumentException("server " +serverGuid + " is already registered");
         }
         // 创建登录用的token(同步调用是用于服务器之间的，因此不需要外部传入)
-        Token loginToken=tokenMrg.newLoginToken(worldInfoMrg.getWorldGuid(),worldInfoMrg.getWorldType(), serverGuid,roleType);
+        Token loginToken=tokenMrg.newLoginToken(worldInfoMrg.processGuid(),worldInfoMrg.processType(), serverGuid,roleType);
         byte[] tokenBytes=tokenMrg.encryptToken(loginToken);
 
         // 创建会话信息
-        SyncC2SSession session=new SyncC2SSession(serverGuid, roleType, host,port,initializerSupplier, lifeCycleAware);
+        SyncC2SSession session=new SyncC2SSession(serverGuid, roleType,hostAndPort,initializerSupplier, lifeCycleAware);
         SessionWrapper sessionWrapper=new SessionWrapper(session,tokenBytes);
         sessionMap.put(serverGuid,sessionWrapper);
 
@@ -141,22 +145,21 @@ public class SyncC2SSessionMrg {
         SyncC2SSession session=sessionWrapper.getSession();
 
         long serverGuid=session.getServerGuid();
-        String host=session.getHost();
-        int port=session.getPort();
+        HostAndPort hostAndPort=session.getHostAndPort();
         ChannelInitializer<SocketChannel> initializer=session.getInitializerSupplier().get();
 
-        final Channel channel = syncNetServiceMrg.connectSyn(host, port, initializer);
+        final Channel channel = acceptorMrg.connectSyn(syncNettyThreadMrg,hostAndPort, initializer);
         sessionWrapper.setChannel(channel);
 
         if (!channel.isActive()){
             // 远程服务器可能没启动
-            removeSession(serverGuid,"can't connect remote " + host + ":" + port);
+            removeSession(serverGuid,"can't connect remote " + hostAndPort);
             return;
         }
 
         // 发送建立连接请求
         final int sndTokenTimes = sessionWrapper.getSndTokenSequencer().incAndGet();
-        channel.writeAndFlush(new SyncConnectRequestTO(worldInfoMrg.getWorldGuid(), serverGuid,
+        channel.writeAndFlush(new SyncConnectRequestTO(worldInfoMrg.processGuid(), serverGuid,
                 sndTokenTimes,sessionWrapper.getTokenBytes()));
 
         // 清除无效结果集
@@ -170,7 +173,7 @@ public class SyncC2SSessionMrg {
 
         // 超时
         if (null == connectResponseEvent){
-            logger.warn("connect {}:{} timeout",host,port);
+            logger.warn("connect {} timeout",hostAndPort);
             NetUtils.closeQuietly(channel);
             return;
         }
@@ -178,7 +181,7 @@ public class SyncC2SSessionMrg {
         // 禁止连接(token验证失败)
         SyncConnectResponseTO response = connectResponseEvent.getConnectResponseTO();
         if (!response.isSuccess()){
-            removeSession(serverGuid,"connect remote " +host +":" + port + " was refused!");
+            removeSession(serverGuid,"connect remote "+ hostAndPort + " was refused!");
             return;
         }
 

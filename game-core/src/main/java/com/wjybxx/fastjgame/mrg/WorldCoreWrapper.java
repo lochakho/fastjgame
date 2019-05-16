@@ -31,13 +31,15 @@ public class WorldCoreWrapper {
     private final CuratorMrg curatorMrg;
     private final GuidMrg guidMrg;
     private final GameConfigMrg gameConfigMrg;
+    private final InnerAcceptorMrg innerAcceptorMrg;
 
     @Inject
-    public WorldCoreWrapper(ZkPathMrg zkPathMrg, CuratorMrg curatorMrg, GuidMrg guidMrg, GameConfigMrg gameConfigMrg) {
+    public WorldCoreWrapper(ZkPathMrg zkPathMrg, CuratorMrg curatorMrg, GuidMrg guidMrg, GameConfigMrg gameConfigMrg, InnerAcceptorMrg innerAcceptorMrg) {
         this.zkPathMrg = zkPathMrg;
         this.curatorMrg = curatorMrg;
         this.guidMrg = guidMrg;
         this.gameConfigMrg = gameConfigMrg;
+        this.innerAcceptorMrg = innerAcceptorMrg;
     }
 
     public ZkPathMrg getZkPathMrg() {
@@ -54,5 +56,9 @@ public class WorldCoreWrapper {
 
     public GameConfigMrg getGameConfigMrg() {
         return gameConfigMrg;
+    }
+
+    public InnerAcceptorMrg getInnerAcceptorMrg() {
+        return innerAcceptorMrg;
     }
 }

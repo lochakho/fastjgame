@@ -21,7 +21,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 /**
  * 场景区域划分。
- *
+ * 建议每个区域至少拥有一个城镇，通过城镇进入其它类型的地图(普通副本，活动副本)。
+ * 没有城镇也是可以的，传图时需要指定要传入的地图id。
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/15 11:33
@@ -32,24 +33,24 @@ public enum SceneRegion {
     /**
      * 本服普通区域，不互斥，大多数地图都应该属于它。
      */
-    LOCAL_NORMAL(1,SceneProcessType.LOCAL,false),
+    LOCAL_NORMAL(1, SceneProcessType.SINGLE,false),
     /**
      * 本服竞技场(DNF玩习惯了，习惯叫PKC)，互斥
      */
-    LOCAL_PKC(2,SceneProcessType.LOCAL,true),
+    LOCAL_PKC(2, SceneProcessType.SINGLE,true),
     /**
      * 安徒恩，跨服，不互斥。
      */
-    WARZONE_ANTON(3,SceneProcessType.CROSS, false),
+    WARZONE_ANTON(3, SceneProcessType.CROSS, false),
     /**
      * 卢克，跨服，不互斥。
      */
-    WARZONE_LUKE(4,SceneProcessType.CROSS, false);
+    WARZONE_LUKE(4, SceneProcessType.CROSS, false);
 
     /**
      * 区域所在的进程类型(是否是跨服区域)
      */
-    private final SceneProcessType processType;
+    private final SceneProcessType sceneProcessType;
 
     /**
      * 数字标记，不使用ordinal
@@ -60,9 +61,9 @@ public enum SceneRegion {
      */
     private final boolean mutex;
 
-    SceneRegion(int number,SceneProcessType processType, boolean mutex) {
+    SceneRegion(int number, SceneProcessType sceneProcessType, boolean mutex) {
         this.number=number;
-        this.processType = processType;
+        this.sceneProcessType = sceneProcessType;
         this.mutex = mutex;
     }
 
@@ -89,8 +90,8 @@ public enum SceneRegion {
         return number;
     }
 
-    public SceneProcessType getProcessType(){
-        return processType;
+    public SceneProcessType getSceneProcessType(){
+        return sceneProcessType;
     }
 
     public boolean isMutex(){

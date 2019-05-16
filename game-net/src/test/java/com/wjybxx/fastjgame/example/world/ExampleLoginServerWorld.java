@@ -141,8 +141,8 @@ public class ExampleLoginServerWorld extends World {
         }
 
         CodecHelper codecHelper=codecHelperMrg.getCodecHelper("json");
-        Token token= tokenMrg.newLoginToken(worldInfoMrg.getWorldGuid(), worldInfoMrg.getWorldType(),
-                serverInfo.getServerGuid(), RoleType.GAME_SERVER);
+        Token token= tokenMrg.newLoginToken(worldInfoMrg.processGuid(), worldInfoMrg.processType(),
+                serverInfo.getServerGuid(), RoleType.CENTER_SERVER);
         byte[] encryptToken= tokenMrg.encryptToken(token);
 
         Supplier<ChannelInitializer<SocketChannel>> initializerSupplier;
@@ -159,7 +159,7 @@ public class ExampleLoginServerWorld extends World {
         assert null!=address;
         HostAndPort hostAndPort= HostAndPort.parseHostAndPort(address);
 
-        c2SSessionMrg.register(serverInfo.getServerGuid(), RoleType.GAME_SERVER, hostAndPort.getHost(),hostAndPort.getPort(),
+        c2SSessionMrg.register(serverInfo.getServerGuid(), RoleType.CENTER_SERVER, hostAndPort,
                 initializerSupplier,
                 new ExampleSessionLifecycleAware(), encryptToken);
         serverInfo.setTcpOrWsRegistered(true);
@@ -176,7 +176,7 @@ public class ExampleLoginServerWorld extends World {
         CodecHelper codecHelper=codecHelperMrg.getCodecHelper("json");
         HostAndPort hostAndPort= HostAndPort.parseHostAndPort(syncRpcAddress);
 
-        syncC2SSessionMrg.registerServer(serverInfo.getServerGuid(), RoleType.GAME_SERVER, hostAndPort.getHost(),hostAndPort.getPort(),
+        syncC2SSessionMrg.registerServer(serverInfo.getServerGuid(), RoleType.CENTER_SERVER, hostAndPort,
                 () -> new ClientSyncRpcInitializer(netConfigMrg.maxFrameLength(),
                         netConfigMrg.syncRpcPingInterval(),
                         codecHelper,

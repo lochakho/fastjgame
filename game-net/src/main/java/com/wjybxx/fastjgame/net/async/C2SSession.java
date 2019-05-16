@@ -16,6 +16,7 @@
 
 package com.wjybxx.fastjgame.net.async;
 
+import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import io.netty.channel.ChannelInitializer;
@@ -44,11 +45,7 @@ public class C2SSession {
     /**
      * 服务器地址
      */
-    private final String host;
-    /**
-     * 服务器端口
-     */
-    private final int port;
+    private final HostAndPort hostAndPort;
     /**
      * 该会话使用的initializer提供者
      */
@@ -58,13 +55,12 @@ public class C2SSession {
      */
     private final SessionLifecycleAware<C2SSession> lifecycleAware;
 
-    public C2SSession(long serverGuid, RoleType roleType, String host, int port,
+    public C2SSession(long serverGuid, RoleType roleType, HostAndPort hostAndPort,
                       Supplier<ChannelInitializer<SocketChannel>> initializerSupplier,
                       SessionLifecycleAware<C2SSession> lifecycleAware) {
         this.serverGuid = serverGuid;
-        this.host = host;
-        this.port = port;
         this.roleType = roleType;
+        this.hostAndPort=hostAndPort;
         this.initializerSupplier = initializerSupplier;
         this.lifecycleAware = lifecycleAware;
     }
@@ -77,12 +73,8 @@ public class C2SSession {
         return roleType;
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public int getPort() {
-        return port;
+    public HostAndPort getHostAndPort() {
+        return hostAndPort;
     }
 
     public Supplier<ChannelInitializer<SocketChannel>> getInitializerSupplier() {
@@ -98,8 +90,9 @@ public class C2SSession {
         return "C2SSession{" +
                 "serverGuid=" + serverGuid +
                 ", roleType=" + roleType +
-                ", host='" + host + '\'' +
-                ", port=" + port +
+                ", hostAndPort=" + hostAndPort +
+                ", initializerSupplier=" + initializerSupplier +
+                ", lifecycleAware=" + lifecycleAware +
                 '}';
     }
 }

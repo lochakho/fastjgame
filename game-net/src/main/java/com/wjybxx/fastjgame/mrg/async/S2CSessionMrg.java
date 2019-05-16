@@ -17,6 +17,8 @@
 package com.wjybxx.fastjgame.mrg.async;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.misc.HostAndPort;
+import com.wjybxx.fastjgame.misc.PortRange;
 import com.wjybxx.fastjgame.mrg.*;
 import com.wjybxx.fastjgame.net.async.*;
 import com.wjybxx.fastjgame.net.async.event.AckPingPongEventParam;
@@ -35,6 +37,8 @@ import com.wjybxx.fastjgame.utils.NetUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.socket.SocketChannel;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.slf4j.Logger;
@@ -79,6 +83,8 @@ public class S2CSessionMrg {
     private final SystemTimeMrg systemTimeMrg;
     private final NetConfigMrg netConfigMrg;
     private final TokenMrg tokenMrg;
+    private final AsyncNettyThreadMrg asyncNettyThreadMrg;
+    private final AcceptorMrg acceptorMrg;
     private final MessageDispatcherMrg dispatcherMrg;
     private final ForbiddenTokenHelper forbiddenTokenHelper;
 
@@ -93,11 +99,14 @@ public class S2CSessionMrg {
 
     @Inject
     public S2CSessionMrg(SystemTimeMrg systemTimeMrg, NetConfigMrg netConfigMrg, TimerMrg timerMrg, WorldInfoMrg worldInfoMrg,
-                         TokenMrg tokenMrg, MessageDispatcherMrg dispatcherMrg) {
+                         TokenMrg tokenMrg, AsyncNettyThreadMrg asyncNettyThreadMrg, AcceptorMrg acceptorMrg,
+                         MessageDispatcherMrg dispatcherMrg) {
         this.systemTimeMrg = systemTimeMrg;
         this.netConfigMrg = netConfigMrg;
         this.worldInfoMrg = worldInfoMrg;
         this.tokenMrg = tokenMrg;
+        this.asyncNettyThreadMrg = asyncNettyThreadMrg;
+        this.acceptorMrg = acceptorMrg;
         this.dispatcherMrg = dispatcherMrg;
         this.forbiddenTokenHelper=new ForbiddenTokenHelper(systemTimeMrg,timerMrg,netConfigMrg.tokenForbiddenTimeout());
 
@@ -117,6 +126,20 @@ public class S2CSessionMrg {
         FastCollectionsUtils.removeIfAndThen(sessionWrapperMap,
                 (k, sessionWrapper) -> systemTimeMrg.getSystemSecTime() > sessionWrapper.getSessionTimeout(),
                 (k, sessionWrapper) -> afterRemoved(sessionWrapper,"session time out!"));
+    }
+
+    /**
+     * @see AcceptorMrg#bind(NettyThreadMrg, boolean, int, ChannelInitializer)
+     */
+    public HostAndPort bind(boolean outer,int port,ChannelInitializer<SocketChannel> initializer){
+        return acceptorMrg.bind(asyncNettyThreadMrg,outer,port,initializer);
+    }
+
+    /**
+     * @see AcceptorMrg#bindRange(NettyThreadMrg, boolean, PortRange, ChannelInitializer)
+     */
+    public HostAndPort bindRange(boolean outer, PortRange portRange, ChannelInitializer<SocketChannel> initializer){
+        return acceptorMrg.bindRange(asyncNettyThreadMrg,outer,portRange,initializer);
     }
 
     /**
@@ -264,8 +287,8 @@ public class S2CSessionMrg {
             return false;
         }
         // token不是用于该服务器的
-        if (token.getServerGuid() != worldInfoMrg.getWorldGuid()
-                || token.getServerRoleType() != worldInfoMrg.getWorldType()){
+        if (token.getServerGuid() != worldInfoMrg.processGuid()
+                || token.getServerRoleType() != worldInfoMrg.processType()){
             return false;
         }
         return true;
@@ -384,7 +407,7 @@ public class S2CSessionMrg {
      */
     private void notifyClientExit(Channel channel, SessionWrapper sessionWrapper){
         long clientGuid = sessionWrapper.getSession().getClientGuid();
-        Token failToken = tokenMrg.newFailToken(clientGuid, worldInfoMrg.getWorldGuid());
+        Token failToken = tokenMrg.newFailToken(clientGuid, worldInfoMrg.processGuid());
         notifyTokenCheckResult(channel,sessionWrapper.getSndTokenTimes(),false, -1, failToken);
     }
 

@@ -392,10 +392,10 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
         PathChildrenCache pathChildrenCache = new PathChildrenCache(client, path, true, false, watcherService);
         // 捕获初始化之前的事件，并将其保存到初始化数据中
         InitCaptureListener initCaptureListener = new InitCaptureListener(listener);
-        pathChildrenCache.getListenable().addListener(initCaptureListener);
-
         // 先添加listener以确保不会遗漏事件
+        pathChildrenCache.getListenable().addListener(initCaptureListener);
         this.allocateNodeCache.add(pathChildrenCache);
+
         pathChildrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
 
         // 等待初始化数据完毕

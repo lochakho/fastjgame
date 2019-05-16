@@ -30,8 +30,8 @@ import java.io.File;
  * 以下参数替换ip后可直接复制到启动参数。
  *
  * 服务端(游戏服)的参数如(我们启动两个服务器，每个服务器同时监听tcp端口、websocket端口、http端口、SyncRpc端口
- roleType=GAME_SERVER processGuid=1 tcpPort=10001 wsPort=10002 httpPort=10003 syncRpcPort=10004
- roleType=GAME_SERVER processGuid=2 tcpPort=20001 wsPort=20002 httpPort=20003 syncRpcPort=20004
+ roleType=CENTER_SERVER processGuid=1 tcpPort=10001 wsPort=10002 httpPort=10003 syncRpcPort=10004
+ roleType=CENTER_SERVER processGuid=2 tcpPort=20001 wsPort=20002 httpPort=20003 syncRpcPort=20004
  *
  * 客户端(登录服)可以连接任意个数服务器(参数项决定)
  * 一个客户端最多可以连接同一个服4个端口中的三个， http端口 + syncRpc端口 + tcp端口或websocket端口
@@ -85,7 +85,7 @@ public class Main {
         int framesPerSecond;
 
         switch (roleType){
-            case GAME_SERVER:
+            case CENTER_SERVER:
                 module=new ExampleGameServerModule();
                 framesPerSecond=25;
                 break;

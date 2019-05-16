@@ -17,6 +17,7 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.utils.GameUtils;
 import org.apache.curator.utils.PathUtils;
 
 /**
@@ -47,32 +48,6 @@ public class ZkPathMrg {
             return globalLockPath();
         }
         return path.substring(0,delimiterIndex);
-    }
-
-    /**
-     *
-     * @param path 路径参数，不可以是根节点("/")
-     * @return
-     */
-    public String findParentPath(String path){
-        PathUtils.validatePath(path);
-        int delimiterIndex = path.lastIndexOf("/");
-        // root(nameSpace)
-        if (delimiterIndex == 0){
-            throw new IllegalArgumentException("path " + path + " is root parent");
-        }
-        return path.substring(0,delimiterIndex);
-    }
-
-    /**
-     * 寻找节点的名字，即最后一部分
-     * @param path
-     * @return
-     */
-    public String findNodeName(String path){
-        PathUtils.validatePath(path);
-        int delimiterIndex = path.lastIndexOf("/");
-        return path.substring(delimiterIndex+1);
     }
 
     /**

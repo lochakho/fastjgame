@@ -18,6 +18,8 @@ package com.wjybxx.fastjgame.mrg.sync;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.constants.NetConstants;
+import com.wjybxx.fastjgame.misc.HostAndPort;
+import com.wjybxx.fastjgame.misc.PortRange;
 import com.wjybxx.fastjgame.mrg.*;
 import com.wjybxx.fastjgame.net.common.FailReason;
 import com.wjybxx.fastjgame.net.common.ForbiddenTokenHelper;
@@ -36,6 +38,8 @@ import com.wjybxx.fastjgame.utils.NetUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.socket.SocketChannel;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import org.slf4j.Logger;
@@ -67,6 +71,8 @@ public class SyncS2CSessionMrg {
     private final TimerMrg timerMrg;
     private final NetConfigMrg netConfigMrg;
     private final TokenMrg tokenMrg;
+    private final AcceptorMrg acceptorMrg;
+    private final SyncNettyThreadMrg syncNettyThreadMrg;
     private final ForbiddenTokenHelper forbiddenTokenHelper;
     /**
      * 会话生命周期回调
@@ -95,13 +101,15 @@ public class SyncS2CSessionMrg {
 
     @Inject
     public SyncS2CSessionMrg(SyncRequestDispatcherMrg syncRequestDispatcherMrg, WorldInfoMrg worldInfoMrg,
-                             SystemTimeMrg systemTimeMrg, TimerMrg timerMrg, NetConfigMrg netConfigMrg, TokenMrg tokenMrg) {
+                             SystemTimeMrg systemTimeMrg, TimerMrg timerMrg, NetConfigMrg netConfigMrg, TokenMrg tokenMrg, AcceptorMrg acceptorMrg, SyncNettyThreadMrg syncNettyThreadMrg) {
         this.syncRequestDispatcherMrg = syncRequestDispatcherMrg;
         this.worldInfoMrg = worldInfoMrg;
         this.systemTimeMrg = systemTimeMrg;
         this.timerMrg = timerMrg;
         this.netConfigMrg = netConfigMrg;
         this.tokenMrg = tokenMrg;
+        this.acceptorMrg = acceptorMrg;
+        this.syncNettyThreadMrg = syncNettyThreadMrg;
         this.forbiddenTokenHelper=new ForbiddenTokenHelper(systemTimeMrg,timerMrg,netConfigMrg.tokenForbiddenTimeout());
 
         Timer checkSessionTimeoutTimer=Timer.newInfiniteTimer(netConfigMrg.syncRpcSessionTimeout()/3 * 1000,this::checkSessionTimeout);
@@ -122,6 +130,19 @@ public class SyncS2CSessionMrg {
                 (k, sessionWrapper) -> afterRemoved(sessionWrapper,"timeout"));
     }
 
+    /**
+     * @see AcceptorMrg#bind(NettyThreadMrg, boolean, int, ChannelInitializer)
+     */
+    public HostAndPort bind(boolean outer, int port, ChannelInitializer<SocketChannel> initializer){
+        return acceptorMrg.bind(syncNettyThreadMrg,outer,port,initializer);
+    }
+
+    /**
+     * @see AcceptorMrg#bindRange(NettyThreadMrg, boolean, PortRange, ChannelInitializer)
+     */
+    public HostAndPort bindRange(boolean outer, PortRange portRange, ChannelInitializer<SocketChannel> initializer){
+        return acceptorMrg.bindRange(syncNettyThreadMrg,outer,portRange,initializer);
+    }
 
     /**
      * 移除一个会话
@@ -279,8 +300,8 @@ public class SyncS2CSessionMrg {
             return false;
         }
         // token不是用于该服务器的
-        if (token.getServerGuid() != worldInfoMrg.getWorldGuid()
-                || token.getServerRoleType() != worldInfoMrg.getWorldType()){
+        if (token.getServerGuid() != worldInfoMrg.processGuid()
+                || token.getServerRoleType() != worldInfoMrg.processType()){
             return false;
         }
         return true;
@@ -372,7 +393,7 @@ public class SyncS2CSessionMrg {
      */
     private void notifyClientExit(Channel channel, SessionWrapper sessionWrapper){
         long clientGuid = sessionWrapper.getSession().getClientGuid();
-        Token failToken = tokenMrg.newFailToken(clientGuid, worldInfoMrg.getWorldGuid());
+        Token failToken = tokenMrg.newFailToken(clientGuid, worldInfoMrg.processGuid());
         notifyTokenCheckResult(channel,sessionWrapper.getSndTokenTimes(),false, failToken);
     }
 

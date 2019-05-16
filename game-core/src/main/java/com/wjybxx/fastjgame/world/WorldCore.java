@@ -17,6 +17,7 @@
 package com.wjybxx.fastjgame.world;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.*;
 
 /**
@@ -28,18 +29,22 @@ import com.wjybxx.fastjgame.mrg.*;
  */
 public abstract class WorldCore extends World{
 
+    protected final WorldCoreWrapper coreWrapper;
     protected final ZkPathMrg zkPathMrg;
     protected final CuratorMrg curatorMrg;
     protected final GameConfigMrg gameConfigMrg;
     protected final GuidMrg guidMrg;
+    protected final InnerAcceptorMrg innerAcceptorMrg;
 
     @Inject
     public WorldCore(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
         super(worldWrapper);
+        this.coreWrapper=coreWrapper;
         zkPathMrg=coreWrapper.getZkPathMrg();
         curatorMrg=coreWrapper.getCuratorMrg();
         gameConfigMrg=coreWrapper.getGameConfigMrg();
         guidMrg=coreWrapper.getGuidMrg();
+        innerAcceptorMrg =coreWrapper.getInnerAcceptorMrg();
     }
 
     @Override
@@ -51,6 +56,11 @@ public abstract class WorldCore extends World{
 
     private void startCore() throws Exception {
         curatorMrg.start();
+
+        // 绑定3个内部交互的端口
+        HostAndPort tcpHostAndPort = innerAcceptorMrg.bindInnerTcpPort(true);
+        HostAndPort httpHostAndPort = innerAcceptorMrg.bindInnerHttpPort();
+        HostAndPort syncRpcHostAndPort = innerAcceptorMrg.bindInnerSyncRpcPort(true);
     }
 
     /**
@@ -78,7 +88,24 @@ public abstract class WorldCore extends World{
 
 
     @Override
-    protected void beforeShutdown() throws Exception {
+    protected final void beforeShutdown() throws Exception {
+        try {
+            shutdownHook();
+        }finally {
+            shutdownCore();
+        }
+    }
+
+    /**
+     * 关闭公共服务
+     */
+    private void shutdownCore(){
         curatorMrg.shutdown();
     }
+
+    /**
+     * 子类自己的关闭动作
+     */
+    protected abstract void shutdownHook();
+
 }

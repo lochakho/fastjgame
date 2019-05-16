@@ -17,11 +17,11 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.mrg.async.AsyncNetServiceMrg;
+import com.wjybxx.fastjgame.mrg.async.AsyncNettyThreadMrg;
 import com.wjybxx.fastjgame.mrg.async.C2SSessionMrg;
 import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncC2SSessionMrg;
-import com.wjybxx.fastjgame.mrg.sync.SyncNetServiceMrg;
+import com.wjybxx.fastjgame.mrg.sync.SyncNettyThreadMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
 
 /**
@@ -41,8 +41,8 @@ public class WorldWrapper {
     private final S2CSessionMrg s2CSessionMrg;
     private final DisruptorMrg disruptorMrg;
     private final CodecHelperMrg codecHelperMrg;
-    private final AsyncNetServiceMrg asyncNetServiceMrg;
-    private final SyncNetServiceMrg syncNetServiceMrg;
+    private final AsyncNettyThreadMrg asyncNettyThreadMrg;
+    private final SyncNettyThreadMrg syncNettyThreadMrg;
     private final TokenMrg tokenMrg;
     private final TimerMrg timerMrg;
     private final HttpDispatcherMrg httpDispatcherMrg;
@@ -51,15 +51,16 @@ public class WorldWrapper {
     private final SyncS2CSessionMrg syncS2CSessionMrg;
     private final SyncRequestDispatcherMrg syncRequestDispatcherMrg;
     private final GlobalExecutorMrg globalExecutorMrg;
+    private final AcceptorMrg acceptorMrg;
 
     @Inject
     public WorldWrapper(WorldInfoMrg worldInfoMrg, MessageDispatcherMrg messageDispatcherMrg,
                         C2SSessionMrg c2SSessionMrg, S2CSessionMrg s2CSessionMrg,
                         SystemTimeMrg systemTimeMrg, DisruptorMrg disruptorMrg, NetConfigMrg netConfigMrg,
-                        CodecHelperMrg codecHelperMrg, AsyncNetServiceMrg asyncNetServiceMrg, SyncNetServiceMrg syncNetServiceMrg,
+                        CodecHelperMrg codecHelperMrg, AsyncNettyThreadMrg asyncNettyThreadMrg, SyncNettyThreadMrg syncNettyThreadMrg,
                         TokenMrg tokenMrg, TimerMrg timerMrg, HttpDispatcherMrg httpDispatcherMrg, HttpClientMrg httpClientMrg,
                         SyncC2SSessionMrg syncC2SSessionMrg, SyncS2CSessionMrg syncS2CSessionMrg,
-                        SyncRequestDispatcherMrg syncRequestDispatcherMrg, GlobalExecutorMrg globalExecutorMrg) {
+                        SyncRequestDispatcherMrg syncRequestDispatcherMrg, GlobalExecutorMrg globalExecutorMrg, AcceptorMrg acceptorMrg) {
         this.worldInfoMrg = worldInfoMrg;
         this.messageDispatcherMrg = messageDispatcherMrg;
         this.c2SSessionMrg = c2SSessionMrg;
@@ -68,8 +69,8 @@ public class WorldWrapper {
         this.disruptorMrg = disruptorMrg;
         this.netConfigMrg = netConfigMrg;
         this.codecHelperMrg = codecHelperMrg;
-        this.asyncNetServiceMrg = asyncNetServiceMrg;
-        this.syncNetServiceMrg = syncNetServiceMrg;
+        this.asyncNettyThreadMrg = asyncNettyThreadMrg;
+        this.syncNettyThreadMrg = syncNettyThreadMrg;
         this.tokenMrg = tokenMrg;
         this.timerMrg = timerMrg;
         this.httpDispatcherMrg = httpDispatcherMrg;
@@ -78,6 +79,7 @@ public class WorldWrapper {
         this.syncS2CSessionMrg = syncS2CSessionMrg;
         this.syncRequestDispatcherMrg = syncRequestDispatcherMrg;
         this.globalExecutorMrg = globalExecutorMrg;
+        this.acceptorMrg = acceptorMrg;
     }
 
     public WorldInfoMrg getWorldInfoMrg() {
@@ -112,12 +114,12 @@ public class WorldWrapper {
         return codecHelperMrg;
     }
 
-    public AsyncNetServiceMrg getAsyncNetServiceMrg() {
-        return asyncNetServiceMrg;
+    public AsyncNettyThreadMrg getAsyncNettyThreadMrg() {
+        return asyncNettyThreadMrg;
     }
 
-    public SyncNetServiceMrg getSyncNetServiceMrg() {
-        return syncNetServiceMrg;
+    public SyncNettyThreadMrg getSyncNettyThreadMrg() {
+        return syncNettyThreadMrg;
     }
 
     public TokenMrg getTokenMrg() {
@@ -150,5 +152,9 @@ public class WorldWrapper {
 
     public GlobalExecutorMrg getGlobalExecutorMrg() {
         return globalExecutorMrg;
+    }
+
+    public AcceptorMrg getAcceptorMrg() {
+        return acceptorMrg;
     }
 }

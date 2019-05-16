@@ -32,7 +32,7 @@ public abstract class ExampleWorldInfoMrg extends WorldInfoMrg {
     /**
      * 游戏世界全局唯一id
      */
-    private long worldGuid;
+    private long processGuid;
 
     @Inject
     public ExampleWorldInfoMrg() {
@@ -41,12 +41,12 @@ public abstract class ExampleWorldInfoMrg extends WorldInfoMrg {
 
     @Override
     protected void initImp(ConfigWrapper startArgs) {
-        worldGuid=startArgs.getAsLong("processGuid");
+        processGuid =startArgs.getAsLong("processGuid");
     }
 
     @Override
-    public long getWorldGuid() {
-        return worldGuid;
+    public long processGuid() {
+        return processGuid;
     }
 
 }

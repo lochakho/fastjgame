@@ -88,4 +88,9 @@ public class EgWorld extends WorldCore {
     protected void tickHook() {
 
     }
+
+    @Override
+    protected void shutdownHook() {
+
+    }
 }

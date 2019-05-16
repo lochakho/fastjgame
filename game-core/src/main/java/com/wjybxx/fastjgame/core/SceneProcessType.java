@@ -26,9 +26,9 @@ package com.wjybxx.fastjgame.core;
  */
 public enum SceneProcessType {
     /**
-     * 本服场景
+     * 单服场景
      */
-    LOCAL,
+    SINGLE,
     /**
      * 跨服进程
      */

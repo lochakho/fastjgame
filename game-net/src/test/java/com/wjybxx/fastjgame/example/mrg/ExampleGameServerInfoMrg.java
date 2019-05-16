@@ -58,8 +58,8 @@ public class ExampleGameServerInfoMrg extends ExampleWorldInfoMrg{
     }
 
     @Override
-    public RoleType getWorldType() {
-        return RoleType.GAME_SERVER;
+    public RoleType processType() {
+        return RoleType.CENTER_SERVER;
     }
 
     public int getTcpPort() {

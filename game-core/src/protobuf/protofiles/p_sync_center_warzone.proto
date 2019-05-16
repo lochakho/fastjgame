@@ -1,0 +1,13 @@
+// CenterServer 与 WarzonServer 同步rpc消息
+syntax = "proto3";
+package fastjgame;
+
+import "p_enum.proto";
+import "p_struct.proto";
+
+// optimize_for (file option): Can be set to SPEED, CODE_SIZE, or LITE_RUNTIME.
+option optimize_for=SPEED;
+
+// package属性是为了支持多语言的，在其他语言里，可能就是命名空间，因此建议定义清晰的java包名
+option java_package="com.wjybxx.fastjgame.protobuffer";
+option java_outer_classname = "p_sync_center_warzone";

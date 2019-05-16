@@ -17,17 +17,17 @@
 package com.wjybxx.fastjgame.example.world;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.example.jsonmsg.ExampleMappingStrategy;
 import com.wjybxx.fastjgame.example.jsonmsg.ExampleJsonMsg;
+import com.wjybxx.fastjgame.example.jsonmsg.ExampleMappingStrategy;
 import com.wjybxx.fastjgame.example.mrg.ExampleGameServerInfoMrg;
 import com.wjybxx.fastjgame.misc.HttpResponseHelper;
 import com.wjybxx.fastjgame.mrg.WorldWrapper;
 import com.wjybxx.fastjgame.net.async.S2CSession;
-import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.net.async.initializer.HttpServerInitializer;
 import com.wjybxx.fastjgame.net.async.initializer.TCPServerChannelInitializer;
 import com.wjybxx.fastjgame.net.async.initializer.WsServerChannelInitializer;
 import com.wjybxx.fastjgame.net.common.JsonMessageSerializer;
+import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
 import com.wjybxx.fastjgame.net.sync.initializer.ServerSyncRpcInitializer;
 import com.wjybxx.fastjgame.world.World;
@@ -132,7 +132,7 @@ public class ExampleGameServerWorld extends World {
         // tcp监听
         int tcpPort=gameServerInfoMrg.getTcpPort();
         if (tcpPort>0){
-            asyncNetServiceMrg.bind(outer, tcpPort,new TCPServerChannelInitializer(
+            s2CSessionMrg.bind(outer, tcpPort,new TCPServerChannelInitializer(
                     netConfigMrg.maxFrameLength(),
                     codecHelperMrg.getCodecHelper("json"),
                     disruptorMrg
@@ -142,7 +142,7 @@ public class ExampleGameServerWorld extends World {
         // websocket监听
         int websocketPort=gameServerInfoMrg.getWsPort();
         if (websocketPort>0){
-            asyncNetServiceMrg.bind(outer, websocketPort,new WsServerChannelInitializer(
+            s2CSessionMrg.bind(outer, websocketPort,new WsServerChannelInitializer(
                     "/ws",
                     netConfigMrg.maxFrameLength(),
                     codecHelperMrg.getCodecHelper("json"),
@@ -152,12 +152,12 @@ public class ExampleGameServerWorld extends World {
         // http监听
         int httpPort=gameServerInfoMrg.getHttpPort();
         if (httpPort>0){
-            asyncNetServiceMrg.bind(outer,httpPort,new HttpServerInitializer(disruptorMrg));
+            httpClientMrg.bind(outer,httpPort,new HttpServerInitializer(disruptorMrg));
         }
         // 同步rpc调用监听
         int syncRpcPort=gameServerInfoMrg.getSyncRpcPort();
         if (syncRpcPort>0){
-            asyncNetServiceMrg.bind(outer,syncRpcPort,new ServerSyncRpcInitializer(
+            syncS2CSessionMrg.bind(outer,syncRpcPort,new ServerSyncRpcInitializer(
                     netConfigMrg.maxFrameLength(),
                     codecHelperMrg.getCodecHelper("json"),
                     syncS2CSessionMrg

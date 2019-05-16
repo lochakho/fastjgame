@@ -80,4 +80,9 @@ public class WarzoneWorld extends WorldCore {
     protected void tickHook() {
 
     }
+
+    @Override
+    protected void shutdownHook() {
+
+    }
 }

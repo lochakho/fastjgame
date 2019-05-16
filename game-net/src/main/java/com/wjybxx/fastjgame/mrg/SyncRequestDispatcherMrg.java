@@ -46,6 +46,13 @@ public class SyncRequestDispatcherMrg {
     public SyncRequestDispatcherMrg() {
     }
 
+    /**
+     * 注册客户端的同步调用处理器
+     * @param messageClazz 消息类
+     * @param handler 消息类对应的处理器
+     * @param <T> 消息的类型
+     * @param <R> 结果类型
+     */
     public <T,R> void registerHandler(Class<T> messageClazz,SyncRequestHandler<T,R> handler){
         if (handlerMap.containsKey(messageClazz)){
             throw new IllegalArgumentException("messageClazz " + messageClazz.getSimpleName() + " already registered.");

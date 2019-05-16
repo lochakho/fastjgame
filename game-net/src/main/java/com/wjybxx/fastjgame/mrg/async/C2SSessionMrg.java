@@ -17,11 +17,9 @@
 package com.wjybxx.fastjgame.mrg.async;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.misc.IntSequencer;
-import com.wjybxx.fastjgame.mrg.MessageDispatcherMrg;
-import com.wjybxx.fastjgame.mrg.NetConfigMrg;
-import com.wjybxx.fastjgame.mrg.SystemTimeMrg;
-import com.wjybxx.fastjgame.mrg.WorldInfoMrg;
+import com.wjybxx.fastjgame.mrg.*;
 import com.wjybxx.fastjgame.net.async.*;
 import com.wjybxx.fastjgame.net.async.event.AckPingPongEventParam;
 import com.wjybxx.fastjgame.net.async.event.ConnectResponseEventParam;
@@ -73,7 +71,8 @@ public class C2SSessionMrg {
 
     private final WorldInfoMrg worldInfoMrg;
     private final NetConfigMrg netConfigMrg;
-    private final AsyncNetServiceMrg asyncNetServiceMrg;
+    private final AcceptorMrg acceptorMrg;
+    private final AsyncNettyThreadMrg asyncNettyThreadMrg;
     private final SystemTimeMrg systemTimeMrg;
     private final MessageDispatcherMrg dispatcherMrg;
 
@@ -84,11 +83,12 @@ public class C2SSessionMrg {
     private final Long2ObjectMap<SessionWrapper> sessionWrapperMap =new Long2ObjectOpenHashMap<>();
 
     @Inject
-    public C2SSessionMrg(WorldInfoMrg worldInfoMrg, NetConfigMrg netConfigMrg, AsyncNetServiceMrg asyncNetServiceMrg,
+    public C2SSessionMrg(WorldInfoMrg worldInfoMrg, NetConfigMrg netConfigMrg, AcceptorMrg acceptorMrg, AsyncNettyThreadMrg asyncNettyThreadMrg,
                          SystemTimeMrg systemTimeMrg, MessageDispatcherMrg dispatcherMrg) {
         this.worldInfoMrg = worldInfoMrg;
         this.netConfigMrg = netConfigMrg;
-        this.asyncNetServiceMrg = asyncNetServiceMrg;
+        this.acceptorMrg = acceptorMrg;
+        this.asyncNettyThreadMrg = asyncNettyThreadMrg;
         this.systemTimeMrg = systemTimeMrg;
         this.dispatcherMrg = dispatcherMrg;
     }
@@ -117,13 +117,12 @@ public class C2SSessionMrg {
      * 注册一个服务器
      * @param serverGuid 在登录服或别处获得的serverGuid
      * @param roleType 服务器类型
-     * @param host 服务器ip
-     * @param port 服务器监听的端口号
+     * @param hostAndPort 服务器地址
      * @param initializerSupplier 初始化器提供者，如果initializer是线程安全的，可以始终返回同一个对象
      * @param lifecycleHandler 作为客户端，链接不同的服务器时，可能有不同的生命周期事件处理
      * @param encryptedLoginToken 在登录服或别处获得的登录用的token
      */
-    public C2SSession register(long serverGuid, RoleType roleType, String host, int port,
+    public C2SSession register(long serverGuid, RoleType roleType, HostAndPort hostAndPort,
                          Supplier<ChannelInitializer<SocketChannel>> initializerSupplier,
                          SessionLifecycleAware<C2SSession> lifecycleHandler, byte[] encryptedLoginToken){
         // 已注册
@@ -131,7 +130,7 @@ public class C2SSessionMrg {
             throw new IllegalArgumentException("serverGuid " + serverGuid+ " registered before.");
         }
         // 创建会话，尚未激活
-        C2SSession session = new C2SSession(serverGuid, roleType, host,port, initializerSupplier, lifecycleHandler);
+        C2SSession session = new C2SSession(serverGuid, roleType,hostAndPort, initializerSupplier, lifecycleHandler);
         SessionWrapper sessionWrapper=new SessionWrapper(session, encryptedLoginToken);
         sessionWrapperMap.put(session.getServerGuid(), sessionWrapper);
         logger.debug("register session {}",session);
@@ -368,15 +367,15 @@ public class C2SSessionMrg {
         private void tryConnect(){
             tryTimes++;
             connectStartTime=systemTimeMrg.getSystemMillTime();
-            channelFuture = asyncNetServiceMrg.connectAsyn(session.getHost(), session.getPort(), session.getInitializerSupplier().get());
-            logger.debug("tryConnect remote {}:{} ,tryTimes {}.", session.getHost(), session.getPort(),tryTimes);
+            channelFuture = acceptorMrg.connectAsyn(asyncNettyThreadMrg,session.getHostAndPort(), session.getInitializerSupplier().get());
+            logger.debug("tryConnect remote {} ,tryTimes {}.", session.getHostAndPort(),tryTimes);
         }
 
         @Override
         protected void execute() {
             // 建立连接成功
             if (channelFuture.isSuccess() && channelFuture.channel().isActive()){
-                logger.debug("connect remote {}:{} success,tryTimes {}.", session.getHost(), session.getPort(),tryTimes);
+                logger.debug("connect remote {} success,tryTimes {}.", session.getHostAndPort(),tryTimes);
                 changeState(sessionWrapper,new VerifyingState(sessionWrapper,channelFuture.channel()));
                 return;
             }
@@ -392,7 +391,7 @@ public class C2SSessionMrg {
                 tryConnect();
             }else {
                 // 无法连接到服务器，移除会话，结束
-                removeSession(session.getServerGuid(),"can't connect remote " + session.getHost()+  ":" + session.getPort());
+                removeSession(session.getServerGuid(),"can't connect remote " + session.getHostAndPort());
             }
         }
 
@@ -482,7 +481,7 @@ public class C2SSessionMrg {
 
             int sndTokenTimes=getSndTokenSequencer().incAndGet();
             // 创建验证请求
-            ConnectRequestTO connectRequest = new ConnectRequestTO(worldInfoMrg.getWorldGuid(), session.getServerGuid(),
+            ConnectRequestTO connectRequest = new ConnectRequestTO(worldInfoMrg.processGuid(), session.getServerGuid(),
                     sndTokenTimes, getMessageQueue().getAck(), sessionWrapper.getEncryptedToken());
             channel.writeAndFlush(connectRequest);
             logger.debug("{} times send verify msg to server {}",sndTokenTimes,session);

@@ -69,7 +69,7 @@ public class ZkGuidMrg implements GuidMrg {
             checkCache();
             // 这种方式的guid不是很方便查看规律(如果是乘以10的N次方可能方便查看使用情况)
             long high = ((long)guidIndex) << 32;
-            long low = guidSequence++;
+            int low = guidSequence++;
             return high + low;
         } catch (Exception e) {
             throw new IllegalStateException("may lose zk connect",e);

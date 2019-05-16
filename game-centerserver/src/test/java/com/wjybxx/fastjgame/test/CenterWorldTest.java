@@ -14,38 +14,33 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core;
+package com.wjybxx.fastjgame.test;
+
+import com.wjybxx.fastjgame.NetBootstrap;
+import com.wjybxx.fastjgame.module.CenterModule;
+
+import java.io.File;
 
 /**
- * CenterServer在SceneServer中的信息
+ * 启动参数：
+ warzoneId=1 serverId=1
  *
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/15 12:30
+ * @date 2019/5/16 21:29
  * @github - https://github.com/hl845740757
  */
-public class CenterInSceneInfo {
+public class CenterWorldTest {
 
-    /**
-     * CenterServer进程guid
-     */
-    private final long centerProcessGuid;
-    /**
-     * 连接的是哪个服
-     */
-    private final int serverId;
+    public static void main(String[] args) throws Exception {
+        String logDir=new File("").getAbsolutePath() + File.separator + "log";
+        String logFilePath = logDir + File.separator + "center.log";
+        System.setProperty("logFilePath",logFilePath);
 
-    public CenterInSceneInfo(long centerProcessGuid, int serverId) {
-        this.centerProcessGuid = centerProcessGuid;
-        this.serverId = serverId;
-    }
-
-    public long getCenterProcessGuid() {
-        return centerProcessGuid;
-    }
-
-    public int getServerId() {
-        return serverId;
+        new NetBootstrap<>()
+                .setArgs(args)
+                .setFramesPerSecond(5)
+                .addModule(new CenterModule())
+                .start();
     }
 }
-

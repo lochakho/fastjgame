@@ -58,7 +58,7 @@ public class ExampleGameServerInfoMrg extends ExampleWorldInfoMrg{
     }
 
     @Override
-    public RoleType processType() {
+    public RoleType getProcessType() {
         return RoleType.CENTER_SERVER;
     }
 

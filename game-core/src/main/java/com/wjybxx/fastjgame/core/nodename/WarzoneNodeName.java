@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core.parserresult;
+package com.wjybxx.fastjgame.core.nodename;
 
 /**
+ * 战区服也必须总是生成相同的名字，以使得同时只能有一个战区服存在。
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/16 0:14
@@ -26,18 +27,19 @@ public class WarzoneNodeName {
 
     private final int warzoneId;
 
-    private final long worldProcessGuid;
-
-    public WarzoneNodeName(int warzoneId, long worldProcessGuid) {
+    public WarzoneNodeName(int warzoneId) {
         this.warzoneId = warzoneId;
-        this.worldProcessGuid = worldProcessGuid;
     }
 
     public int getWarzoneId() {
         return warzoneId;
     }
 
-    public long getWorldProcessGuid() {
-        return worldProcessGuid;
+
+    @Override
+    public String toString() {
+        return "WarzoneNodeName{" +
+                "warzoneId=" + warzoneId +
+                '}';
     }
 }

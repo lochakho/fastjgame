@@ -18,17 +18,18 @@
 package com.wjybxx.fastjgame.world;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.core.node.ZKOnlineCenterNode;
+import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.misc.ProtoBufHashMappingStrategy;
-import com.wjybxx.fastjgame.mrg.CenterDiscoverMrg;
-import com.wjybxx.fastjgame.mrg.SceneInCenterInfoMrg;
-import com.wjybxx.fastjgame.mrg.WorldCoreWrapper;
-import com.wjybxx.fastjgame.mrg.WorldWrapper;
+import com.wjybxx.fastjgame.mrg.*;
 import com.wjybxx.fastjgame.net.async.S2CSession;
 import com.wjybxx.fastjgame.net.common.ProtoBufMessageSerializer;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
-import com.wjybxx.fastjgame.protobuffer.p_center_scene;
 import com.wjybxx.fastjgame.utils.GameUtils;
+import com.wjybxx.fastjgame.utils.ZKUtils;
+import org.apache.curator.utils.ZKPaths;
+import org.apache.zookeeper.CreateMode;
 
 import javax.annotation.Nonnull;
 
@@ -46,6 +47,7 @@ public class CenterWorld extends WorldCore {
 
     private final CenterDiscoverMrg centerDiscoverMrg;
     private final SceneInCenterInfoMrg sceneInCenterInfoMrg;
+    private final CenterWorldInfoMrg centerWorldInfoMrg;
 
     @Inject
     public CenterWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper,
@@ -53,6 +55,7 @@ public class CenterWorld extends WorldCore {
         super(worldWrapper, coreWrapper);
         this.centerDiscoverMrg = centerDiscoverMrg;
         this.sceneInCenterInfoMrg = sceneInCenterInfoMrg;
+        centerWorldInfoMrg = (CenterWorldInfoMrg) worldWrapper.getWorldInfoMrg();
     }
 
     @Override
@@ -83,18 +86,63 @@ public class CenterWorld extends WorldCore {
     @Nonnull
     @Override
     protected SessionLifecycleAware<S2CSession> newAsyncSessionLifecycleAware() {
-        return null;
+        return new SessionLifecycleAware<S2CSession>() {
+            @Override
+            public void onSessionConnected(S2CSession session) {
+
+            }
+
+            @Override
+            public void onSessionDisconnected(S2CSession session) {
+
+            }
+        };
     }
 
     @Nonnull
     @Override
     protected SessionLifecycleAware<SyncS2CSession> newSyncSessionLifeCycleAware() {
-        return null;
+        return new SessionLifecycleAware<SyncS2CSession>() {
+            @Override
+            public void onSessionConnected(SyncS2CSession syncS2CSession) {
+
+            }
+
+            @Override
+            public void onSessionDisconnected(SyncS2CSession syncS2CSession) {
+
+            }
+        };
     }
 
     @Override
     protected void startHook() throws Exception {
+        // 绑定端口并注册到zookeeper
+        bindAndRegisterToZK();
+
+        // 注册成功再启动服务发现
         centerDiscoverMrg.start();
+    }
+
+    private void bindAndRegisterToZK() throws Exception {
+        // 绑定3个内部交互的端口
+        HostAndPort tcpHostAndPort = innerAcceptorMrg.bindInnerTcpPort(true);
+        HostAndPort syncRpcHostAndPort = innerAcceptorMrg.bindInnerSyncRpcPort(true);
+        HostAndPort httpHostAndPort = innerAcceptorMrg.bindInnerHttpPort();
+
+        // 注册到zk
+        String parentPath= ZKUtils.onlineParentPath(centerWorldInfoMrg.getWarzoneId());
+        String nodeName= ZKUtils.buildCenterNodeName(centerWorldInfoMrg.getWarzoneId(), centerWorldInfoMrg.getServerId());
+
+        ZKOnlineCenterNode zkOnlineCenterNode=new ZKOnlineCenterNode(tcpHostAndPort.toString(),
+                syncRpcHostAndPort.toString(), httpHostAndPort.toString(),
+                centerWorldInfoMrg.getProcessGuid());
+
+
+        String path = ZKPaths.makePath(parentPath, nodeName);
+        curatorMrg.waitForNodeDelete(path);
+
+        curatorMrg.createNode(path, CreateMode.EPHEMERAL,GameUtils.serializeToJsonBytes(zkOnlineCenterNode));
     }
 
     @Override

@@ -21,6 +21,8 @@ import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
 import com.wjybxx.fastjgame.core.SceneProcessType;
 import com.wjybxx.fastjgame.core.SceneRegion;
 import com.wjybxx.fastjgame.net.common.RoleType;
+import com.wjybxx.fastjgame.utils.ZKUtils;
+import org.apache.zookeeper.CreateMode;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -34,19 +36,37 @@ import java.util.Set;
  */
 public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
 
+    private static final int SINGLE_SCENE_MIN_CHANNEL_ID=1;
+    private static final int CROSS_SCENE_MIN_CHANNEL_ID=10001;
+
+
+    /**
+     * scene进程类型
+     */
     private SceneProcessType sceneProcessType;
-
+    /**
+     * 所属的战区
+     */
     private int warzoneId;
-
+    /**
+     * 如果的单服进程，那么表示它所属的服务器
+     */
     private int serverId;
+    /**
+     * 频道id，自动生成会比较好
+     */
+    private int channelId;
     /**
      * 复合当前进程类型的场景区域
      */
     private Set<SceneRegion> configuredRegions=EnumSet.noneOf(SceneRegion.class);
 
+    private final CuratorMrg curatorMrg;
+
     @Inject
-    public SceneWorldInfoMrg(GuidMrg guidMrg) {
+    public SceneWorldInfoMrg(GuidMrg guidMrg, CuratorMrg curatorMrg) {
         super(guidMrg);
+        this.curatorMrg=curatorMrg;
     }
 
     @Override
@@ -54,11 +74,17 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
         sceneProcessType = SceneProcessType.forName(startArgs.getAsString("sceneType"));
         warzoneId = startArgs.getAsInt("warzoneId");
 
+
         // 只有本服场景才支持指定服务器id
         if(sceneProcessType == SceneProcessType.SINGLE){
             serverId = startArgs.getAsInt("serverId");
+            // zk默认序号是从0开始的
+            String path = curatorMrg.createNode(ZKUtils.singleChannelPath(warzoneId, serverId), CreateMode.EPHEMERAL_SEQUENTIAL);
+            channelId = SINGLE_SCENE_MIN_CHANNEL_ID + ZKUtils.parseSequentialId(path);
         }else {
             serverId = -1;
+            String path = curatorMrg.createNode(ZKUtils.crossChannelPath(warzoneId), CreateMode.EPHEMERAL_SEQUENTIAL);
+            channelId = CROSS_SCENE_MIN_CHANNEL_ID + ZKUtils.parseSequentialId(path);
         }
 
         // 配置的要启动的区域 TODO 这种配置方式不方便配置
@@ -73,7 +99,7 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
     }
 
     @Override
-    public RoleType processType() {
+    public RoleType getProcessType() {
         return RoleType.SCENE_SERVER;
     }
 
@@ -98,5 +124,9 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
 
     public Set<SceneRegion> getConfiguredRegions() {
         return Collections.unmodifiableSet(configuredRegions);
+    }
+
+    public int getChannelId() {
+        return channelId;
     }
 }

@@ -17,8 +17,8 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.core.ZKOnlineWarzoneNode;
-import com.wjybxx.fastjgame.core.parserresult.WarzoneNodeName;
+import com.wjybxx.fastjgame.core.node.ZKOnlineWarzoneNode;
+import com.wjybxx.fastjgame.core.nodename.WarzoneNodeName;
 
 /**
  * Warzone在Game中的连接管理等控制器

@@ -27,23 +27,17 @@ import com.google.inject.Inject;
  */
 public class WorldCoreWrapper {
 
-    private final ZkPathMrg zkPathMrg;
     private final CuratorMrg curatorMrg;
     private final GuidMrg guidMrg;
     private final GameConfigMrg gameConfigMrg;
     private final InnerAcceptorMrg innerAcceptorMrg;
 
     @Inject
-    public WorldCoreWrapper(ZkPathMrg zkPathMrg, CuratorMrg curatorMrg, GuidMrg guidMrg, GameConfigMrg gameConfigMrg, InnerAcceptorMrg innerAcceptorMrg) {
-        this.zkPathMrg = zkPathMrg;
+    public WorldCoreWrapper(CuratorMrg curatorMrg, GuidMrg guidMrg, GameConfigMrg gameConfigMrg, InnerAcceptorMrg innerAcceptorMrg) {
         this.curatorMrg = curatorMrg;
         this.guidMrg = guidMrg;
         this.gameConfigMrg = gameConfigMrg;
         this.innerAcceptorMrg = innerAcceptorMrg;
-    }
-
-    public ZkPathMrg getZkPathMrg() {
-        return zkPathMrg;
     }
 
     public CuratorMrg getCuratorMrg() {

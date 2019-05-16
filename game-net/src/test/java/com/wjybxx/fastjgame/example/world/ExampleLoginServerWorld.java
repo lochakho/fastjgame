@@ -141,7 +141,7 @@ public class ExampleLoginServerWorld extends World {
         }
 
         CodecHelper codecHelper=codecHelperMrg.getCodecHelper("json");
-        Token token= tokenMrg.newLoginToken(worldInfoMrg.processGuid(), worldInfoMrg.processType(),
+        Token token= tokenMrg.newLoginToken(worldInfoMrg.getProcessGuid(), worldInfoMrg.getProcessType(),
                 serverInfo.getServerGuid(), RoleType.CENTER_SERVER);
         byte[] encryptToken= tokenMrg.encryptToken(token);
 

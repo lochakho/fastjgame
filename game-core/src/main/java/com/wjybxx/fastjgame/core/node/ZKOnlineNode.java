@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core;
+package com.wjybxx.fastjgame.core.node;
 
 /**
  *
@@ -31,7 +31,7 @@ public abstract class ZKOnlineNode {
      */
     private final String innerTcpAddress;
     /**
-     * 费武器之间同步rpc调用端口信息
+     * 服务器之间同步rpc调用端口信息
      */
     private final String innerRpcAddress;
 
@@ -40,22 +40,10 @@ public abstract class ZKOnlineNode {
      */
     private final String innerHttpAddress;
 
-    /**
-     * 对外开放的绑定的tcp端口信息(与玩家通信用)
-     */
-    private final String outerTcpAddress;
-    /**
-     * 对外开放的绑定的websocket端口信息(与玩家通信用)
-     */
-    private final String outerWebsocketAddress;
-
-    public ZKOnlineNode(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress,
-                        String outerTcpAddress, String outerWebsocketAddress) {
+    public ZKOnlineNode(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress) {
         this.innerTcpAddress = innerTcpAddress;
         this.innerRpcAddress = innerRpcAddress;
         this.innerHttpAddress = innerHttpAddress;
-        this.outerTcpAddress = outerTcpAddress;
-        this.outerWebsocketAddress = outerWebsocketAddress;
     }
 
     public String getInnerTcpAddress() {
@@ -70,11 +58,4 @@ public abstract class ZKOnlineNode {
         return innerHttpAddress;
     }
 
-    public String getOuterTcpAddress() {
-        return outerTcpAddress;
-    }
-
-    public String getOuterWebsocketAddress() {
-        return outerWebsocketAddress;
-    }
 }

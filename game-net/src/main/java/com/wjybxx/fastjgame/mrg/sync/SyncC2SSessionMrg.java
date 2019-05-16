@@ -125,7 +125,7 @@ public class SyncC2SSessionMrg {
             throw new IllegalArgumentException("server " +serverGuid + " is already registered");
         }
         // 创建登录用的token(同步调用是用于服务器之间的，因此不需要外部传入)
-        Token loginToken=tokenMrg.newLoginToken(worldInfoMrg.processGuid(),worldInfoMrg.processType(), serverGuid,roleType);
+        Token loginToken=tokenMrg.newLoginToken(worldInfoMrg.getProcessGuid(),worldInfoMrg.getProcessType(), serverGuid,roleType);
         byte[] tokenBytes=tokenMrg.encryptToken(loginToken);
 
         // 创建会话信息
@@ -159,7 +159,7 @@ public class SyncC2SSessionMrg {
 
         // 发送建立连接请求
         final int sndTokenTimes = sessionWrapper.getSndTokenSequencer().incAndGet();
-        channel.writeAndFlush(new SyncConnectRequestTO(worldInfoMrg.processGuid(), serverGuid,
+        channel.writeAndFlush(new SyncConnectRequestTO(worldInfoMrg.getProcessGuid(), serverGuid,
                 sndTokenTimes,sessionWrapper.getTokenBytes()));
 
         // 清除无效结果集

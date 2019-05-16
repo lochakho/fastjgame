@@ -45,7 +45,7 @@ public abstract class ExampleWorldInfoMrg extends WorldInfoMrg {
     }
 
     @Override
-    public long processGuid() {
+    public long getProcessGuid() {
         return processGuid;
     }
 

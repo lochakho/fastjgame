@@ -37,7 +37,7 @@ public abstract class WorldCoreInfoMrg extends WorldInfoMrg{
     }
 
     @Override
-    public final long processGuid() {
+    public final long getProcessGuid() {
         return processGuid;
     }
 }

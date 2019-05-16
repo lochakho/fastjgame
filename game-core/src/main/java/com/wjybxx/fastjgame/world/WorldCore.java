@@ -17,7 +17,6 @@
 package com.wjybxx.fastjgame.world;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.*;
 
 /**
@@ -30,7 +29,6 @@ import com.wjybxx.fastjgame.mrg.*;
 public abstract class WorldCore extends World{
 
     protected final WorldCoreWrapper coreWrapper;
-    protected final ZkPathMrg zkPathMrg;
     protected final CuratorMrg curatorMrg;
     protected final GameConfigMrg gameConfigMrg;
     protected final GuidMrg guidMrg;
@@ -40,7 +38,6 @@ public abstract class WorldCore extends World{
     public WorldCore(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
         super(worldWrapper);
         this.coreWrapper=coreWrapper;
-        zkPathMrg=coreWrapper.getZkPathMrg();
         curatorMrg=coreWrapper.getCuratorMrg();
         gameConfigMrg=coreWrapper.getGameConfigMrg();
         guidMrg=coreWrapper.getGuidMrg();
@@ -56,11 +53,6 @@ public abstract class WorldCore extends World{
 
     private void startCore() throws Exception {
         curatorMrg.start();
-
-        // 绑定3个内部交互的端口
-        HostAndPort tcpHostAndPort = innerAcceptorMrg.bindInnerTcpPort(true);
-        HostAndPort httpHostAndPort = innerAcceptorMrg.bindInnerHttpPort();
-        HostAndPort syncRpcHostAndPort = innerAcceptorMrg.bindInnerSyncRpcPort(true);
     }
 
     /**

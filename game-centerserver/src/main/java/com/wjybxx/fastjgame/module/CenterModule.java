@@ -17,6 +17,10 @@
 package com.wjybxx.fastjgame.module;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
+import com.wjybxx.fastjgame.mrg.*;
+import com.wjybxx.fastjgame.world.CenterWorld;
+import com.wjybxx.fastjgame.world.World;
 
 /**
  * @author wjybxx
@@ -24,11 +28,19 @@ import com.google.inject.AbstractModule;
  * @date 2019/5/15 23:07
  * @github - https://github.com/hl845740757
  */
-public class CenterServerModule extends AbstractModule {
+public class CenterModule extends CoreModule {
 
     @Override
-    protected void configure() {
-        super.configure();
-        binder().requireExplicitBindings();
+    protected void bindWorldAndWorldInfoMrg() {
+        bind(World.class).to(CenterWorld.class).in(Singleton.class);
+        bind(WorldInfoMrg.class).to(CenterWorldInfoMrg.class).in(Singleton.class);
+    }
+
+    @Override
+    protected void bindOthers() {
+        bind(CenterDiscoverMrg.class).in(Singleton.class);
+        bind(SceneInCenterInfoMrg.class).in(Singleton.class);
+        bind(WarzoneInCenterInfoMrg.class).in(Singleton.class);
+        bind(CenterWorldInfoMrg.class).in(Singleton.class);
     }
 }

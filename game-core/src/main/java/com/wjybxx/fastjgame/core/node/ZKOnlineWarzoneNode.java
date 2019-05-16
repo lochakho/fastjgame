@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core;
+package com.wjybxx.fastjgame.core.node;
 
 /**
- * zookeeper上在线CenterServer节点信息
+ * zookeeper在线WarzoneServer节点信息
+ *
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/15 17:21
+ * @date 2019/5/15 17:22
  * @github - https://github.com/hl845740757
  */
-public class ZKOnlineCenterNode extends ZKOnlineNode{
+public class ZKOnlineWarzoneNode extends ZKOnlineNode{
 
-    public ZKOnlineCenterNode(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress,
-                              String outerTcpAddress, String outerWebsocketAddress) {
-        super(innerTcpAddress, innerRpcAddress, innerHttpAddress, outerTcpAddress, outerWebsocketAddress);
+    private final long processGuid;
+
+    public ZKOnlineWarzoneNode(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress, long processGuid) {
+        super(innerTcpAddress, innerRpcAddress, innerHttpAddress);
+        this.processGuid=processGuid;
+    }
+
+    public long getProcessGuid() {
+        return processGuid;
     }
 }

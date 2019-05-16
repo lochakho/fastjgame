@@ -50,7 +50,7 @@ public class ExampleLoginServerInfoMrg extends ExampleWorldInfoMrg{
     }
 
     @Override
-    public RoleType processType() {
+    public RoleType getProcessType() {
         return RoleType.LOGIN_SERVER;
     }
 

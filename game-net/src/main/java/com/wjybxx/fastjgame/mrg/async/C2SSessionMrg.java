@@ -481,7 +481,7 @@ public class C2SSessionMrg {
 
             int sndTokenTimes=getSndTokenSequencer().incAndGet();
             // 创建验证请求
-            ConnectRequestTO connectRequest = new ConnectRequestTO(worldInfoMrg.processGuid(), session.getServerGuid(),
+            ConnectRequestTO connectRequest = new ConnectRequestTO(worldInfoMrg.getProcessGuid(), session.getServerGuid(),
                     sndTokenTimes, getMessageQueue().getAck(), sessionWrapper.getEncryptedToken());
             channel.writeAndFlush(connectRequest);
             logger.debug("{} times send verify msg to server {}",sndTokenTimes,session);

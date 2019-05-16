@@ -300,8 +300,8 @@ public class SyncS2CSessionMrg {
             return false;
         }
         // token不是用于该服务器的
-        if (token.getServerGuid() != worldInfoMrg.processGuid()
-                || token.getServerRoleType() != worldInfoMrg.processType()){
+        if (token.getServerGuid() != worldInfoMrg.getProcessGuid()
+                || token.getServerRoleType() != worldInfoMrg.getProcessType()){
             return false;
         }
         return true;
@@ -393,7 +393,7 @@ public class SyncS2CSessionMrg {
      */
     private void notifyClientExit(Channel channel, SessionWrapper sessionWrapper){
         long clientGuid = sessionWrapper.getSession().getClientGuid();
-        Token failToken = tokenMrg.newFailToken(clientGuid, worldInfoMrg.processGuid());
+        Token failToken = tokenMrg.newFailToken(clientGuid, worldInfoMrg.getProcessGuid());
         notifyTokenCheckResult(channel,sessionWrapper.getSndTokenTimes(),false, failToken);
     }
 

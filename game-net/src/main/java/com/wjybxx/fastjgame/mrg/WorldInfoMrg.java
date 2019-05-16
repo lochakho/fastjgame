@@ -74,12 +74,12 @@ public abstract class WorldInfoMrg {
     /**
      * 获取游戏世界进程唯一id，也就是{@link com.wjybxx.fastjgame.world.World}的唯一标识。
      */
-    public abstract long processGuid();
+    public abstract long getProcessGuid();
 
     /**
      * 获取服务器类型(进程类型)
      */
-    public abstract RoleType processType();
+    public abstract RoleType getProcessType();
 
     /**
      * 获取游戏世界帧率

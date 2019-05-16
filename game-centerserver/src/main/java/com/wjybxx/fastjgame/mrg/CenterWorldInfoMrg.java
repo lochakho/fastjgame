@@ -48,7 +48,7 @@ public class CenterWorldInfoMrg extends WorldCoreInfoMrg{
     }
 
     @Override
-    public RoleType processType() {
+    public RoleType getProcessType() {
         return RoleType.CENTER_SERVER;
     }
 

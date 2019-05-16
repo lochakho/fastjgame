@@ -88,8 +88,6 @@ public class SyncC2SSession {
                 "serverGuid=" + serverGuid +
                 ", roleType=" + roleType +
                 ", hostAndPort=" + hostAndPort +
-                ", initializerSupplier=" + initializerSupplier +
-                ", lifeCycleAware=" + lifeCycleAware +
                 '}';
     }
 }

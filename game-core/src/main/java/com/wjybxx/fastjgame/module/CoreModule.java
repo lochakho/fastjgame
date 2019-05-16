@@ -21,22 +21,41 @@ import com.google.inject.Singleton;
 import com.wjybxx.fastjgame.mrg.*;
 
 /**
- * WorldCoreModule
+ * CoreModule
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/12 12:06
  * @github - https://github.com/hl845740757
  */
-public class WorldCoreModule extends AbstractModule {
+public abstract class CoreModule extends AbstractModule {
 
+    // 这样改造之后为典型的模板方法
     @Override
-    protected void configure() {
+    protected final void configure() {
         binder().requireExplicitBindings();
-        bind(ZkPathMrg.class).in(Singleton.class);
+        configCore();
+
+        bindWorldAndWorldInfoMrg();
+
+        bindOthers();
+    }
+
+    private void configCore() {
         bind(CuratorMrg.class).in(Singleton.class);
         bind(GameConfigMrg.class).in(Singleton.class);
         bind(GuidMrg.class).to(ZkGuidMrg.class).in(Singleton.class);
         bind(WorldCoreWrapper.class).in(Singleton.class);
         bind(InnerAcceptorMrg.class).in(Singleton.class);
     }
+
+    /**
+     * 请注意绑定{@link com.wjybxx.fastjgame.world.World}类和
+     * {@link WorldInfoMrg}
+     */
+    protected abstract void bindWorldAndWorldInfoMrg();
+
+    /**
+     * 绑定其它的类
+     */
+    protected abstract void bindOthers();
 }

@@ -17,6 +17,7 @@ package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.utils.GameUtils;
+import com.wjybxx.fastjgame.utils.ZKUtils;
 import org.apache.curator.framework.recipes.atomic.DistributedAtomicLong;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.zookeeper.CreateMode;
@@ -46,7 +47,6 @@ public class ZkGuidMrg implements GuidMrg {
     private static final Logger logger= LoggerFactory.getLogger(ZkGuidMrg.class);
 
     private final CuratorMrg curatorMrg;
-    private final ZkPathMrg zkPathMrg;
 
     /**
      * guid区间索引
@@ -58,9 +58,8 @@ public class ZkGuidMrg implements GuidMrg {
     private int guidSequence=0;
 
     @Inject
-    public ZkGuidMrg(CuratorMrg curatorMrg, ZkPathMrg zkPathMrg) {
+    public ZkGuidMrg(CuratorMrg curatorMrg) {
         this.curatorMrg = curatorMrg;
-        this.zkPathMrg = zkPathMrg;
     }
 
     @Override
@@ -88,8 +87,8 @@ public class ZkGuidMrg implements GuidMrg {
         }
         // 本地缓存用完了
         if (guidSequence == Integer.MAX_VALUE){
-            String guidIndexPath = zkPathMrg.guidIndexPath();
-            String lockPath=zkPathMrg.findAppropriateLockPath(guidIndexPath);
+            String guidIndexPath = ZKUtils.guidIndexPath();
+            String lockPath= ZKUtils.findAppropriateLockPath(guidIndexPath);
             curatorMrg.actionWhitLock(lockPath,lockPath1 -> incGuidIndex());
         }
     }
@@ -109,8 +108,8 @@ public class ZkGuidMrg implements GuidMrg {
      * @throws Exception zk errors
      */
     private void init() throws Exception {
-        String guidIndexPath = zkPathMrg.guidIndexPath();
-        String lockPath=zkPathMrg.findAppropriateLockPath(guidIndexPath);
+        String guidIndexPath = ZKUtils.guidIndexPath();
+        String lockPath= ZKUtils.findAppropriateLockPath(guidIndexPath);
 
         curatorMrg.actionWhitLock(lockPath,lockPath1 -> {
             if (!curatorMrg.isPathExist(guidIndexPath)){
@@ -130,12 +129,12 @@ public class ZkGuidMrg implements GuidMrg {
      * @throws Exception zk errors
      */
     private void incGuidIndex() throws Exception{
-        byte[] oldData=curatorMrg.getData(zkPathMrg.guidIndexPath());
+        byte[] oldData=curatorMrg.getData(ZKUtils.guidIndexPath());
         int zkGuidIndex= GameUtils.parseIntFromStringBytes(oldData);
 
         int nextGuidIndex = zkGuidIndex+1;
         byte[] newData = GameUtils.serializeToStringBytes(nextGuidIndex);
-        curatorMrg.setData(zkPathMrg.guidIndexPath(), newData);
+        curatorMrg.setData(ZKUtils.guidIndexPath(), newData);
 
         updateCache(nextGuidIndex);
     }

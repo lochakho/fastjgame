@@ -18,9 +18,21 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.mrg.async.C2SSessionMrg;
+import com.wjybxx.fastjgame.core.CenterInSceneInfo;
+import com.wjybxx.fastjgame.core.SceneProcessType;
+import com.wjybxx.fastjgame.core.SceneRegion;
 import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
+import com.wjybxx.fastjgame.net.async.S2CSession;
+import com.wjybxx.fastjgame.world.SceneWorld;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+
+import static com.wjybxx.fastjgame.protobuffer.p_center_scene.*;
+import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello;
+import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello;
 
 /**
  * CenterServer在SceneServer中的连接管理等。
@@ -32,15 +44,93 @@ import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
  * @github - https://github.com/hl845740757
  */
 public class CenterInSceneInfoMrg {
-
+    /**
+     * scene接收其它服务器的连接，因此它作为连接的服务器放
+     */
     private final S2CSessionMrg s2CSessionMrg;
-    private final C2SSessionMrg c2SSessionMrg;
     private final SyncS2CSessionMrg syncS2CSessionMrg;
+    private final SceneWorldInfoMrg sceneWorldInfoMrg;
+    private final SceneRegionMrg sceneRegionMrg;
+
+    /**
+     * 进程guid到信息的映射
+     */
+    private final Long2ObjectMap<CenterInSceneInfo> guid2InfoMap=new Long2ObjectOpenHashMap<>();
+    /**
+     * 服务器id到信息的映射
+     */
+    private final Int2ObjectMap<CenterInSceneInfo> serverId2InfoMap=new Int2ObjectOpenHashMap<>();
 
     @Inject
-    public CenterInSceneInfoMrg(S2CSessionMrg s2CSessionMrg, C2SSessionMrg c2SSessionMrg, SyncS2CSessionMrg syncS2CSessionMrg) {
+    public CenterInSceneInfoMrg(S2CSessionMrg s2CSessionMrg, SyncS2CSessionMrg syncS2CSessionMrg,
+                                SceneWorldInfoMrg sceneWorldInfoMrg, SceneRegionMrg sceneRegionMrg) {
         this.s2CSessionMrg = s2CSessionMrg;
-        this.c2SSessionMrg = c2SSessionMrg;
         this.syncS2CSessionMrg = syncS2CSessionMrg;
+        this.sceneWorldInfoMrg = sceneWorldInfoMrg;
+        this.sceneRegionMrg = sceneRegionMrg;
+    }
+
+    private void addInfo(CenterInSceneInfo centerInSceneInfo){
+        guid2InfoMap.put(centerInSceneInfo.getCenterProcessGuid(),centerInSceneInfo);
+        serverId2InfoMap.put(centerInSceneInfo.getServerId(),centerInSceneInfo);
+    }
+
+    private void removeInfo(CenterInSceneInfo centerInSceneInfo){
+        guid2InfoMap.remove(centerInSceneInfo.getCenterProcessGuid());
+        serverId2InfoMap.remove(centerInSceneInfo.getServerId());
+    }
+
+    public void onConnect(){
+
+    }
+
+    /**
+     * 检测到center服进程会话断开
+     * @param centerProcessGuid
+     */
+    public void onDisconnect(long centerProcessGuid, SceneWorld sceneWorld){
+        CenterInSceneInfo centerInSceneInfo = guid2InfoMap.remove(centerProcessGuid);
+        if (null == centerInSceneInfo){
+            return;
+        }
+        // 跨服场景，收到某个center服宕机，无所谓
+        if (sceneWorldInfoMrg.getSceneProcessType() == SceneProcessType.CROSS){
+            return;
+        }
+        // 单服场景，自己的center服宕机，需要通知所有玩家下线，然后退出
+        if (centerInSceneInfo.getServerId() == sceneWorldInfoMrg.getServerId()){
+            // TODO 踢掉所有玩家，shutdown
+            sceneWorld.requestShutdown();
+        }
+    }
+
+    /**
+     * 收到center打的招呼(认为我是单服节点)
+     * @param session 会话信息
+     * @param hello 简单信息
+     */
+    public void p_center_single_scene_hello_handler(S2CSession session, p_center_single_scene_hello hello) {
+        assert !guid2InfoMap.containsKey(session.getClientGuid());
+        CenterInSceneInfo centerInSceneInfo=new CenterInSceneInfo(session.getClientGuid(),hello.getServerId());
+
+        p_center_single_scene_hello_result.Builder builder = p_center_single_scene_hello_result
+                .newBuilder()
+                .setChannelId(-1);
+
+        for (SceneRegion sceneRegion:sceneWorldInfoMrg.getConfiguredRegions()){
+            builder.addConfiguredRegions(sceneRegion.getNumber());
+        }
+
+        s2CSessionMrg.send(session.getClientGuid(),builder);
+        addInfo(centerInSceneInfo);
+    }
+
+    /**
+     * 收到center打的招呼(认为我是跨服节点)
+     * @param session 会话信息
+     * @param hello 简单信息
+     */
+    public void p_center_cross_scene_hello_handler(S2CSession session,p_center_cross_scene_hello hello){
+        assert !guid2InfoMap.containsKey(session.getClientGuid());
     }
 }

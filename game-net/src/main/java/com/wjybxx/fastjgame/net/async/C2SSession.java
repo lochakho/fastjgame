@@ -91,8 +91,6 @@ public class C2SSession {
                 "serverGuid=" + serverGuid +
                 ", roleType=" + roleType +
                 ", hostAndPort=" + hostAndPort +
-                ", initializerSupplier=" + initializerSupplier +
-                ", lifecycleAware=" + lifecycleAware +
                 '}';
     }
 }

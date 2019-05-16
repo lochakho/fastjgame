@@ -89,8 +89,12 @@ public class AcceptorMrg {
         } catch (InterruptedException e) {
             // ignore e
             NetUtils.closeQuietly(channelFuture);
-            return null;
+            Thread.currentThread().interrupt();
+        } catch (Exception e){
+            // ignore, may another process bind this port
+            NetUtils.closeQuietly(channelFuture);
         }
+        return null;
     }
 
     /**

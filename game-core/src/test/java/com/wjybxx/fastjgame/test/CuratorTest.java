@@ -2,7 +2,6 @@ package com.wjybxx.fastjgame.test;
 
 import com.wjybxx.fastjgame.mrg.CuratorMrg;
 import com.wjybxx.fastjgame.mrg.GameConfigMrg;
-import com.wjybxx.fastjgame.mrg.ZkPathMrg;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
@@ -20,9 +19,8 @@ import java.util.Map;
 public class CuratorTest {
 
     public static void main(String[] args) throws Exception {
-        ZkPathMrg zkPathMrg = new ZkPathMrg();
         GameConfigMrg gameConfigMrg = new GameConfigMrg();
-        CuratorMrg curatorMrg = new CuratorMrg(gameConfigMrg, zkPathMrg);
+        CuratorMrg curatorMrg = new CuratorMrg(gameConfigMrg);
         curatorMrg.start();
 
         List<ChildData> childrenData = curatorMrg.watchChildren("/mutex", CuratorTest::onEvent);

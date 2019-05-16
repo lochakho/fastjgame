@@ -20,9 +20,9 @@ import com.google.inject.Inject;
 import com.wjybxx.fastjgame.core.SceneInCenterInfo;
 import com.wjybxx.fastjgame.core.SceneProcessType;
 import com.wjybxx.fastjgame.core.SceneRegion;
-import com.wjybxx.fastjgame.core.ZKOnlineSceneNode;
-import com.wjybxx.fastjgame.core.parserresult.CrossSceneNodeName;
-import com.wjybxx.fastjgame.core.parserresult.SingleSceneNodeName;
+import com.wjybxx.fastjgame.core.node.ZKOnlineSceneNode;
+import com.wjybxx.fastjgame.core.nodename.CrossSceneNodeName;
+import com.wjybxx.fastjgame.core.nodename.SingleSceneNodeName;
 import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.async.C2SSessionMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncC2SSessionMrg;
@@ -49,7 +49,7 @@ import static com.wjybxx.fastjgame.protobuffer.p_center_scene.*;
  */
 public class SceneInCenterInfoMrg {
     /**
-     * game主动连接scene，因此scene是服务器端
+     * game主动连接scene，因此scene是服务器端，center是会话的客户端。
      */
     private final C2SSessionMrg c2SSessionMrg;
     private final SyncC2SSessionMrg syncC2SSessionMrg;

@@ -25,7 +25,7 @@ public class EGWorldCoreInfoMrg extends WorldCoreInfoMrg {
     }
 
     @Override
-    public RoleType processType() {
+    public RoleType getProcessType() {
         return RoleType.TEST;
     }
 }

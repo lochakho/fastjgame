@@ -42,7 +42,7 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public class WsServerChannelInitializer extends ChannelInitializer<SocketChannel> {
     /**
-     * url路径(eg: "http://127.0.0.1:8888/ws" 中的ws)
+     * url路径(eg: "http://127.0.0.1:8888/ws" 中的 /ws )
      */
     private final String websocketPath;
     private final int maxFrameLength;

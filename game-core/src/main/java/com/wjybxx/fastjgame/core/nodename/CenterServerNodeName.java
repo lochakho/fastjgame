@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core.parserresult;
+package com.wjybxx.fastjgame.core.nodename;
 
 /**
+ * 中心服需要总是生成相同的名字，以使得只有一个center进程存在
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/16 0:14
@@ -26,12 +27,10 @@ public class CenterServerNodeName {
 
     private final int warzoneId;
     private final int serverId;
-    private final long gameProcessGuid;
 
-    public CenterServerNodeName(int warzoneId, int serverId, long gameProcessGuid) {
+    public CenterServerNodeName(int warzoneId, int serverId) {
         this.warzoneId = warzoneId;
         this.serverId = serverId;
-        this.gameProcessGuid = gameProcessGuid;
     }
 
     public int getWarzoneId() {
@@ -42,7 +41,11 @@ public class CenterServerNodeName {
         return serverId;
     }
 
-    public long getGameProcessGuid() {
-        return gameProcessGuid;
+    @Override
+    public String toString() {
+        return "CenterServerNodeName{" +
+                "warzoneId=" + warzoneId +
+                ", serverId=" + serverId +
+                '}';
     }
 }

@@ -86,7 +86,7 @@ public class InnerAcceptorMrg {
      * @param lifecycleAware 会话生命周期通知
      */
     public void registerAsyncTcpSession(long serverGuid, RoleType serverRoleType, HostAndPort tcpHostAndPort, SessionLifecycleAware<C2SSession> lifecycleAware){
-        Token loginToken = tokenMrg.newLoginToken(worldInfoMrg.processGuid(),worldInfoMrg.processType(),
+        Token loginToken = tokenMrg.newLoginToken(worldInfoMrg.getProcessGuid(),worldInfoMrg.getProcessType(),
                 serverGuid,serverRoleType);
         byte[] tokenBytes = tokenMrg.encryptToken(loginToken);
 

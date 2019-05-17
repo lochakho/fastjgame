@@ -14,7 +14,7 @@ import com.wjybxx.fastjgame.net.common.CodecHelper;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.utils.GameUtils;
-import com.wjybxx.fastjgame.utils.ZKUtils;
+import com.wjybxx.fastjgame.utils.ZKPathUtils;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
 import org.slf4j.Logger;
@@ -74,7 +74,7 @@ public class SceneWorld extends WorldCore {
 
     @Override
     protected void registerAsyncSessionLifeAware(S2CSessionMrg s2CSessionMrg) {
-        this.s2CSessionMrg.registerLifeCycleAware(RoleType.CENTER_SERVER, new SessionLifecycleAware<S2CSession>() {
+        this.s2CSessionMrg.registerLifeCycleAware(RoleType.CENTER, new SessionLifecycleAware<S2CSession>() {
             @Override
             public void onSessionConnected(S2CSession session) {
 
@@ -122,12 +122,12 @@ public class SceneWorld extends WorldCore {
                 sceneWorldInfoMrg.getChannelId(),
                 outerTcpHostAndPort.toString(),outerWebsocketHostAndPort.toString());
 
-        String parentPath= ZKUtils.onlineParentPath(sceneWorldInfoMrg.getWarzoneId());
+        String parentPath= ZKPathUtils.onlineParentPath(sceneWorldInfoMrg.getWarzoneId());
         String nodeName;
         if (sceneWorldInfoMrg.getSceneProcessType()== SceneProcessType.SINGLE){
-            nodeName= ZKUtils.buildSingleSceneNodeName(sceneWorldInfoMrg.getWarzoneId(),sceneWorldInfoMrg.getServerId(),sceneWorldInfoMrg.getProcessGuid());
+            nodeName= ZKPathUtils.buildSingleSceneNodeName(sceneWorldInfoMrg.getWarzoneId(),sceneWorldInfoMrg.getServerId(),sceneWorldInfoMrg.getProcessGuid());
         }else {
-            nodeName= ZKUtils.buildCrossSceneNodeName(sceneWorldInfoMrg.getWarzoneId(),sceneWorldInfoMrg.getProcessGuid());
+            nodeName= ZKPathUtils.buildCrossSceneNodeName(sceneWorldInfoMrg.getWarzoneId(),sceneWorldInfoMrg.getProcessGuid());
         }
         curatorMrg.createNode(ZKPaths.makePath(parentPath,nodeName), CreateMode.EPHEMERAL,GameUtils.serializeToJsonBytes(zkOnlineSceneNode));
     }

@@ -16,6 +16,8 @@
 
 package com.wjybxx.fastjgame.core.nodename;
 
+import com.wjybxx.fastjgame.misc.PlatformType;
+
 /**
  * 单服场景节点名字。
  * 场景服需要不同的名字，场景进程之间没有直接的互斥关系，后启动的可以和先启动的同时存在。
@@ -25,21 +27,36 @@ package com.wjybxx.fastjgame.core.nodename;
  * @github - https://github.com/hl845740757
  */
 public class SingleSceneNodeName {
-
+    /**
+     * 战区id来自父节点
+     */
     private final int warzoneId;
-
+    /**
+     * 所属的平台
+     */
+    private final PlatformType platformType;
+    /**
+     * 所属的服
+     */
     private final int serverId;
-
+    /**
+     * guid
+     */
     private final long sceneProcessGuid;
 
-    public SingleSceneNodeName(int warzoneId, int serverId, long sceneProcessGuid) {
+    public SingleSceneNodeName(int warzoneId, PlatformType platformType, int serverId, long sceneProcessGuid) {
         this.warzoneId = warzoneId;
+        this.platformType = platformType;
         this.serverId = serverId;
         this.sceneProcessGuid = sceneProcessGuid;
     }
 
     public int getWarzoneId() {
         return warzoneId;
+    }
+
+    public PlatformType getPlatformType() {
+        return platformType;
     }
 
     public int getServerId() {

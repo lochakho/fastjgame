@@ -21,12 +21,11 @@ import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
 import com.wjybxx.fastjgame.core.SceneProcessType;
 import com.wjybxx.fastjgame.core.SceneRegion;
 import com.wjybxx.fastjgame.net.common.RoleType;
-import com.wjybxx.fastjgame.utils.ZKUtils;
+import com.wjybxx.fastjgame.utils.ZKPathUtils;
 import org.apache.zookeeper.CreateMode;
 
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -39,7 +38,6 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
 
     private static final int SINGLE_SCENE_MIN_CHANNEL_ID=1;
     private static final int CROSS_SCENE_MIN_CHANNEL_ID=10001;
-
 
     /**
      * scene进程类型
@@ -79,11 +77,11 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
         // 只有本服场景才支持指定服务器id
         if(sceneProcessType == SceneProcessType.SINGLE){
             serverId = startArgs.getAsInt("serverId");
-            final String originPath = ZKUtils.singleChannelPath(warzoneId, serverId);
+            final String originPath = ZKPathUtils.singleChannelPath(warzoneId, serverId);
             this.initChannelId(originPath,SINGLE_SCENE_MIN_CHANNEL_ID);
         }else {
             serverId = -1;
-            String originPath = ZKUtils.crossChannelPath(warzoneId);
+            String originPath = ZKPathUtils.crossChannelPath(warzoneId);
             this.initChannelId(originPath,CROSS_SCENE_MIN_CHANNEL_ID);
         }
 
@@ -100,7 +98,7 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
 
     @Override
     public RoleType getProcessType() {
-        return RoleType.SCENE_SERVER;
+        return RoleType.SCENE;
     }
 
     public SceneProcessType getSceneProcessType() {
@@ -137,14 +135,14 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
      * @throws Exception zk errors
      */
     private void initChannelId(String originPath,int startChannelId) throws Exception {
-        final String parent = ZKUtils.findParentPath(originPath);
-        final String lockPath = ZKUtils.findAppropriateLockPath(parent);
+        final String parent = ZKPathUtils.findParentPath(originPath);
+        final String lockPath = ZKPathUtils.findAppropriateLockPath(parent);
         // 如果父节点存在，且没有子节点，则先删除，让序号初始化为0,再创建节点
         // 整个是一个先检查后执行的逻辑，因此需要加锁，保证整个操作的原子性
         curatorMrg.actionWhitLock(lockPath,lockPath1 -> {
             curatorMrg.deleteNodeIfNoChild(parent);
             String realPath=curatorMrg.createNode(originPath,CreateMode.EPHEMERAL_SEQUENTIAL);
-            this.channelId = startChannelId + ZKUtils.parseSequentialId(realPath);
+            this.channelId = startChannelId + ZKPathUtils.parseSequentialId(realPath);
         });
 
     }

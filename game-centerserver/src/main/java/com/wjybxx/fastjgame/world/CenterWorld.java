@@ -25,7 +25,7 @@ import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
 import com.wjybxx.fastjgame.utils.ConcurrentUtils;
 import com.wjybxx.fastjgame.utils.GameUtils;
-import com.wjybxx.fastjgame.utils.ZKUtils;
+import com.wjybxx.fastjgame.utils.ZKPathUtils;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
 
@@ -36,7 +36,7 @@ import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_sc
 import static com.wjybxx.fastjgame.protobuffer.p_center_warzone.*;
 
 /**
- * CENTER_SERVER
+ * CENTER
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/15 22:43
@@ -103,8 +103,8 @@ public class CenterWorld extends WorldCore {
         HostAndPort httpHostAndPort = innerAcceptorMrg.bindInnerHttpPort();
 
         // 注册到zk
-        String parentPath= ZKUtils.onlineParentPath(centerWorldInfoMrg.getWarzoneId());
-        String nodeName= ZKUtils.buildCenterNodeName(centerWorldInfoMrg.getWarzoneId(), centerWorldInfoMrg.getServerId());
+        String parentPath= ZKPathUtils.onlineParentPath(centerWorldInfoMrg.getWarzoneId());
+        String nodeName= ZKPathUtils.buildCenterNodeName(centerWorldInfoMrg.getWarzoneId(), centerWorldInfoMrg.getServerId());
 
         ZKOnlineCenterNode zkOnlineCenterNode=new ZKOnlineCenterNode(tcpHostAndPort.toString(),
                 syncRpcHostAndPort.toString(),

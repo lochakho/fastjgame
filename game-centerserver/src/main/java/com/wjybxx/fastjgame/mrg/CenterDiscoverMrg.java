@@ -26,7 +26,7 @@ import com.wjybxx.fastjgame.core.nodename.WarzoneNodeName;
 import com.wjybxx.fastjgame.misc.AbstractThreadLifeCycleHelper;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.utils.GameUtils;
-import com.wjybxx.fastjgame.utils.ZKUtils;
+import com.wjybxx.fastjgame.utils.ZKPathUtils;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.slf4j.Logger;
@@ -77,7 +77,7 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
 
     @Override
     protected void startImp() throws Exception {
-        String watchPath = ZKUtils.onlineParentPath(centerWorldInfoMrg.getWarzoneId());
+        String watchPath = ZKPathUtils.onlineParentPath(centerWorldInfoMrg.getWarzoneId());
         List<ChildData> childrenData = curatorMrg.watchChildren(watchPath, (client, event) -> eventQueue.offer(event));
 
         // 初始监听
@@ -101,10 +101,10 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
         if (type != Type.CHILD_ADDED && type != Type.CHILD_REMOVED){
             return;
         }
-        String nodeName= ZKUtils.findNodeName(childData.getPath());
-        RoleType roleType= ZKUtils.parseServerType(nodeName);
+        String nodeName= ZKPathUtils.findNodeName(childData.getPath());
+        RoleType roleType= ZKPathUtils.parseServerType(nodeName);
         // 只处理战区和scene信息
-        if (roleType != RoleType.SCENE_SERVER && roleType != RoleType.WARZONE_SERVER){
+        if (roleType != RoleType.SCENE && roleType != RoleType.WARZONE){
             return;
         }
 
@@ -115,7 +115,7 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
             onlineNodeInfoMap.remove(childData.getPath());
         }
 
-        if (roleType==RoleType.SCENE_SERVER){
+        if (roleType==RoleType.SCENE){
             onSceneEvent(type, childData);
         }else {
             onWarzoneEvent(type, childData);
@@ -123,11 +123,11 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
     }
 
     private void onSceneEvent(Type type, ChildData childData) {
-        SceneProcessType sceneProcessType = ZKUtils.parseSceneType(childData.getPath());
+        SceneProcessType sceneProcessType = ZKPathUtils.parseSceneType(childData.getPath());
         ZKOnlineSceneNode zkOnlineSceneNode=GameUtils.parseFromJsonBytes(childData.getData(),ZKOnlineSceneNode.class);
         if (sceneProcessType==SceneProcessType.SINGLE){
             // 单服场景
-            SingleSceneNodeName singleSceneNodeName = ZKUtils.parseSingleSceneNodeName(childData.getPath());
+            SingleSceneNodeName singleSceneNodeName = ZKPathUtils.parseSingleSceneNodeName(childData.getPath());
             if (singleSceneNodeName.getWarzoneId() != centerWorldInfoMrg.getWarzoneId()
                     || singleSceneNodeName.getServerId() != centerWorldInfoMrg.getServerId()){
                 // 不是我的场景
@@ -143,7 +143,7 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
             }
         }else {
             // 跨服场景
-            CrossSceneNodeName crossSceneNodeName= ZKUtils.parseCrossSceneNodeName(childData.getPath());
+            CrossSceneNodeName crossSceneNodeName= ZKPathUtils.parseCrossSceneNodeName(childData.getPath());
             if (type==Type.CHILD_ADDED){
                 sceneInCenterInfoMrg.onDiscoverCrossScene(crossSceneNodeName,zkOnlineSceneNode);
                 logger.info("discover cross scene {}",crossSceneNodeName);
@@ -156,7 +156,7 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
     }
 
     private void onWarzoneEvent(Type type, ChildData childData) {
-        WarzoneNodeName warzoneNodeName= ZKUtils.parseWarzoneNodeNode(childData.getPath());
+        WarzoneNodeName warzoneNodeName= ZKPathUtils.parseWarzoneNodeNode(childData.getPath());
         if (warzoneNodeName.getWarzoneId()!=centerWorldInfoMrg.getWarzoneId()){
             // 不是我的战区，这里不应该走到，因为该节点下的进程都是同一个进程的
             return;

@@ -17,35 +17,26 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
-import com.wjybxx.fastjgame.net.common.RoleType;
+import com.wjybxx.fastjgame.core.CenterInLoginInfo;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 /**
+ * CenterServer在LoginServer端的信息
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/17 15:40
+ * @date 2019/5/17 21:23
  * @github - https://github.com/hl845740757
  */
-public class WarzoneWorldInfoMrg extends WorldCoreInfoMrg{
+public class CenterInLoginInfoMrg {
 
-    private int warzoneId;
+    /**
+     * 服id->服信息的映射，暂时未涉及跨平台
+     */
+    private final Int2ObjectMap<CenterInLoginInfo> serverId2InfoMap=new Int2ObjectOpenHashMap<>();
 
     @Inject
-    public WarzoneWorldInfoMrg(GuidMrg guidMrg) {
-        super(guidMrg);
-    }
+    public CenterInLoginInfoMrg() {
 
-    @Override
-    protected void initImp(ConfigWrapper startArgs) throws Exception {
-        warzoneId=startArgs.getAsInt("warzoneId");
-    }
-
-    @Override
-    public RoleType getProcessType() {
-        return RoleType.WARZONE;
-    }
-
-    public int getWarzoneId() {
-        return warzoneId;
     }
 }

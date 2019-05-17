@@ -14,38 +14,23 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.mrg;
-
-import com.google.inject.Inject;
-import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
-import com.wjybxx.fastjgame.net.common.RoleType;
+package com.wjybxx.fastjgame.module;
 
 /**
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/17 15:40
+ * @date 2019/5/17 20:09
  * @github - https://github.com/hl845740757
  */
-public class WarzoneWorldInfoMrg extends WorldCoreInfoMrg{
+public class LoginModule extends CoreModule{
 
-    private int warzoneId;
+    @Override
+    protected void bindWorldAndWorldInfoMrg() {
 
-    @Inject
-    public WarzoneWorldInfoMrg(GuidMrg guidMrg) {
-        super(guidMrg);
     }
 
     @Override
-    protected void initImp(ConfigWrapper startArgs) throws Exception {
-        warzoneId=startArgs.getAsInt("warzoneId");
-    }
+    protected void bindOthers() {
 
-    @Override
-    public RoleType getProcessType() {
-        return RoleType.WARZONE;
-    }
-
-    public int getWarzoneId() {
-        return warzoneId;
     }
 }

@@ -17,7 +17,7 @@ package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.utils.GameUtils;
-import com.wjybxx.fastjgame.utils.ZKUtils;
+import com.wjybxx.fastjgame.utils.ZKPathUtils;
 import org.apache.curator.framework.recipes.atomic.DistributedAtomicLong;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.zookeeper.CreateMode;
@@ -87,8 +87,8 @@ public class ZkGuidMrg implements GuidMrg {
         }
         // 本地缓存用完了
         if (guidSequence == Integer.MAX_VALUE){
-            String guidIndexPath = ZKUtils.guidIndexPath();
-            String lockPath= ZKUtils.findAppropriateLockPath(guidIndexPath);
+            String guidIndexPath = ZKPathUtils.guidIndexPath();
+            String lockPath= ZKPathUtils.findAppropriateLockPath(guidIndexPath);
             curatorMrg.actionWhitLock(lockPath,lockPath1 -> incGuidIndex());
         }
     }
@@ -108,8 +108,8 @@ public class ZkGuidMrg implements GuidMrg {
      * @throws Exception zk errors
      */
     private void init() throws Exception {
-        String guidIndexPath = ZKUtils.guidIndexPath();
-        String lockPath= ZKUtils.findAppropriateLockPath(guidIndexPath);
+        String guidIndexPath = ZKPathUtils.guidIndexPath();
+        String lockPath= ZKPathUtils.findAppropriateLockPath(guidIndexPath);
 
         curatorMrg.actionWhitLock(lockPath,lockPath1 -> {
             if (!curatorMrg.isPathExist(guidIndexPath)){
@@ -129,12 +129,12 @@ public class ZkGuidMrg implements GuidMrg {
      * @throws Exception zk errors
      */
     private void incGuidIndex() throws Exception{
-        byte[] oldData=curatorMrg.getData(ZKUtils.guidIndexPath());
+        byte[] oldData=curatorMrg.getData(ZKPathUtils.guidIndexPath());
         int zkGuidIndex= GameUtils.parseIntFromStringBytes(oldData);
 
         int nextGuidIndex = zkGuidIndex+1;
         byte[] newData = GameUtils.serializeToStringBytes(nextGuidIndex);
-        curatorMrg.setData(ZKUtils.guidIndexPath(), newData);
+        curatorMrg.setData(ZKPathUtils.guidIndexPath(), newData);
 
         updateCache(nextGuidIndex);
     }

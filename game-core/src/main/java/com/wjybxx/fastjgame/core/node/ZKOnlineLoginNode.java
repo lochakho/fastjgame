@@ -14,38 +14,35 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.mrg;
-
-import com.google.inject.Inject;
-import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
-import com.wjybxx.fastjgame.net.common.RoleType;
+package com.wjybxx.fastjgame.core.node;
 
 /**
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/17 15:40
+ * @date 2019/5/17 21:28
  * @github - https://github.com/hl845740757
  */
-public class WarzoneWorldInfoMrg extends WorldCoreInfoMrg{
+public class ZKOnlineLoginNode {
 
-    private int warzoneId;
+    /**
+     * 用于GM等工具而绑定的http端口信息
+     */
+    private final String innerHttpAddress;
+    /**
+     * 为玩家服务的http端口
+     */
+    private final String outerHttpAddress;
 
-    @Inject
-    public WarzoneWorldInfoMrg(GuidMrg guidMrg) {
-        super(guidMrg);
+    public ZKOnlineLoginNode(String innerHttpAddress, String outerHttpAddress) {
+        this.innerHttpAddress = innerHttpAddress;
+        this.outerHttpAddress = outerHttpAddress;
     }
 
-    @Override
-    protected void initImp(ConfigWrapper startArgs) throws Exception {
-        warzoneId=startArgs.getAsInt("warzoneId");
+    public String getInnerHttpAddress() {
+        return innerHttpAddress;
     }
 
-    @Override
-    public RoleType getProcessType() {
-        return RoleType.WARZONE;
-    }
-
-    public int getWarzoneId() {
-        return warzoneId;
+    public String getOuterHttpAddress() {
+        return outerHttpAddress;
     }
 }

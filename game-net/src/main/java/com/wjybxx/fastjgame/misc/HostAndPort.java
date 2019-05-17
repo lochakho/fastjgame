@@ -49,7 +49,7 @@ public class HostAndPort {
     }
 
     /**
-     * 转为了特定格式的字符串
+     * 转为了特定格式的字符串。不可随意修改。
      * @return 可解析的字符串
      */
     @Override

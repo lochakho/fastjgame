@@ -51,7 +51,7 @@ public class ExampleLoginServerInfoMrg extends ExampleWorldInfoMrg{
 
     @Override
     public RoleType getProcessType() {
-        return RoleType.LOGIN_SERVER;
+        return RoleType.LOGIN;
     }
 
     public Long2ObjectMap<ServerInfo> getServerMap() {

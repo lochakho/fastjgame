@@ -18,6 +18,7 @@ package com.wjybxx.fastjgame.core;
 
 import com.wjybxx.fastjgame.misc.IntSequencer;
 
+import java.util.EnumSet;
 import java.util.Set;
 
 /**
@@ -39,36 +40,44 @@ public class SceneInCenterInfo {
      * 该channel和IO什么的没任何关系，别混淆了。
      */
     private final int chanelId;
+
     /**
      * 进程类型(本服/跨服)
      */
     private final SceneProcessType processType;
+    /**
+     * 对玩家开放的tcp端口
+     */
+    private final String outerTcpAddress;
+    /**
+     * 对玩家开放的websocket端口
+     */
+    private final String outerWsAddress;
 
     /**
      * 配置的期望启动的区域，尽可能的都启动它们，且不启动额外的区域。
      * (本服scene进程才会有)
      */
-    private final Set<SceneRegion> configuredRegions;
+    private final Set<SceneRegion> configuredRegions = EnumSet.noneOf(SceneRegion.class);
     /**
      * 激活的区域；
      * 激活的区域可以比配置的区域多，比如当其它区域服务器宕机时，它可能会承载这部分区域。
      * 如果该进程承载的都是互斥区域，那么新启动的进程也无法分担它的压力。
      * 如果该进程城战的有非互斥区域，那么启动新的带有相同非互斥区域的服务器将降低该进程压力。
      */
-    private final Set<SceneRegion> activeRegions;
+    private final Set<SceneRegion> activeRegions = EnumSet.noneOf(SceneRegion.class);
     /**
      * 在线玩家数量计数器。
      * 本服玩家在当前scene的数量。
      */
     private final IntSequencer onlinePlayerSequencer=new IntSequencer(0);
 
-    public SceneInCenterInfo(long sceneProcessGuid, int chanelId, SceneProcessType processType,
-                             Set<SceneRegion> configuredRegions, Set<SceneRegion> activeRegions) {
+    public SceneInCenterInfo(long sceneProcessGuid, int chanelId, SceneProcessType processType, String outerTcpAddress, String outerWsAddress) {
         this.sceneProcessGuid = sceneProcessGuid;
         this.chanelId = chanelId;
         this.processType = processType;
-        this.configuredRegions = configuredRegions;
-        this.activeRegions = activeRegions;
+        this.outerTcpAddress = outerTcpAddress;
+        this.outerWsAddress = outerWsAddress;
     }
 
     public long getSceneProcessGuid() {
@@ -81,6 +90,14 @@ public class SceneInCenterInfo {
 
     public SceneProcessType getProcessType() {
         return processType;
+    }
+
+    public String getOuterTcpAddress() {
+        return outerTcpAddress;
+    }
+
+    public String getOuterWsAddress() {
+        return outerWsAddress;
     }
 
     public Set<SceneRegion> getConfiguredRegions() {

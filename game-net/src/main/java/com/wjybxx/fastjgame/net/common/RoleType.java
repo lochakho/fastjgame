@@ -36,25 +36,25 @@ public enum RoleType {
      */
     TEST(0),
     /**
-     * 网关服
+     * 网关服(不使用)
      */
-    GATE_SERVER(1),
+    GATE(1),
     /**
      * 登录服(login server)
      */
-    LOGIN_SERVER(2),
+    LOGIN(2),
     /**
      * 中心服务器
      */
-    CENTER_SERVER(3),
+    CENTER(3),
     /**
      * 场景服
      */
-    SCENE_SERVER(4),
+    SCENE(4),
     /**
      * 战区服
      */
-    WARZONE_SERVER(5),
+    WARZONE(5),
     /**
      * 玩家
      */

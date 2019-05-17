@@ -24,7 +24,9 @@ package com.wjybxx.fastjgame.core.nodename;
  * @github - https://github.com/hl845740757
  */
 public class WarzoneNodeName {
-
+    /**
+     * 其实可以不要的
+     */
     private final int warzoneId;
 
     public WarzoneNodeName(int warzoneId) {

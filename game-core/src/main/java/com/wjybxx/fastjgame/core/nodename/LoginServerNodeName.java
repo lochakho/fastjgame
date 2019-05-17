@@ -14,38 +14,36 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.mrg;
-
-import com.google.inject.Inject;
-import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
-import com.wjybxx.fastjgame.net.common.RoleType;
+package com.wjybxx.fastjgame.core.nodename;
 
 /**
+ * 登录服务器节点名字
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/17 15:40
+ * @date 2019/5/17 21:27
  * @github - https://github.com/hl845740757
  */
-public class WarzoneWorldInfoMrg extends WorldCoreInfoMrg{
+public class LoginServerNodeName {
 
-    private int warzoneId;
+    /**
+     * 登录服绑定的端口
+     */
+    private final int port;
+    /**
+     * 登录服进程guid
+     */
+    private final long loginProcessGuid;
 
-    @Inject
-    public WarzoneWorldInfoMrg(GuidMrg guidMrg) {
-        super(guidMrg);
+    public LoginServerNodeName(int port, long loginProcessGuid) {
+        this.port = port;
+        this.loginProcessGuid = loginProcessGuid;
     }
 
-    @Override
-    protected void initImp(ConfigWrapper startArgs) throws Exception {
-        warzoneId=startArgs.getAsInt("warzoneId");
+    public int getPort() {
+        return port;
     }
 
-    @Override
-    public RoleType getProcessType() {
-        return RoleType.WARZONE;
-    }
-
-    public int getWarzoneId() {
-        return warzoneId;
+    public long getLoginProcessGuid() {
+        return loginProcessGuid;
     }
 }

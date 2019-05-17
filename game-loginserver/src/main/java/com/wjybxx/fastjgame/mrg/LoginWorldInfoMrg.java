@@ -16,57 +16,37 @@
 
 package com.wjybxx.fastjgame.mrg;
 
-import com.google.inject.Inject;
 import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
-import com.wjybxx.fastjgame.misc.PlatformType;
 import com.wjybxx.fastjgame.net.common.RoleType;
 
 /**
+ * 登录服需要启动参数吗？
+ * 需要指定端口，如果随机端口的话，得查zookeeper才知道绑定的哪个端口，
+ * 而且如果用Nginx，每次都可能要改配置。
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/15 23:30
+ * @date 2019/5/17 20:18
  * @github - https://github.com/hl845740757
  */
-public class CenterWorldInfoMrg extends WorldCoreInfoMrg{
-    /**
-     * 所属的运营平台
-     */
-    private PlatformType platformType;
-    /**
-     * 从属的战区
-     */
-    private int warzoneId;
-    /**
-     * 服id
-     */
-    private int serverId;
+public class LoginWorldInfoMrg extends WorldCoreInfoMrg{
 
-    @Inject
-    public CenterWorldInfoMrg(GuidMrg guidMrg) {
+    private int port;
+
+    public LoginWorldInfoMrg(GuidMrg guidMrg) {
         super(guidMrg);
     }
 
     @Override
     protected void initImp(ConfigWrapper startArgs) throws Exception {
-        platformType=PlatformType.valueOf(startArgs.getAsString("platform"));
-        warzoneId=startArgs.getAsInt("warzoneId");
-        serverId=startArgs.getAsInt("serverId");
+        port=startArgs.getAsInt("port");
     }
 
     @Override
     public RoleType getProcessType() {
-        return RoleType.CENTER;
+        return RoleType.LOGIN;
     }
 
-    public PlatformType getPlatformType() {
-        return platformType;
-    }
-
-    public int getWarzoneId() {
-        return warzoneId;
-    }
-
-    public int getServerId() {
-        return serverId;
+    public int getPort() {
+        return port;
     }
 }

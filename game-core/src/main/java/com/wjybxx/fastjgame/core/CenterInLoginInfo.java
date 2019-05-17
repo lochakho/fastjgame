@@ -14,38 +14,27 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.mrg;
+package com.wjybxx.fastjgame.core;
 
-import com.google.inject.Inject;
-import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
-import com.wjybxx.fastjgame.net.common.RoleType;
+import com.wjybxx.fastjgame.core.node.ZKOnlineCenterNode;
+import com.wjybxx.fastjgame.core.nodename.CenterServerNodeName;
 
 /**
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/17 15:40
+ * @date 2019/5/17 21:24
  * @github - https://github.com/hl845740757
  */
-public class WarzoneWorldInfoMrg extends WorldCoreInfoMrg{
+public class CenterInLoginInfo {
 
-    private int warzoneId;
+    private final CenterServerNodeName nodeName;
 
-    @Inject
-    public WarzoneWorldInfoMrg(GuidMrg guidMrg) {
-        super(guidMrg);
+    private final ZKOnlineCenterNode nodeData;
+
+    public CenterInLoginInfo(CenterServerNodeName nodeName, ZKOnlineCenterNode nodeData) {
+        this.nodeName = nodeName;
+        this.nodeData = nodeData;
     }
 
-    @Override
-    protected void initImp(ConfigWrapper startArgs) throws Exception {
-        warzoneId=startArgs.getAsInt("warzoneId");
-    }
 
-    @Override
-    public RoleType getProcessType() {
-        return RoleType.WARZONE;
-    }
-
-    public int getWarzoneId() {
-        return warzoneId;
-    }
 }

@@ -30,25 +30,25 @@ import java.io.File;
  * 以下参数替换ip后可直接复制到启动参数。
  *
  * 服务端(游戏服)的参数如(我们启动两个服务器，每个服务器同时监听tcp端口、websocket端口、http端口、SyncRpc端口
- roleType=CENTER_SERVER processGuid=1 tcpPort=10001 wsPort=10002 httpPort=10003 syncRpcPort=10004
- roleType=CENTER_SERVER processGuid=2 tcpPort=20001 wsPort=20002 httpPort=20003 syncRpcPort=20004
+ roleType=CENTER processGuid=1 tcpPort=10001 wsPort=10002 httpPort=10003 syncRpcPort=10004
+ roleType=CENTER processGuid=2 tcpPort=20001 wsPort=20002 httpPort=20003 syncRpcPort=20004
  *
  * 客户端(登录服)可以连接任意个数服务器(参数项决定)
  * 一个客户端最多可以连接同一个服4个端口中的三个， http端口 + syncRpc端口 + tcp端口或websocket端口
  * (tcp和websocket只能二选一，否则sessionId冲突)，一个都不连的话啥也不干.
  *
  * tcp客户端(同时连接服务器的tcp端口和syncRpc端口)：
- roleType=LOGIN_SERVER processGuid=20001
+ roleType=LOGIN processGuid=20001
  tcp_1=192.168.1.103:10001 syncRpc_1=192.168.1.103:10004
  tcp_2=192.168.1.103:20001 syncRpc_2=192.168.1.103:20004
  *
  * ws客户端(同时连接服务器的ws端口和syncRpc端口)：
- roleType=LOGIN_SERVER processGuid=20002
+ roleType=LOGIN processGuid=20002
  ws_1=192.168.1.103:10002 syncRpc_1=192.168.1.103:10004
  ws_2=192.168.1.103:20002 syncRpc_2=192.168.1.103:20004
  *
  * http客户端(只连接http端口)：
- roleType=LOGIN_SERVER processGuid=20003 http_1=192.168.1.103:10003 http_2=192.168.1.103:20003
+ roleType=LOGIN processGuid=20003 http_1=192.168.1.103:10003 http_2=192.168.1.103:20003
  *
  * 参数详细意义可参考{@link com.wjybxx.fastjgame.example.mrg.ExampleLoginServerInfoMrg#parseServerInfos(ConfigWrapper)}
  * tcp_serverGuid 意味着连接指定 serverGuid 的http端口，后面的属性为地址
@@ -85,11 +85,11 @@ public class Main {
         int framesPerSecond;
 
         switch (roleType){
-            case CENTER_SERVER:
+            case CENTER:
                 module=new ExampleGameServerModule();
                 framesPerSecond=25;
                 break;
-            case LOGIN_SERVER:
+            case LOGIN:
                 module=new ExampleLoginServerModule();
                 framesPerSecond=1;
                 break;

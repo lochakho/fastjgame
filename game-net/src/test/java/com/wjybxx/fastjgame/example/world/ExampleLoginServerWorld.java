@@ -118,7 +118,7 @@ public class ExampleLoginServerWorld extends World {
 
         CodecHelper codecHelper=codecHelperMrg.getCodecHelper("json");
         Token token= tokenMrg.newLoginToken(worldInfoMrg.getProcessGuid(), worldInfoMrg.getProcessType(),
-                serverInfo.getServerGuid(), RoleType.CENTER_SERVER);
+                serverInfo.getServerGuid(), RoleType.CENTER);
         byte[] encryptToken= tokenMrg.encryptToken(token);
 
         Supplier<ChannelInitializer<SocketChannel>> initializerSupplier;
@@ -135,7 +135,7 @@ public class ExampleLoginServerWorld extends World {
         assert null!=address;
         HostAndPort hostAndPort= HostAndPort.parseHostAndPort(address);
 
-        c2SSessionMrg.register(serverInfo.getServerGuid(), RoleType.CENTER_SERVER, hostAndPort,
+        c2SSessionMrg.register(serverInfo.getServerGuid(), RoleType.CENTER, hostAndPort,
                 initializerSupplier,
                 new ExampleSessionLifecycleAware(), encryptToken);
         serverInfo.setTcpOrWsRegistered(true);
@@ -152,7 +152,7 @@ public class ExampleLoginServerWorld extends World {
         CodecHelper codecHelper=codecHelperMrg.getCodecHelper("json");
         HostAndPort hostAndPort= HostAndPort.parseHostAndPort(syncRpcAddress);
 
-        syncC2SSessionMrg.registerServer(serverInfo.getServerGuid(), RoleType.CENTER_SERVER, hostAndPort,
+        syncC2SSessionMrg.registerServer(serverInfo.getServerGuid(), RoleType.CENTER, hostAndPort,
                 () -> new ClientSyncRpcInitializer(netConfigMrg.maxFrameLength(),
                         netConfigMrg.syncRpcPingInterval(),
                         codecHelper,

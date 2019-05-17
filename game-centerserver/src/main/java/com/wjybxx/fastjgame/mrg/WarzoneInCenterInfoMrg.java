@@ -26,8 +26,6 @@ import com.wjybxx.fastjgame.mrg.sync.SyncC2SSessionMrg;
 import com.wjybxx.fastjgame.net.async.C2SSession;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
-import com.wjybxx.fastjgame.net.sync.SyncC2SSession;
-import com.wjybxx.fastjgame.utils.GameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,12 +77,12 @@ public class WarzoneInCenterInfoMrg {
         }
         // 注册异步tcp会话
         HostAndPort tcpHostAndPort=HostAndPort.parseHostAndPort(zkOnlineWarzoneNode.getInnerTcpAddress());
-        innerAcceptorMrg.registerAsyncTcpSession(zkOnlineWarzoneNode.getProcessGuid(), RoleType.WARZONE_SERVER,
+        innerAcceptorMrg.registerAsyncTcpSession(zkOnlineWarzoneNode.getProcessGuid(), RoleType.WARZONE,
                 tcpHostAndPort,new WarzoneSessionLifeAware());
 
         // 注册同步rpc会话(异步连接管理更加稳健，如果异步连接有效，那么同步连接也能保持有效)
         HostAndPort syncRpcHostAndPort=HostAndPort.parseHostAndPort(zkOnlineWarzoneNode.getInnerRpcAddress());
-        innerAcceptorMrg.registerSyncRpcSession(zkOnlineWarzoneNode.getProcessGuid(), RoleType.WARZONE_SERVER,
+        innerAcceptorMrg.registerSyncRpcSession(zkOnlineWarzoneNode.getProcessGuid(), RoleType.WARZONE,
                 syncRpcHostAndPort,
                 session -> {
                     return  null != warzoneInCenterInfo && warzoneInCenterInfo.getWarzoneProcessGuid() == session.getServerGuid();

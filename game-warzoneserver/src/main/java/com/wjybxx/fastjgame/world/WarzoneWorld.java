@@ -30,7 +30,7 @@ import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.utils.ConcurrentUtils;
 import com.wjybxx.fastjgame.utils.GameUtils;
-import com.wjybxx.fastjgame.utils.ZKUtils;
+import com.wjybxx.fastjgame.utils.ZKPathUtils;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
 
@@ -75,7 +75,7 @@ public class WarzoneWorld extends WorldCore {
 
     @Override
     protected void registerAsyncSessionLifeAware(S2CSessionMrg s2CSessionMrg) {
-        this.s2CSessionMrg.registerLifeCycleAware(RoleType.CENTER_SERVER, new SessionLifecycleAware<S2CSession>() {
+        this.s2CSessionMrg.registerLifeCycleAware(RoleType.CENTER, new SessionLifecycleAware<S2CSession>() {
             @Override
             public void onSessionConnected(S2CSession session) {
 
@@ -105,8 +105,8 @@ public class WarzoneWorld extends WorldCore {
         HostAndPort httpHostAndPort = innerAcceptorMrg.bindInnerHttpPort();
 
         // 注册到zk
-        String parentPath= ZKUtils.onlineParentPath(warzoneWorldInfoMrg.getWarzoneId());
-        String nodeName= ZKUtils.buildWarzoneNodeName(warzoneWorldInfoMrg.getWarzoneId());
+        String parentPath= ZKPathUtils.onlineParentPath(warzoneWorldInfoMrg.getWarzoneId());
+        String nodeName= ZKPathUtils.buildWarzoneNodeName(warzoneWorldInfoMrg.getWarzoneId());
 
         ZKOnlineCenterNode zkOnlineCenterNode=new ZKOnlineCenterNode(tcpHostAndPort.toString(),
                 syncRpcHostAndPort.toString(),

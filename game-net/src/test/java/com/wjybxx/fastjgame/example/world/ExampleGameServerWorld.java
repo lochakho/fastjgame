@@ -114,7 +114,7 @@ public class ExampleGameServerWorld extends World {
 
     @Override
     protected void registerAsyncSessionLifeAware(S2CSessionMrg s2CSessionMrg) {
-        this.s2CSessionMrg.registerLifeCycleAware(RoleType.LOGIN_SERVER,new ExampleS2CSessionLifecycleAware());
+        this.s2CSessionMrg.registerLifeCycleAware(RoleType.LOGIN,new ExampleS2CSessionLifecycleAware());
     }
 
     @Override

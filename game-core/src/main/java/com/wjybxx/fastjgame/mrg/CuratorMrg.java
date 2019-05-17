@@ -22,7 +22,7 @@ import com.wjybxx.fastjgame.misc.BackoffRetryForever;
 import com.wjybxx.fastjgame.misc.LockPathAction;
 import com.wjybxx.fastjgame.utils.ConcurrentUtils;
 import com.wjybxx.fastjgame.utils.GameUtils;
-import com.wjybxx.fastjgame.utils.ZKUtils;
+import com.wjybxx.fastjgame.utils.ZKPathUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.*;
@@ -61,7 +61,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </P>
  * <p>
  *     加锁时注意：不可以对临时节点加锁(临时节点不能创建子节点，你需要使用另外一个节点加锁，来保护它)。
- *     {@link ZKUtils#findAppropriateLockPath(String)}可能会有帮助。
+ *     {@link ZKPathUtils#findAppropriateLockPath(String)}可能会有帮助。
  * </p>
  *   警告：
  *   关于Curator的{@link NodeCache} 和 {@link PathChildrenCache}线程安全问题请查看笔记：
@@ -184,7 +184,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
 
     /**
      * 对某个永久类型节点加锁，不可以直接对临时节点加锁(临时节点无法创建子节点)，可锁其父节点或其它永久节点；
-     * {@link ZKUtils#findAppropriateLockPath(String)}可能有帮助
+     * {@link ZKPathUtils#findAppropriateLockPath(String)}可能有帮助
      *
      * 实现：阻塞直到锁可用，锁为可重入锁。每一次lock调用都必须有一次对应的{@link #unlock(String)}}调用。
      * 食用方式，就向使用jdk的显式锁一样：

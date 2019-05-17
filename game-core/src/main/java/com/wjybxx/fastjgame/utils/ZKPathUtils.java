@@ -21,16 +21,18 @@ import com.wjybxx.fastjgame.core.nodename.CenterServerNodeName;
 import com.wjybxx.fastjgame.core.nodename.CrossSceneNodeName;
 import com.wjybxx.fastjgame.core.nodename.SingleSceneNodeName;
 import com.wjybxx.fastjgame.core.nodename.WarzoneNodeName;
+import com.wjybxx.fastjgame.misc.PlatformType;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import org.apache.curator.utils.PathUtils;
 
 /**
+ * zookeeper节点路径辅助类
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/16 20:49
  * @github - https://github.com/hl845740757
  */
-public class ZKUtils {
+public class ZKPathUtils {
 
     private static final String CHANNELID_PREFIX="channel-";
 
@@ -103,12 +105,41 @@ public class ZKUtils {
     }
 
     /**
-     * 同一个战区下的服务器注册在同一节点下
-     * @param warzoneId 战区id
+     * 运行平台参数路径
+     * @param platformType 平台枚举
      * @return
      */
-    public static String onlineParentPath(int warzoneId){
-        return "/online/warzone" + warzoneId;
+    public static String platParamPath(PlatformType platformType){
+        return "/config/platform/" + platformType;
+    }
+
+    /**
+     * 真实服配置节点
+     * @param platformType 平台枚举
+     * @param serverId 真实服id，现存的服务器
+     * @return
+     */
+    public static String serverConfigPath(PlatformType platformType,int serverId){
+        return platParamPath(platformType) +"/serverparam/" + serverId;
+    }
+
+    /**
+     * 逻辑服到真实服映射节点
+     * @param platformType 平台枚举
+     * @param logicServerId 逻辑服id(合服前的服id)
+     * @return
+     */
+    public static String serverMappingPath(PlatformType platformType,int logicServerId){
+        return platParamPath(platformType) +"/servermapping" + logicServerId;
+    }
+
+    /**
+     *
+     * @param warzoneId
+     * @return
+     */
+    public static String warzoneConfigPath(int warzoneId){
+        return "/config/warzone/"+warzoneId;
     }
 
     /**
@@ -140,82 +171,41 @@ public class ZKUtils {
         return Integer.parseInt(findNodeName(path).split("-",2)[1]);
     }
 
+    // region 在线节点路径
+
     /**
-     * 为指定本服scene进程创建一个有意义的节点名字，用于注册到zookeeper
+     * 在线节点信息的根节点
+     * @return
+     */
+    public static String onlineRootPath(){
+        return "/online";
+    }
+
+    /**
+     * 同一个战区下的服务器注册在同一节点下.
+     *
+     * 如果战区跨平台：
+     * online/warzone-x/
+     * 如果战区不夸平台:
+     * online/platfrom/warzone
      * @param warzoneId 战区id
-     * @param serverId 几服
-     * @param processGuid 进程guid
-     * @return 唯一的有意义的名字
+     * @return
      */
-    public static String buildSingleSceneNodeName(int warzoneId, int serverId, long processGuid){
-        return RoleType.SCENE_SERVER  + "-" + SceneProcessType.SINGLE.name() + "-" + warzoneId + "-" + serverId + "-" + processGuid;
+    public static String onlineParentPath(int warzoneId){
+        return "/online/warzone-" + warzoneId;
     }
+    // endregion 在线节点路径
+
+    // region 在线节点名字
 
     /**
-     * 解析本地scene进程的节点路径(名字)
-     * @param path fullpath
-     * @return scene包含的基本信息
+     * 通过服务器的节点名字解析服务器的类型。
+     * 名字的第一个字段始终是服务器类型的枚举名。
+     * @param nodeName 服务器节点名字
+     * @return 返回服务器的类型
      */
-    public static SingleSceneNodeName parseSingleSceneNodeName(String path){
-        String[] params = findNodeName(path).split("-",5);
-        int warzoneId = Integer.parseInt(params[2]);
-        int serverId = Integer.parseInt(params[3]);
-        long processGuid = Long.parseLong(params[4]);
-        return new SingleSceneNodeName(warzoneId,serverId,processGuid);
-    }
-
-    /**
-     * 为跨服节点创建一个有意义的节点名字，用于注册到zookeeper
-     * @param warzoneId 战区id
-     * @param processGuid 进程guid
-     * @return 唯一的有意义的名字
-     */
-    public static String buildCrossSceneNodeName(int warzoneId, long processGuid){
-        return RoleType.SCENE_SERVER  + "-" + SceneProcessType.CROSS.name() + "-" + warzoneId + "-" + processGuid;
-    }
-
-    /**
-     * 解析跨服节点的节点路径(名字)
-     * @param path fullpath
-     * @return 跨服节点信息
-     */
-    public static CrossSceneNodeName parseCrossSceneNodeName(String path){
-        String[] params = findNodeName(path).split("-", 4);
-        int warzoneId = Integer.parseInt(params[2]);
-        long processGuid = Long.parseLong(params[3]);
-        return new CrossSceneNodeName(warzoneId,processGuid);
-    }
-
-    /**
-     * 通过场景节点的名字解析场景进程的类型
-     * @param sceneNodePath scene节点的名字
-     * @return scene进程的类型
-     */
-    public static SceneProcessType parseSceneType(String sceneNodePath){
-        String[] params = findNodeName(sceneNodePath).split("-");
-        return SceneProcessType.valueOf(params[1]);
-    }
-
-    /**
-     * 为指定服创建一个有意义的节点名字
-     * @param warzoneId 战区id
-     * @param serverId 几服
-     * @return 唯一的有意义的名字
-     */
-    public static String buildCenterNodeName(int warzoneId, int serverId){
-        return RoleType.CENTER_SERVER + "-" + warzoneId + "-" + serverId;
-    }
-
-    /**
-     * 解析game节点的路径(名字)
-     * @param gameNodeName fullpath
-     * @return game服的信息
-     */
-    public static CenterServerNodeName parseCenterNodeName(String gameNodeName){
-        String[] params = findNodeName(gameNodeName).split("-", 3);
-        int warzoneId = Integer.parseInt(params[1]);
-        int serverId = Integer.parseInt(params[2]);
-        return new CenterServerNodeName(warzoneId, serverId);
+    public static RoleType parseServerType(String nodeName){
+        return RoleType.valueOf(nodeName.split("-",2)[0]);
     }
 
     /**
@@ -224,7 +214,7 @@ public class ZKUtils {
      * @return 唯一的有意义的名字
      */
     public static String buildWarzoneNodeName(int warzoneId){
-        return RoleType.WARZONE_SERVER + "-" + warzoneId;
+        return RoleType.WARZONE + "-" + warzoneId;
     }
 
     /**
@@ -239,12 +229,82 @@ public class ZKUtils {
     }
 
     /**
-     * 通过服务器的节点名字解析服务器的类型
-     * @param nodeName 服务器节点名字
-     * @return 返回服务器的类型
+     * 为指定服创建一个有意义的节点名字
+     * @param warzoneId 战区id
+     * @param serverId 几服
+     * @return 唯一的有意义的名字
      */
-    public static RoleType parseServerType(String nodeName){
-        return RoleType.valueOf(nodeName.split("-",2)[0]);
+    public static String buildCenterNodeName(int warzoneId, int serverId){
+        return RoleType.CENTER + "-" + warzoneId + "-" + serverId;
     }
 
+    /**
+     * 解析game节点的路径(名字)
+     * @param gameNodeName fullpath
+     * @return game服的信息
+     */
+    public static CenterServerNodeName parseCenterNodeName(String gameNodeName){
+        String[] params = findNodeName(gameNodeName).split("-", 3);
+        int warzoneId = Integer.parseInt(params[1]);
+        int serverId = Integer.parseInt(params[2]);
+        return new CenterServerNodeName(warzoneId, null, serverId);
+    }
+
+    /**
+     * 通过场景节点的名字解析场景进程的类型
+     * @param sceneNodePath scene节点的名字
+     * @return scene进程的类型
+     */
+    public static SceneProcessType parseSceneType(String sceneNodePath){
+        String[] params = findNodeName(sceneNodePath).split("-");
+        return SceneProcessType.valueOf(params[1]);
+    }
+
+    /**
+     * 为指定本服scene进程创建一个有意义的节点名字，用于注册到zookeeper
+     * @param warzoneId 战区id
+     * @param serverId 几服
+     * @param processGuid 进程guid
+     * @return 唯一的有意义的名字
+     */
+    public static String buildSingleSceneNodeName(int warzoneId, int serverId, long processGuid){
+        return RoleType.SCENE + "-" + SceneProcessType.SINGLE.name() + "-" + warzoneId + "-" + serverId + "-" + processGuid;
+    }
+
+    /**
+     * 解析本地scene进程的节点路径(名字)
+     * @param path fullpath
+     * @return scene包含的基本信息
+     */
+    public static SingleSceneNodeName parseSingleSceneNodeName(String path){
+        String[] params = findNodeName(path).split("-",5);
+        int warzoneId = Integer.parseInt(params[2]);
+        int serverId = Integer.parseInt(params[3]);
+        long processGuid = Long.parseLong(params[4]);
+        return new SingleSceneNodeName(warzoneId, null, serverId,processGuid);
+    }
+
+    /**
+     * 为跨服节点创建一个有意义的节点名字，用于注册到zookeeper
+     * @param warzoneId 战区id
+     * @param processGuid 进程guid
+     * @return 唯一的有意义的名字
+     */
+    public static String buildCrossSceneNodeName(int warzoneId, long processGuid){
+        return RoleType.SCENE + "-" + SceneProcessType.CROSS.name() + "-" + warzoneId + "-" + processGuid;
+    }
+
+    /**
+     * 解析跨服节点的节点路径(名字)
+     * @param path fullpath
+     * @return 跨服节点信息
+     */
+    public static CrossSceneNodeName parseCrossSceneNodeName(String path){
+        String[] params = findNodeName(path).split("-", 4);
+        int warzoneId = Integer.parseInt(params[2]);
+        long processGuid = Long.parseLong(params[3]);
+        return new CrossSceneNodeName(warzoneId,processGuid);
+    }
+
+    // endregion
 }

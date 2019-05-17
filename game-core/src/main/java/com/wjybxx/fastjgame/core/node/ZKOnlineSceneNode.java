@@ -25,7 +25,7 @@ package com.wjybxx.fastjgame.core.node;
  */
 public class ZKOnlineSceneNode extends ZKOnlineNode{
     /**
-     * 可以不显示在节点上，显示出来是为了方便ZK上查看信息
+     * 该场景进程的频道id
      */
     private final int channelId;
     /**

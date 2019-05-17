@@ -25,9 +25,13 @@ package com.wjybxx.fastjgame.core.nodename;
  * @github - https://github.com/hl845740757
  */
 public class CrossSceneNodeName {
-
+    /**
+     * 战区id，来自父节点
+     */
     private final int warzoneId;
-
+    /**
+     * guid
+     */
     private final long sceneProcessGuid;
 
     public CrossSceneNodeName(int warzoneId, long sceneProcessGuid) {

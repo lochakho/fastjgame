@@ -93,10 +93,12 @@ public class CenterInSceneInfoMrg {
      * @param centerProcessGuid
      */
     public void onDisconnect(long centerProcessGuid, SceneWorld sceneWorld){
-        CenterInSceneInfo centerInSceneInfo = guid2InfoMap.remove(centerProcessGuid);
+        CenterInSceneInfo centerInSceneInfo = guid2InfoMap.get(centerProcessGuid);
         if (null == centerInSceneInfo){
             return;
         }
+        removeInfo(centerInSceneInfo);
+
         // 跨服场景，收到某个center服宕机，无所谓
         if (sceneWorldInfoMrg.getSceneProcessType() == SceneProcessType.CROSS){
             return;
@@ -116,16 +118,12 @@ public class CenterInSceneInfoMrg {
     public void p_center_single_scene_hello_handler(S2CSession session, p_center_single_scene_hello hello) {
         assert !guid2InfoMap.containsKey(session.getClientGuid());
         CenterInSceneInfo centerInSceneInfo=new CenterInSceneInfo(session.getClientGuid(),hello.getServerId());
+        addInfo(centerInSceneInfo);
 
-        p_center_single_scene_hello_result.Builder builder = p_center_single_scene_hello_result
-                .newBuilder()
-                .setChannelId(sceneWorldInfoMrg.getChannelId());
-
+        p_center_single_scene_hello_result.Builder builder = p_center_single_scene_hello_result.newBuilder();
         for (SceneRegion sceneRegion:sceneWorldInfoMrg.getConfiguredRegions()){
             builder.addConfiguredRegions(sceneRegion.getNumber());
         }
-        addInfo(centerInSceneInfo);
-
         s2CSessionMrg.send(session.getClientGuid(),builder.build());
     }
 
@@ -137,14 +135,12 @@ public class CenterInSceneInfoMrg {
     public void p_center_cross_scene_hello_handler(S2CSession session,p_center_cross_scene_hello hello){
         assert !guid2InfoMap.containsKey(session.getClientGuid());
 
-        p_center_cross_scene_hello_result.Builder builder = p_center_cross_scene_hello_result
-                .newBuilder()
-                .setChannelId(sceneWorldInfoMrg.getChannelId());
-
+        p_center_cross_scene_hello_result.Builder builder = p_center_cross_scene_hello_result.newBuilder();
+        // 配置的区域
         for (SceneRegion sceneRegion:sceneWorldInfoMrg.getConfiguredRegions()){
             builder.addConfiguredRegions(sceneRegion.getNumber());
         }
-
+        // 实际激活的区域
         for (SceneRegion sceneRegion:sceneRegionMrg.getActiveRegions()){
             builder.addConfiguredRegions(sceneRegion.getNumber());
         }

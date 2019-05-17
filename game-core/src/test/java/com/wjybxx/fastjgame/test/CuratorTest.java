@@ -5,6 +5,7 @@ import com.wjybxx.fastjgame.mrg.GameConfigMrg;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
+import org.apache.zookeeper.CreateMode;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -25,6 +26,9 @@ public class CuratorTest {
 
         List<ChildData> childrenData = curatorMrg.watchChildren("/mutex", CuratorTest::onEvent);
         childrenData.forEach(CuratorTest::printChild);
+
+        byte[] data = "花好约猿".getBytes(StandardCharsets.UTF_8);
+        curatorMrg.createNode("/name", CreateMode.PERSISTENT,data);
     }
 
     private static void onEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception{

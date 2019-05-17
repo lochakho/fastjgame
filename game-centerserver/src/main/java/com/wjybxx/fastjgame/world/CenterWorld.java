@@ -26,12 +26,15 @@ import com.wjybxx.fastjgame.net.async.S2CSession;
 import com.wjybxx.fastjgame.net.common.ProtoBufMessageSerializer;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
+import com.wjybxx.fastjgame.utils.ConcurrentUtils;
 import com.wjybxx.fastjgame.utils.GameUtils;
 import com.wjybxx.fastjgame.utils.ZKUtils;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
 
 import javax.annotation.Nonnull;
+
+import java.util.concurrent.TimeUnit;
 
 import static com.wjybxx.fastjgame.protobuffer.p_center_scene.*;
 import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello_result;
@@ -135,14 +138,18 @@ public class CenterWorld extends WorldCore {
         String nodeName= ZKUtils.buildCenterNodeName(centerWorldInfoMrg.getWarzoneId(), centerWorldInfoMrg.getServerId());
 
         ZKOnlineCenterNode zkOnlineCenterNode=new ZKOnlineCenterNode(tcpHostAndPort.toString(),
-                syncRpcHostAndPort.toString(), httpHostAndPort.toString(),
+                syncRpcHostAndPort.toString(),
+                httpHostAndPort.toString(),
                 centerWorldInfoMrg.getProcessGuid());
 
 
-        String path = ZKPaths.makePath(parentPath, nodeName);
+        final String path = ZKPaths.makePath(parentPath, nodeName);
         curatorMrg.waitForNodeDelete(path);
 
-        curatorMrg.createNode(path, CreateMode.EPHEMERAL,GameUtils.serializeToJsonBytes(zkOnlineCenterNode));
+        final byte[] initData = GameUtils.serializeToJsonBytes(zkOnlineCenterNode);
+        ConcurrentUtils.awaitRemoteWithSleepingRetry(path,resource -> {
+            return curatorMrg.createNodeIfAbsent(path,CreateMode.EPHEMERAL,initData);
+        },3, TimeUnit.SECONDS);
     }
 
     @Override

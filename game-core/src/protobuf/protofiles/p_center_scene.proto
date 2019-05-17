@@ -42,6 +42,6 @@ message p_center_cross_scene_hello_result{
     int32 channelId=1;
     // 配置(或启动参数)中的支持的区域
     repeated int32 configuredRegions=2;	
-	// 我成功启动了哪些区域
+	// 我成功启动了哪些区域(包含互斥区)
     repeated int32 activeRegions=3;
 }

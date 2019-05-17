@@ -29,6 +29,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.wjybxx.fastjgame.protobuffer.p_center_scene.*;
 import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello;
@@ -44,6 +46,8 @@ import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_sc
  * @github - https://github.com/hl845740757
  */
 public class CenterInSceneInfoMrg {
+
+    private static final Logger logger= LoggerFactory.getLogger(CenterInSceneInfoMrg.class);
     /**
      * scene接收其它服务器的连接，因此它作为连接的服务器放
      */
@@ -73,15 +77,15 @@ public class CenterInSceneInfoMrg {
     private void addInfo(CenterInSceneInfo centerInSceneInfo){
         guid2InfoMap.put(centerInSceneInfo.getCenterProcessGuid(),centerInSceneInfo);
         serverId2InfoMap.put(centerInSceneInfo.getServerId(),centerInSceneInfo);
+
+        logger.info("connect center server {}",centerInSceneInfo.getServerId());
     }
 
     private void removeInfo(CenterInSceneInfo centerInSceneInfo){
         guid2InfoMap.remove(centerInSceneInfo.getCenterProcessGuid());
         serverId2InfoMap.remove(centerInSceneInfo.getServerId());
-    }
 
-    public void onConnect(){
-
+        logger.info("remove center server {}",centerInSceneInfo.getServerId());
     }
 
     /**
@@ -115,14 +119,14 @@ public class CenterInSceneInfoMrg {
 
         p_center_single_scene_hello_result.Builder builder = p_center_single_scene_hello_result
                 .newBuilder()
-                .setChannelId(-1);
+                .setChannelId(sceneWorldInfoMrg.getChannelId());
 
         for (SceneRegion sceneRegion:sceneWorldInfoMrg.getConfiguredRegions()){
             builder.addConfiguredRegions(sceneRegion.getNumber());
         }
-
-        s2CSessionMrg.send(session.getClientGuid(),builder);
         addInfo(centerInSceneInfo);
+
+        s2CSessionMrg.send(session.getClientGuid(),builder.build());
     }
 
     /**
@@ -132,5 +136,18 @@ public class CenterInSceneInfoMrg {
      */
     public void p_center_cross_scene_hello_handler(S2CSession session,p_center_cross_scene_hello hello){
         assert !guid2InfoMap.containsKey(session.getClientGuid());
+
+        p_center_cross_scene_hello_result.Builder builder = p_center_cross_scene_hello_result
+                .newBuilder()
+                .setChannelId(sceneWorldInfoMrg.getChannelId());
+
+        for (SceneRegion sceneRegion:sceneWorldInfoMrg.getConfiguredRegions()){
+            builder.addConfiguredRegions(sceneRegion.getNumber());
+        }
+
+        for (SceneRegion sceneRegion:sceneRegionMrg.getActiveRegions()){
+            builder.addConfiguredRegions(sceneRegion.getNumber());
+        }
+        s2CSessionMrg.send(session.getClientGuid(),builder.build());
     }
 }

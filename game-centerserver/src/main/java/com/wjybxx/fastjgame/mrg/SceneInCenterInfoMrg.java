@@ -30,15 +30,21 @@ import com.wjybxx.fastjgame.net.async.C2SSession;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.net.sync.SyncC2SSession;
+import com.wjybxx.fastjgame.protobuffer.p_sync_center_scene;
+import com.wjybxx.fastjgame.utils.GameUtils;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.wjybxx.fastjgame.protobuffer.p_center_scene.*;
+import static com.wjybxx.fastjgame.protobuffer.p_sync_center_scene.*;
 
 /**
  * SceneServer在CenterServer中的连接等控制器。
@@ -48,6 +54,9 @@ import static com.wjybxx.fastjgame.protobuffer.p_center_scene.*;
  * @github - https://github.com/hl845740757
  */
 public class SceneInCenterInfoMrg {
+
+    private static final Logger logger = LoggerFactory.getLogger(SceneInCenterInfoMrg.class);
+
     /**
      * game主动连接scene，因此scene是服务器端，center是会话的客户端。
      */
@@ -78,11 +87,15 @@ public class SceneInCenterInfoMrg {
     private void addSceneInfo(SceneInCenterInfo sceneInCenterInfo) {
         guid2InfoMap.put(sceneInCenterInfo.getSceneProcessGuid(), sceneInCenterInfo);
         channelId2InfoMap.put(sceneInCenterInfo.getChanelId(), sceneInCenterInfo);
+
+        logger.info("connect {} scene ,channelId={}",sceneInCenterInfo.getProcessType(),sceneInCenterInfo.getChanelId());
     }
 
     private void removeSceneInfo(SceneInCenterInfo sceneInCenterInfo) {
         guid2InfoMap.remove(sceneInCenterInfo.getSceneProcessGuid());
         channelId2InfoMap.remove(sceneInCenterInfo.getChanelId());
+
+        logger.info("remove {} scene ,channelId={}",sceneInCenterInfo.getProcessType(),sceneInCenterInfo.getChanelId());
     }
 
     /**
@@ -99,7 +112,8 @@ public class SceneInCenterInfoMrg {
         // 注册同步rpc会话
         HostAndPort syncRpcHostAndPort=HostAndPort.parseHostAndPort(onlineSceneNode.getInnerRpcAddress());
         innerAcceptorMrg.registerSyncRpcSession(singleSceneNodeName.getSceneProcessGuid(), RoleType.SCENE_SERVER,
-                syncRpcHostAndPort,new SingleSceneSyncAware());
+                syncRpcHostAndPort,
+                GameUtils.emptyAware());
     }
 
     /**
@@ -126,7 +140,7 @@ public class SceneInCenterInfoMrg {
         HostAndPort syncRpcHostAndPort=HostAndPort.parseHostAndPort(onlineSceneNode.getInnerRpcAddress());
         innerAcceptorMrg.registerSyncRpcSession(crossSceneNodeName.getSceneProcessGuid(), RoleType.SCENE_SERVER,
                 syncRpcHostAndPort,
-                new CrossSceneSyncAware());
+                GameUtils.emptyAware());
     }
 
     /**
@@ -142,10 +156,10 @@ public class SceneInCenterInfoMrg {
      */
     private void onSceneDisconnect(long sceneProcessGuid){
         // 移除会话
-        c2SSessionMrg.removeSession(sceneProcessGuid,"node removed");
-        syncC2SSessionMrg.removeSession(sceneProcessGuid,"node removed");
-        // 移除存储的信息
+        c2SSessionMrg.removeSession(sceneProcessGuid,"node removed or disconnect");
+        syncC2SSessionMrg.removeSession(sceneProcessGuid,"node removed or disconnect");
         SceneInCenterInfo sceneInCenterInfo = guid2InfoMap.remove(sceneProcessGuid);
+        // 可能是一个无效的会话
         if (null== sceneInCenterInfo){
             return;
         }
@@ -170,11 +184,6 @@ public class SceneInCenterInfoMrg {
 
         @Override
         public void onSessionConnected(C2SSession session) {
-            SceneInCenterInfo sceneInCenterInfo = guid2InfoMap.get(session.getServerGuid());
-            // 消息返回时，会话可能不在(触发的时机不确定，异步消息需要多注意点)
-            if (null== sceneInCenterInfo){
-                return;
-            }
             p_center_single_scene_hello hello = p_center_single_scene_hello
                     .newBuilder()
                     .setServerId(centerWorldInfoMrg.getServerId())
@@ -187,20 +196,6 @@ public class SceneInCenterInfoMrg {
             onSceneDisconnect(session.getServerGuid());
         }
     }
-
-    private class SingleSceneSyncAware implements SessionLifecycleAware<SyncC2SSession> {
-
-        @Override
-        public void onSessionConnected(SyncC2SSession session) {
-
-        }
-
-        @Override
-        public void onSessionDisconnected(SyncC2SSession session) {
-            onSceneDisconnect(session.getServerGuid());
-        }
-    }
-
 
     /**
      * 跨服会话信息
@@ -218,19 +213,6 @@ public class SceneInCenterInfoMrg {
 
         @Override
         public void onSessionDisconnected(C2SSession session) {
-            onSceneDisconnect(session.getServerGuid());
-        }
-    }
-
-    private class CrossSceneSyncAware implements SessionLifecycleAware<SyncC2SSession>{
-
-        @Override
-        public void onSessionConnected(SyncC2SSession session) {
-
-        }
-
-        @Override
-        public void onSessionDisconnected(SyncC2SSession session) {
             onSceneDisconnect(session.getServerGuid());
         }
     }
@@ -263,6 +245,14 @@ public class SceneInCenterInfoMrg {
         addSceneInfo(sceneInCenterInfo);
 
         // TODO 检查该场景可以启动哪些互斥场景
+        // 会话id是相同的(使用同步方法调用，会大大简化逻辑)
+        p_center_command_single_scene_start command = p_center_command_single_scene_start.newBuilder()
+                .addActiveMutexRegions(SceneRegion.LOCAL_PKC.getNumber())
+                .build();
+        Optional<p_center_command_single_scene_start_result> response = syncC2SSessionMrg.request(session.getServerGuid(), command, p_center_command_single_scene_start_result.class);
+        if (response.isPresent()){
+            sceneInCenterInfo.getActiveRegions().add(SceneRegion.LOCAL_PKC);
+        }
     }
 
     /**
@@ -290,7 +280,6 @@ public class SceneInCenterInfoMrg {
 
         // 需要保存到两个缓存中
         addSceneInfo(sceneInCenterInfo);
-
     }
 
 }

@@ -47,10 +47,7 @@ public class ProtoBufMessageSerializer implements MessageSerializer {
 
     @Override
     public byte[] serialize(Object message) throws UnsupportedEncodingException {
-        if (message instanceof MessageLite.Builder){
-            MessageLite.Builder builder= (MessageLite.Builder) message;
-            return builder.build().toByteArray();
-        }else if (message instanceof MessageLite){
+        if (message instanceof MessageLite){
             return ((MessageLite) message).toByteArray();
         }else {
             throw new UnsupportedEncodingException("not protoBuf class " + message.getClass().getSimpleName());

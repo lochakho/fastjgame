@@ -291,7 +291,10 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
     }
 
     /**
-     * 创建一个空节点，如果是并发创建的节点，注意加锁。
+     * 创建一个空节点，如果是并发创建的节点，注意加锁，
+     * (可能存在检测到节点不存在，创建节点仍可能失败)，期望原子的操作请使用
+     * {@link #createNodeIfAbsent(String, CreateMode)} 和
+     * {@link #createNodeIfAbsent(String, CreateMode, byte[])}
      * @param path 路径
      * @param mode 模式
      * @return 返回创建的路径
@@ -301,7 +304,10 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
         return client.create().creatingParentsIfNeeded().withMode(mode).forPath(path);
     }
     /**
-     * 创建一个节点，并以指定数据初始化它，如果是并发创建的节点，注意加锁。
+     * 创建一个节点，并以指定数据初始化它，如果是并发创建的节点，注意加锁，
+     * (可能存在检测到节点不存在，创建节点仍可能失败)，期望原子的操作请使用
+     * {@link #createNodeIfAbsent(String, CreateMode)} 和
+     * {@link #createNodeIfAbsent(String, CreateMode, byte[])}
      * @param path 路径
      * @param mode 模式
      * @param initData 初始数据
@@ -310,6 +316,44 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
      */
     public String createNode(String path, CreateMode mode,@Nonnull byte[] initData) throws Exception {
         return client.create().creatingParentsIfNeeded().withMode(mode).forPath(path,initData);
+    }
+
+    /**
+     *
+     * 如果节点不存在的话，创建它。它是一个原子操作，不是先检查后执行的操作
+     * @param path 路径
+     * @param mode 模式
+     * @return 创建成功则返回true，否则返回false
+     * @throws Exception zk errors
+     */
+    public boolean createNodeIfAbsent(String path, CreateMode mode) throws Exception {
+        try {
+            createNode(path,mode);
+            return true;
+        }catch (KeeperException.NodeExistsException ignore){
+            // ignore
+        }
+        return false;
+    }
+
+    /**
+     *
+     * 如果节点不存在的话创建一个节点，并以指定数据初始化它。
+     * 它是一个原子操作，不是一个先检查后执行的复合操作。
+     * @param path 路径
+     * @param mode 模式
+     * @param initData 初始数据
+     * @return 成功创建则返回true，否则返回false
+     * @throws Exception zk errors
+     */
+    public boolean createNodeIfAbsent(String path, CreateMode mode,@Nonnull byte[] initData) throws Exception {
+        try {
+            createNode(path,mode,initData);
+            return true;
+        }catch (KeeperException.NodeExistsException ignore){
+            // ignore
+        }
+        return false;
     }
 
     /**
@@ -398,12 +442,12 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
         pathChildrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
 
         // 等待初始化数据完毕
-        initCaptureListener.awaitWithHeartBeat(1,TimeUnit.SECONDS);
+        initCaptureListener.awaitWithRetry(1,TimeUnit.SECONDS);
         return initCaptureListener.getInitChildData();
     }
 
     /**
-     * 等待节点出现
+     * 等待节点出现。
      * @param path 节点路径
      * @return 节点的数据
      */
@@ -430,7 +474,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
     }
 
     /**
-     * 等待节点删除，当节点不存在，立即返回
+     * 等待节点删除，当节点不存在，立即返回（注意先检查后执行的原子性问题）。
      * @param path 节点路径
      * @throws Exception zk errors
      */
@@ -503,12 +547,12 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
          * @param heartBeat 心跳间隔
          * @param timeUnit 时间单位
          */
-        void awaitWithHeartBeat(long heartBeat,TimeUnit timeUnit) {
-            ConcurrentUtils.awaitWithHeartBeat(countDownLatch,heartBeat,timeUnit);
+        void awaitWithRetry(long heartBeat, TimeUnit timeUnit) {
+            ConcurrentUtils.awaitWithRetry(countDownLatch,heartBeat,timeUnit);
         }
 
         /**
-         * 当你从{@link #awaitWithHeartBeat(long, TimeUnit)}成功返回后，可获取初始化数据
+         * 当你从{@link #awaitWithRetry(long, TimeUnit)}成功返回后，可获取初始化数据
          * @return 初始化的数据的一个快照
          */
         List<ChildData> getInitChildData() {

@@ -59,7 +59,7 @@ public class SceneWorld extends WorldCore {
     @Override
     protected void registerMessageHandlers() {
         registerClientMessageHandler(p_center_single_scene_hello.class,centerInSceneInfoMrg::p_center_single_scene_hello_handler);
-
+        registerClientMessageHandler(p_center_cross_scene_hello.class,centerInSceneInfoMrg::p_center_cross_scene_hello_handler);
     }
 
     @Override
@@ -132,8 +132,8 @@ public class SceneWorld extends WorldCore {
                 codecHelper,disruptorMrg);
         HostAndPort outerWebsocketHostAndPort = s2CSessionMrg.bindRange(true,GameUtils.OUTER_WS_PORT_RANGE,wsInitializer);
 
-        ZKOnlineSceneNode zkOnlineSceneNode=new ZKOnlineSceneNode(
-                tcpHostAndPort.toString(),syncRpcHostAndPort.toString(), httpHostAndPort.toString(),
+        ZKOnlineSceneNode zkOnlineSceneNode=new ZKOnlineSceneNode(tcpHostAndPort.toString(),
+                syncRpcHostAndPort.toString(), httpHostAndPort.toString(),
                 sceneWorldInfoMrg.getChannelId(),
                 outerTcpHostAndPort.toString(),outerWebsocketHostAndPort.toString());
 

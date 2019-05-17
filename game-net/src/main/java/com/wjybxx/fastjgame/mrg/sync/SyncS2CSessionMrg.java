@@ -257,7 +257,6 @@ public class SyncS2CSessionMrg {
         notifyTokenCheckFailed(channel,requestParam,FailReason.OLD_REQUEST);
     }
 
-
     /**
      * 是否是同一个channel
      */
@@ -325,9 +324,10 @@ public class SyncS2CSessionMrg {
             notifyTokenCheckFailed(channel, requestParam, FailReason.TOKEN_TIMEOUT);
             return false;
         }
-        // 为何要删除旧会话？
+        // 为何要删除旧会话？(前两个问题都是可以解决的，但是第三个问题不能不管)
         // 1.会话是有状态的，无法基于旧状态与新状态的客户端通信(requestGuid限制)
         // 2.旧的token需要被禁用
+        // 3.必须进行通知，需要让逻辑层知道旧连接彻底断开了，可能有额外逻辑
         removeSession(requestParam.getClientGuid(),"reLogin");
 
         // 禁用验证成功的token之前的token(不能放到removeSession之前，会导致覆盖)

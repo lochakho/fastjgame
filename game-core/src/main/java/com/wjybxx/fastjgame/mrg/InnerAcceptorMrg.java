@@ -79,6 +79,19 @@ public class InnerAcceptorMrg {
     }
 
     /**
+     * 绑定异步tcp请求
+     * @param outer 是否外网
+     * @return
+     */
+    public HostAndPort bindInnerTcpPort(boolean outer){
+        TCPServerChannelInitializer tcpServerChannelInitializer = new TCPServerChannelInitializer(netConfigMrg.maxFrameLength(),
+                getInnerCodecHelper(),
+                disruptorMrg);
+
+        return s2CSessionMrg.bindRange(outer,GameUtils.INNER_TCP_PORT_RANGE,tcpServerChannelInitializer);
+    }
+
+    /**
      * 注册异步tcp会话
      * @param serverGuid 服务器guid
      * @param serverRoleType 服务器类型
@@ -100,13 +113,23 @@ public class InnerAcceptorMrg {
                 tokenBytes);
     }
 
+    /**
+     * 绑定一个同步会话断开
+     * @param outer 是否外网
+     * @return
+     */
+    public HostAndPort bindInnerSyncRpcPort(boolean outer){
+        ServerSyncRpcInitializer serverSyncRpcInitializer = new ServerSyncRpcInitializer(netConfigMrg.maxFrameLength(),
+                getInnerCodecHelper(), syncS2CSessionMrg);
+        return syncS2CSessionMrg.bindRange(outer,GameUtils.INNER_SYNC_PORT_RANGE, serverSyncRpcInitializer);
+    }
 
     /**
      * 注册同步会话信息
-     * @param serverGuid
-     * @param serverRoleType
-     * @param syncRpcHostAndPort
-     * @param lifecycleAware
+     * @param serverGuid 服务器guid
+     * @param serverRoleType 服务器角色类型
+     * @param syncRpcHostAndPort syncRpc端口信息
+     * @param lifecycleAware 生命周期回调
      */
     public void registerSyncRpcSession(long serverGuid,RoleType serverRoleType, HostAndPort syncRpcHostAndPort,SessionLifecycleAware<SyncC2SSession> lifecycleAware){
         ClientSyncRpcInitializer syncRpcInitializer = new ClientSyncRpcInitializer(netConfigMrg.maxFrameLength(),
@@ -118,20 +141,6 @@ public class InnerAcceptorMrg {
                 syncRpcHostAndPort,
                 () -> syncRpcInitializer,
                 lifecycleAware);
-    }
-
-    public HostAndPort bindInnerTcpPort(boolean outer){
-        TCPServerChannelInitializer tcpServerChannelInitializer = new TCPServerChannelInitializer(netConfigMrg.maxFrameLength(),
-                getInnerCodecHelper(),
-                disruptorMrg);
-
-        return s2CSessionMrg.bindRange(outer,GameUtils.INNER_TCP_PORT_RANGE,tcpServerChannelInitializer);
-    }
-
-    public HostAndPort bindInnerSyncRpcPort(boolean outer){
-        ServerSyncRpcInitializer serverSyncRpcInitializer = new ServerSyncRpcInitializer(netConfigMrg.maxFrameLength(),
-                getInnerCodecHelper(), syncS2CSessionMrg);
-        return syncS2CSessionMrg.bindRange(outer,GameUtils.INNER_SYNC_PORT_RANGE, serverSyncRpcInitializer);
     }
 
     public HostAndPort bindInnerHttpPort(){

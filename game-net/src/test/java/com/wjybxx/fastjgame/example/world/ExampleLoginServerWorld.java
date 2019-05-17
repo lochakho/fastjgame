@@ -190,9 +190,9 @@ public class ExampleLoginServerWorld extends World {
         for (ServerInfo serverInfo : loginServerInfoMrg.getServerMap().values()){
             trySndTcpOrWsMessage(serverInfo);
 
-            trySndSyncRpcRequest(serverInfo);
+//            trySndSyncRpcRequest(serverInfo);
 
-            trySndHttpRequest(serverInfo);
+//            trySndHttpRequest(serverInfo);
         }
     }
 

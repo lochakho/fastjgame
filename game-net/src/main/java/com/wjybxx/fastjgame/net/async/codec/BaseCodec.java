@@ -204,7 +204,7 @@ public abstract class BaseCodec extends ChannelDuplexHandler {
             return new LogicMessageTO(ack, sequence, message);
         }catch (Exception e){
             // 为了不影响该连接上的其它消息，需要捕获异常
-            logger.warn("deserialize messageId {} caught exception",messageId);
+            logger.warn("deserialize messageId {} caught exception",messageId,e);
             return new LogicMessageTO(ack, sequence, null);
         }
     }

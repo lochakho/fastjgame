@@ -16,10 +16,7 @@
 
 package com.wjybxx.fastjgame.utils;
 
-import com.wjybxx.fastjgame.function.AcquireFun;
-import com.wjybxx.fastjgame.function.AcquireRemoteFun;
-import com.wjybxx.fastjgame.function.TryAcquireFun;
-import com.wjybxx.fastjgame.function.TryAcquireRemoteFun;
+import com.wjybxx.fastjgame.function.*;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.CountDownLatch;
@@ -80,34 +77,34 @@ public class ConcurrentUtils {
     }
 
     /**
-     * 在等待闭锁通过期间带有心跳(保持线程的活性，否则可能导致某些资源关闭)
+     * 使用重试的方式等待闭锁打开
      * @param countDownLatch 闭锁
      * @param heartbeat 心跳间隔
      * @param timeUnit 时间单位
      */
-    public static void awaitWithHeartBeat(CountDownLatch countDownLatch, long heartbeat, TimeUnit timeUnit){
-        awaitWithHeartBeat(countDownLatch,CountDownLatch::await,heartbeat,timeUnit);
+    public static void awaitWithRetry(CountDownLatch countDownLatch, long heartbeat, TimeUnit timeUnit){
+        awaitWithRetry(countDownLatch,CountDownLatch::await,heartbeat,timeUnit);
     }
 
     /**
-     * 在等待信号量期间带有心跳(保持线程的活性，否则可能导致某些资源关闭)
+     * 使用重试的方式申请信号量
      * @param semaphore 信号量
      * @param heartbeat 心跳间隔
      * @param timeUnit 时间单位
      */
-    public static void awaitWithHeartBeat(Semaphore semaphore, long heartbeat, TimeUnit timeUnit){
-        awaitWithHeartBeat(semaphore,Semaphore::tryAcquire,heartbeat,timeUnit);
+    public static void awaitWithRetry(Semaphore semaphore, long heartbeat, TimeUnit timeUnit){
+        awaitWithRetry(semaphore,Semaphore::tryAcquire,heartbeat,timeUnit);
     }
 
      /**
-     * 在等待资源期间带有心跳(保持线程的活性，否则可能导致某些资源关闭)
+     * 使用重试的方式申请资源(可以保持线程的活性)
      * @param resource 资源
      * @param tryAcquireFun 如何在资源上尝试获取资源
      * @param heartbeat 心跳间隔
      * @param timeUnit 时间单位
      * @param <T> 资源的类型
      */
-    public static <T> void awaitWithHeartBeat(T resource, TryAcquireFun<T> tryAcquireFun, long heartbeat, TimeUnit timeUnit){
+    public static <T> void awaitWithRetry(T resource, TryAcquireFun<T> tryAcquireFun, long heartbeat, TimeUnit timeUnit){
         boolean interrupted=false;
         try {
             while (true){
@@ -124,6 +121,18 @@ public class ConcurrentUtils {
                 Thread.currentThread().interrupt();
             }
         }
+    }
+
+    /**
+     * 使用重试的方式申请资源，申请失败则睡眠一定时间。
+     * @param resource 资源
+     * @param tryAcquireFun 资源申请函数
+     * @param heartbeat 心跳间隔
+     * @param timeUnit 时间单位
+     * @param <T> 资源的类型
+     */
+    public static <T> void awaitWithSleepingRetry(T resource, TryAcquireFun2<T> tryAcquireFun, long heartbeat, TimeUnit timeUnit){
+        awaitWithRetry(resource,toAcquireFunWithSleep(tryAcquireFun),heartbeat,timeUnit);
     }
 
     // 远程资源申请
@@ -153,7 +162,7 @@ public class ConcurrentUtils {
     }
 
     /**
-     * 在等待远程资源时保持线程心跳
+     * 使用重试的方式申请远程资源
      * @param resource 要申请的远程资源
      * @param tryAcquireFun 尝试申请
      * @param heartbeat 心跳间隔
@@ -161,7 +170,7 @@ public class ConcurrentUtils {
      * @param <T> 资源类型
      * @throws Exception
      */
-    public static <T> void awaitRemoteWithHeartBeat(T resource, TryAcquireRemoteFun<T> tryAcquireFun, long heartbeat, TimeUnit timeUnit) throws Exception {
+    public static <T> void awaitRemoteWithRetry(T resource, TryAcquireRemoteFun<T> tryAcquireFun, long heartbeat, TimeUnit timeUnit) throws Exception {
         // 虽然是重复代码，但是不好消除
         boolean interrupted=false;
         try {
@@ -180,4 +189,52 @@ public class ConcurrentUtils {
             }
         }
     }
+
+    /**
+     * 使用重试的方式申请远程资源，申请失败则睡眠一定时间
+     * @param resource 资源
+     * @param tryAcquireFun 资源申请函数
+     * @param heartbeat 心跳间隔
+     * @param timeUnit 时间单位
+     * @param <T> 资源的类型
+     */
+    public static <T> void awaitRemoteWithSleepingRetry(T resource, TryAcquireRemoteFun2<T> tryAcquireFun, long heartbeat, TimeUnit timeUnit) throws Exception {
+        awaitRemoteWithRetry(resource,toAcquireRemoteFunWithSleep(tryAcquireFun),heartbeat,timeUnit);
+    }
+
+    // region 私有实现(辅助方法)
+    /**
+     * 使用sleep转换为{@link TryAcquireFun}类型。
+     * @param tryAcquireFun2 CAS的尝试函数
+     * @param <T> 资源类型
+     * @return
+     */
+    private static <T> TryAcquireFun<T> toAcquireFunWithSleep(TryAcquireFun2<T> tryAcquireFun2){
+        return (r,h,t) -> {
+            if (tryAcquireFun2.tryAcquire(r)){
+                return true;
+            }else {
+                Thread.sleep(t.toMillis(h));
+                return false;
+            }
+        };
+    }
+
+    /**
+     * 使用sleep转换为{@link TryAcquireRemoteFun}类型。
+     * @param tryAcquireFun2 CAS的尝试函数
+     * @param <T> 资源类型
+     * @return
+     */
+    private static <T> TryAcquireRemoteFun<T> toAcquireRemoteFunWithSleep(TryAcquireRemoteFun2<T> tryAcquireFun2){
+        return (r,h,t) -> {
+            if (tryAcquireFun2.tryAcquire(r)){
+                return true;
+            }else {
+                Thread.sleep(t.toMillis(h));
+                return false;
+            }
+        };
+    }
+    // endregion
 }

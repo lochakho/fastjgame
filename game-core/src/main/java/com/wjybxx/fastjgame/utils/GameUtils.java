@@ -18,6 +18,7 @@ package com.wjybxx.fastjgame.utils;
 
 import com.google.gson.GsonBuilder;
 import com.wjybxx.fastjgame.misc.PortRange;
+import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,4 +142,25 @@ public class GameUtils {
         return parseFromJson(new String(json,StandardCharsets.UTF_8),clazz);
     }
 
+    /**
+     * 返回控制的会话生命周期通知器
+     * @param <T> 会话参数类型
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> SessionLifecycleAware<T> emptyAware(){
+        return (SessionLifecycleAware<T>) emptyAware;
+    }
+
+    private static SessionLifecycleAware<Object> emptyAware=new SessionLifecycleAware<Object>() {
+        @Override
+        public void onSessionConnected(Object t) {
+
+        }
+
+        @Override
+        public void onSessionDisconnected(Object t) {
+
+        }
+    };
 }

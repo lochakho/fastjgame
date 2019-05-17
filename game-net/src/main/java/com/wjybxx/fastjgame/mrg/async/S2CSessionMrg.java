@@ -465,7 +465,7 @@ public class S2CSessionMrg {
     public void onRcvClientAckPing(Channel eventChannel, AckPingPongEventParam ackPingParam){
         tryUpdateMessageQueue(eventChannel,ackPingParam,sessionWrapper -> {
             MessageQueue messageQueue = sessionWrapper.getMessageQueue();
-            sessionWrapper.writeAndFlush(new AckPingPongMessage(messageQueue.getAck()));
+            sessionWrapper.writeAndFlush(new AckPingPongMessage(messageQueue.nextSequence()));
         });
     }
 

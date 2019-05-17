@@ -87,7 +87,7 @@ public class WarzoneInCenterInfoMrg {
         innerAcceptorMrg.registerSyncRpcSession(zkOnlineWarzoneNode.getProcessGuid(), RoleType.WARZONE_SERVER,
                 syncRpcHostAndPort,
                 session -> {
-                    return  null != warzoneInCenterInfo && session.getServerGuid()==warzoneInCenterInfo.getWarzoneProcessGuid();
+                    return  null != warzoneInCenterInfo && warzoneInCenterInfo.getWarzoneProcessGuid() == session.getServerGuid();
                 });
     }
 
@@ -133,7 +133,7 @@ public class WarzoneInCenterInfoMrg {
 
         @Override
         public void onSessionDisconnected(C2SSession session) {
-
+            onWarzoneDisconnect(session.getServerGuid());
         }
     }
 

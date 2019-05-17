@@ -164,11 +164,11 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
         ZKOnlineWarzoneNode zkOnlineWarzoneNode=GameUtils.parseFromJsonBytes(childData.getData(),ZKOnlineWarzoneNode.class);
         if (type== Type.CHILD_ADDED){
             warzoneInCenterInfoMrg.onDiscoverWarzone(warzoneNodeName,zkOnlineWarzoneNode);
-            logger.info("discover warzone {}",warzoneNodeName);
+            logger.info("discover warzone {}",warzoneNodeName.getWarzoneId());
         }else {
             // child remove
             warzoneInCenterInfoMrg.onWarzoneNodeRemoved(warzoneNodeName,zkOnlineWarzoneNode);
-            logger.info("child remove,warzone {}",warzoneNodeName);
+            logger.info("child remove,warzone {}",warzoneNodeName.getWarzoneId());
         }
     }
 }

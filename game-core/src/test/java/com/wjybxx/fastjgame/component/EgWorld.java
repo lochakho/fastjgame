@@ -28,11 +28,6 @@ public class EgWorld extends WorldCore {
     }
 
     @Override
-    protected void registerCodecHelper() throws Exception {
-
-    }
-
-    @Override
     protected void registerMessageHandlers() {
 
     }

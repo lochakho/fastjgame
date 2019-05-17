@@ -18,6 +18,7 @@ package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.misc.HostAndPort;
+import com.wjybxx.fastjgame.misc.ProtoBufHashMappingStrategy;
 import com.wjybxx.fastjgame.mrg.async.C2SSessionMrg;
 import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncC2SSessionMrg;
@@ -26,10 +27,7 @@ import com.wjybxx.fastjgame.net.async.C2SSession;
 import com.wjybxx.fastjgame.net.async.initializer.HttpServerInitializer;
 import com.wjybxx.fastjgame.net.async.initializer.TCPClientChannelInitializer;
 import com.wjybxx.fastjgame.net.async.initializer.TCPServerChannelInitializer;
-import com.wjybxx.fastjgame.net.common.CodecHelper;
-import com.wjybxx.fastjgame.net.common.RoleType;
-import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
-import com.wjybxx.fastjgame.net.common.Token;
+import com.wjybxx.fastjgame.net.common.*;
 import com.wjybxx.fastjgame.net.sync.SyncC2SSession;
 import com.wjybxx.fastjgame.net.sync.initializer.ClientSyncRpcInitializer;
 import com.wjybxx.fastjgame.net.sync.initializer.ServerSyncRpcInitializer;
@@ -72,6 +70,16 @@ public class InnerAcceptorMrg {
         this.syncC2SSessionMrg = syncC2SSessionMrg;
         this.syncS2CSessionMrg = syncS2CSessionMrg;
         this.httpClientMrg = httpClientMrg;
+    }
+
+    /**
+     * 在worldCore创建时调用
+     * @throws Exception
+     */
+    public void registerInnerCodecHelper() throws Exception {
+        codecHelperMrg.registerCodecHelper(GameUtils.INNER_CODEC_NAME,
+                new ProtoBufHashMappingStrategy(),
+                new ProtoBufMessageSerializer());
     }
 
     private CodecHelper getInnerCodecHelper() {

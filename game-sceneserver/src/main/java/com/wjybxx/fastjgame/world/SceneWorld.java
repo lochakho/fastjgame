@@ -4,13 +4,11 @@ import com.google.inject.Inject;
 import com.wjybxx.fastjgame.core.SceneProcessType;
 import com.wjybxx.fastjgame.core.node.ZKOnlineSceneNode;
 import com.wjybxx.fastjgame.misc.HostAndPort;
-import com.wjybxx.fastjgame.misc.ProtoBufHashMappingStrategy;
 import com.wjybxx.fastjgame.mrg.*;
 import com.wjybxx.fastjgame.net.async.S2CSession;
 import com.wjybxx.fastjgame.net.async.initializer.TCPServerChannelInitializer;
 import com.wjybxx.fastjgame.net.async.initializer.WsServerChannelInitializer;
 import com.wjybxx.fastjgame.net.common.CodecHelper;
-import com.wjybxx.fastjgame.net.common.ProtoBufMessageSerializer;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
@@ -23,8 +21,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 
-import static com.wjybxx.fastjgame.protobuffer.p_center_scene.*;
-import static com.wjybxx.fastjgame.protobuffer.p_sync_center_scene.*;
+import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello;
+import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello;
+import static com.wjybxx.fastjgame.protobuffer.p_sync_center_scene.p_center_command_single_scene_active_regions;
+import static com.wjybxx.fastjgame.protobuffer.p_sync_center_scene.p_center_command_single_scene_start;
 
 /**
  * SceneServer
@@ -51,9 +51,9 @@ public class SceneWorld extends WorldCore {
 
     @Override
     protected void registerCodecHelper() throws Exception {
-        registerCodecHelper(GameUtils.INNER_CODEC_NAME,
-                new ProtoBufHashMappingStrategy(),
-                new ProtoBufMessageSerializer());
+        super.registerCodecHelper();
+        // 这里没有使用模板方法是因为不是都有额外的codec要注册，导致太多钩子方法也不好
+        // TODO 注册与玩家交互的codec帮助类
     }
 
     @Override

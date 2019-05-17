@@ -20,10 +20,8 @@ package com.wjybxx.fastjgame.world;
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.core.node.ZKOnlineCenterNode;
 import com.wjybxx.fastjgame.misc.HostAndPort;
-import com.wjybxx.fastjgame.misc.ProtoBufHashMappingStrategy;
 import com.wjybxx.fastjgame.mrg.*;
 import com.wjybxx.fastjgame.net.async.S2CSession;
-import com.wjybxx.fastjgame.net.common.ProtoBufMessageSerializer;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
 import com.wjybxx.fastjgame.utils.ConcurrentUtils;
@@ -59,13 +57,6 @@ public class CenterWorld extends WorldCore {
         this.centerDiscoverMrg = centerDiscoverMrg;
         this.sceneInCenterInfoMrg = sceneInCenterInfoMrg;
         centerWorldInfoMrg = (CenterWorldInfoMrg) worldWrapper.getWorldInfoMrg();
-    }
-
-    @Override
-    protected void registerCodecHelper() throws Exception {
-        registerCodecHelper(GameUtils.INNER_CODEC_NAME,
-                new ProtoBufHashMappingStrategy(),
-                new ProtoBufMessageSerializer());
     }
 
     @Override

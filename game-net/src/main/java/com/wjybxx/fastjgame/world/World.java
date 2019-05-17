@@ -130,10 +130,7 @@ public abstract class World {
      * @param messageSerializer 消息序列化反序列化实现类
      */
     protected final void registerCodecHelper(String name, MessageMappingStrategy mappingStrategy, MessageSerializer messageSerializer) throws Exception {
-        Object2IntMap<Class<?>> mapper = mappingStrategy.mapping();
-        MessageMapper messageMapper = new MessageMapper(mapper);
-        messageSerializer.init(messageMapper);
-        codecHelperMrg.registerCodecHelper(name,new CodecHelper(messageMapper,messageSerializer));
+        codecHelperMrg.registerCodecHelper(name,mappingStrategy,messageSerializer);
     }
 
     /**

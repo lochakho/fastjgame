@@ -15,8 +15,6 @@
  */
 package com.wjybxx.fastjgame.function;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * @author wjybxx
  * @version 1.0

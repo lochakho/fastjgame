@@ -27,10 +27,7 @@ import com.wjybxx.fastjgame.net.async.event.MessageEventParam;
 import com.wjybxx.fastjgame.net.async.transferobject.ConnectRequestTO;
 import com.wjybxx.fastjgame.net.async.transferobject.ConnectResponseTO;
 import com.wjybxx.fastjgame.net.async.transferobject.MessageTO;
-import com.wjybxx.fastjgame.net.common.FailReason;
-import com.wjybxx.fastjgame.net.common.ForbiddenTokenHelper;
-import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
-import com.wjybxx.fastjgame.net.common.Token;
+import com.wjybxx.fastjgame.net.common.*;
 import com.wjybxx.fastjgame.trigger.Timer;
 import com.wjybxx.fastjgame.utils.FastCollectionsUtils;
 import com.wjybxx.fastjgame.utils.NetUtils;
@@ -46,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.EnumMap;
 import java.util.function.Consumer;
 
 /**
@@ -93,9 +91,10 @@ public class S2CSessionMrg {
      */
     private final Long2ObjectMap<SessionWrapper> sessionWrapperMap =new Long2ObjectOpenHashMap<>();
     /**
-     * 会话生命周期handler
+     * 会话生命周期handler。
+     * 这样设计是因为角色类型很多，而真正与你建立会话的角色类型很少。
      */
-    private SessionLifecycleAware<S2CSession> sessionLifecycleAware;
+    private final EnumMap<RoleType,SessionLifecycleAware<S2CSession>> lifecycleAwareMap=new EnumMap<>(RoleType.class);
 
     @Inject
     public S2CSessionMrg(SystemTimeMrg systemTimeMrg, NetConfigMrg netConfigMrg, TimerMrg timerMrg, WorldInfoMrg worldInfoMrg,
@@ -115,8 +114,11 @@ public class S2CSessionMrg {
         timerMrg.addTimer(checkTimeOutTimer,systemTimeMrg.getSystemMillTime());
     }
 
-    public void setSessionLifecycleAware(SessionLifecycleAware<S2CSession> sessionLifecycleAware) {
-        this.sessionLifecycleAware = sessionLifecycleAware;
+    public void registerLifeCycleAware(@Nonnull RoleType roleType,@Nonnull SessionLifecycleAware<S2CSession> lifecycleAware){
+        if (lifecycleAwareMap.containsKey(roleType)){
+            throw new IllegalArgumentException("duplicate roleType " + roleType);
+        }
+        lifecycleAwareMap.put(roleType,lifecycleAware);
     }
 
     /**
@@ -187,10 +189,11 @@ public class S2CSessionMrg {
         notifyClientExit(sessionWrapper.getChannel(),sessionWrapper);
         logger.info("remove session by reason of {}, session info={}.",reason, session);
 
+        SessionLifecycleAware<S2CSession> lifecycleAware = lifecycleAwareMap.get(session.getRoleType());
         // 回调通知
-        if (null!=sessionLifecycleAware){
+        if (null!=lifecycleAware){
             try {
-                sessionLifecycleAware.onSessionDisconnected(session);
+                lifecycleAware.onSessionDisconnected(session);
             }catch (Exception e){
                 logger.warn("disconnect callback caught exception",e);
             }
@@ -339,9 +342,10 @@ public class S2CSessionMrg {
         logger.info("client login success, sessionInfo={}",session);
 
         // 连接建立回调(通知)
-        if (sessionLifecycleAware != null){
+        SessionLifecycleAware<S2CSession> lifecycleAware = lifecycleAwareMap.get(session.getRoleType());
+        if (lifecycleAware != null){
             try {
-                sessionLifecycleAware.onSessionConnected(session);
+                lifecycleAware.onSessionConnected(session);
             }catch (Exception e){
                 logger.warn("sessionConnected callback caught exception",e);
             }
@@ -513,7 +517,7 @@ public class S2CSessionMrg {
      */
     public void onRcvClientLogicMsg(Channel eventChannel, LogicMessageEventParam logicMessageParam){
         tryUpdateMessageQueue(eventChannel,logicMessageParam,sessionWrapper -> {
-            dispatcherMrg.handleClientMessage(sessionWrapper.getSession(),logicMessageParam.messageTO().getMessage());
+            dispatcherMrg.handleRequestMessage(sessionWrapper.getSession(),logicMessageParam.messageTO().getMessage());
         });
     }
 

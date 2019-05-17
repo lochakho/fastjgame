@@ -26,6 +26,7 @@ import org.apache.zookeeper.CreateMode;
 
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -78,13 +79,12 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
         // 只有本服场景才支持指定服务器id
         if(sceneProcessType == SceneProcessType.SINGLE){
             serverId = startArgs.getAsInt("serverId");
-            // zk默认序号是从0开始的
-            String path = curatorMrg.createNode(ZKUtils.singleChannelPath(warzoneId, serverId), CreateMode.EPHEMERAL_SEQUENTIAL);
-            channelId = SINGLE_SCENE_MIN_CHANNEL_ID + ZKUtils.parseSequentialId(path);
+            final String originPath = ZKUtils.singleChannelPath(warzoneId, serverId);
+            this.initChannelId(originPath,SINGLE_SCENE_MIN_CHANNEL_ID);
         }else {
             serverId = -1;
-            String path = curatorMrg.createNode(ZKUtils.crossChannelPath(warzoneId), CreateMode.EPHEMERAL_SEQUENTIAL);
-            channelId = CROSS_SCENE_MIN_CHANNEL_ID + ZKUtils.parseSequentialId(path);
+            String originPath = ZKUtils.crossChannelPath(warzoneId);
+            this.initChannelId(originPath,CROSS_SCENE_MIN_CHANNEL_ID);
         }
 
         // 配置的要启动的区域 TODO 这种配置方式不方便配置
@@ -128,5 +128,24 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
 
     public int getChannelId() {
         return channelId;
+    }
+
+    /**
+     * 初始化channelId
+     * @param originPath 创建的节点原始路径，因为临时节点，实际路径名会不一样
+     * @param startChannelId 其实channelId
+     * @throws Exception zk errors
+     */
+    private void initChannelId(String originPath,int startChannelId) throws Exception {
+        final String parent = ZKUtils.findParentPath(originPath);
+        final String lockPath = ZKUtils.findAppropriateLockPath(parent);
+        // 如果父节点存在，且没有子节点，则先删除，让序号初始化为0,再创建节点
+        // 整个是一个先检查后执行的逻辑，因此需要加锁，保证整个操作的原子性
+        curatorMrg.actionWhitLock(lockPath,lockPath1 -> {
+            curatorMrg.deleteNodeIfNoChild(parent);
+            String realPath=curatorMrg.createNode(originPath,CreateMode.EPHEMERAL_SEQUENTIAL);
+            this.channelId = startChannelId + ZKUtils.parseSequentialId(realPath);
+        });
+
     }
 }

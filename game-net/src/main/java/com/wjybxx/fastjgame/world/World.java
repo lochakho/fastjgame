@@ -22,10 +22,9 @@ import com.wjybxx.fastjgame.mrg.async.C2SSessionMrg;
 import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncC2SSessionMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
-import com.wjybxx.fastjgame.net.async.ClientMessageHandler;
+import com.wjybxx.fastjgame.net.async.RequestMessageHandler;
 import com.wjybxx.fastjgame.net.async.HttpRequestHandler;
-import com.wjybxx.fastjgame.net.async.S2CSession;
-import com.wjybxx.fastjgame.net.async.ServerMessageHandler;
+import com.wjybxx.fastjgame.net.async.ResponseMessageHandler;
 import com.wjybxx.fastjgame.net.async.event.AckPingPongEventParam;
 import com.wjybxx.fastjgame.net.async.event.ConnectResponseEventParam;
 import com.wjybxx.fastjgame.net.async.event.LogicMessageEventParam;
@@ -35,12 +34,8 @@ import com.wjybxx.fastjgame.net.async.transferobject.HttpRequestTO;
 import com.wjybxx.fastjgame.net.async.transferobject.OkHttpResponseTO;
 import com.wjybxx.fastjgame.net.common.*;
 import com.wjybxx.fastjgame.net.sync.SyncRequestHandler;
-import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 
 /**
  * 游戏世界顶层类(World)
@@ -102,8 +97,8 @@ public abstract class World {
         registerSyncRequestHandlers();
 
         // 注册会话处理器
-        s2CSessionMrg.setSessionLifecycleAware(newAsyncSessionLifecycleAware());
-        syncS2CSessionMrg.setLifecycleAware(newSyncSessionLifeCycleAware());
+        registerAsyncSessionLifeAware(s2CSessionMrg);
+        registerSyncSessionLifeAware(syncS2CSessionMrg);
 
         globalExecutorMrg.start();
         // 启动netty线程(可保证线程安全性，netty线程可看见当前线程设置的值)
@@ -135,8 +130,8 @@ public abstract class World {
 
     /**
      * 注册自己要处理的消息。也可以在自己的类中使用messageDispatcherMrg自己注册，不一定需要在world中注册。
-     * use {@link #registerClientMessageHandler(Class, ClientMessageHandler)} and
-     * {@link #registerServerMessageHandler(Class, ServerMessageHandler)}
+     * use {@link #registerRequestMessageHandler(Class, RequestMessageHandler)} and
+     * {@link #registerResponseMessageHandler(Class, ResponseMessageHandler)}
      * to register
      */
     protected abstract void registerMessageHandlers();
@@ -144,26 +139,28 @@ public abstract class World {
     /**
      * 注册客户端发来的消息的处理器
      * @param messageClazz 消息类
-     * @param clientMessageHandler 消息处理器
+     * @param requestMessageHandler 消息处理器
      * @param <T> 消息类型
      */
-    protected final <T> void registerClientMessageHandler(Class<T> messageClazz, ClientMessageHandler<? super T> clientMessageHandler){
-        messageDispatcherMrg.registerClientMessageHandler(messageClazz,clientMessageHandler);
+    protected final <T> void registerRequestMessageHandler(Class<T> messageClazz, RequestMessageHandler<? super T> requestMessageHandler){
+        messageDispatcherMrg.registerRequestMessageHandler(messageClazz, requestMessageHandler);
     }
 
     /**
      * 注册服务器发来的消息的处理器
      * @param messageClazz 消息类型
-     * @param serverMessageHandler 消息对应的处理器
+     * @param responseMessageHandler 消息对应的处理器
      * @param <T> 消息类型
      */
-    protected final <T> void registerServerMessageHandler(Class<T> messageClazz, ServerMessageHandler<? super T> serverMessageHandler){
-        messageDispatcherMrg.registerServerMessageHandler(messageClazz,serverMessageHandler);
+    protected final <T> void registerResponseMessageHandler(Class<T> messageClazz, ResponseMessageHandler<? super T> responseMessageHandler){
+        messageDispatcherMrg.registerResponseMessageHandler(messageClazz, responseMessageHandler);
     }
 
     /**
      * 注册自己要处理的http请求
      * use {@link #registerHttpRequestHandler(String, HttpRequestHandler)} to register
+     * 或 {@link HttpDispatcherMrg#registerHandler(String, HttpRequestHandler)}进行注册。
+     * 使用
      */
     protected abstract void registerHttpRequestHandlers();
 
@@ -195,19 +192,20 @@ public abstract class World {
     }
 
     /**
-     * 工厂方法，获取异步rpc会话生命周期处理器
-     * @return
+     * 注册异步会话生命回调。
+     * 使用{@link S2CSessionMrg#registerLifeCycleAware(RoleType, SessionLifecycleAware)}
+     * 进行注册
+     * @param s2CSessionMrg
      */
-    @Nonnull
-    protected abstract SessionLifecycleAware<S2CSession> newAsyncSessionLifecycleAware();
+    protected abstract void registerAsyncSessionLifeAware(S2CSessionMrg s2CSessionMrg);
 
     /**
-     * 工厂方法，获取同步rpc会话生命周期处理器
-     * @return
+     * 注册同步会话通知回调。
+     * 使用{@link SyncS2CSessionMrg#registerLifeCycleAware(RoleType, SessionLifecycleAware)}
+     * 进行注册
+     * @param syncS2CSessionMrg
      */
-    @Nonnull
-    protected abstract SessionLifecycleAware<SyncS2CSession> newSyncSessionLifeCycleAware();
-
+    protected abstract void registerSyncSessionLifeAware(SyncS2CSessionMrg syncS2CSessionMrg);
 
     /**
      * world子类自己的启动逻辑，不要轻易的在构造方法中写太多逻辑

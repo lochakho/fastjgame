@@ -118,8 +118,8 @@ public class ZKUtils {
      * @return 父节点路径
      */
     public static String singleChannelPath(int warzoneId,int serverId){
-        // 不弄那么深
-        return "/online/channel/single/" + warzoneId + "-" + serverId + "/" + CHANNELID_PREFIX;
+        // 拼一下，不弄那么深
+        return "/mutex/channel/single/" + warzoneId + "-" + serverId + "/" + CHANNELID_PREFIX;
     }
 
     /**
@@ -128,7 +128,7 @@ public class ZKUtils {
      * @return 父节点路径
      */
     public static String crossChannelPath(int warzoneId){
-        return "/online/channel/cross/" + warzoneId + "/" + CHANNELID_PREFIX;
+        return "/mutex/channel/cross/" + warzoneId + "/" + CHANNELID_PREFIX;
     }
 
     /**

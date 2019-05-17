@@ -30,6 +30,8 @@ public enum MessageEnum {
     P_CENTER_SINGLE_SCENE_HELLO_RESULT(49177817,"com.wjybxx.fastjgame.protobuffer","p_center_scene","p_center_single_scene_hello_result"),
     P_CENTER_CROSS_SCENE_HELLO(431992165,"com.wjybxx.fastjgame.protobuffer","p_center_scene","p_center_cross_scene_hello"),
     P_CENTER_CROSS_SCENE_HELLO_RESULT(-767022025,"com.wjybxx.fastjgame.protobuffer","p_center_scene","p_center_cross_scene_hello_result"),
+    P_CENTER_WARZONE_HELLO(195173740,"com.wjybxx.fastjgame.protobuffer","p_center_warzone","p_center_warzone_hello"),
+    P_CENTER_WARZONE_HELLO_RESULT(-1192233392,"com.wjybxx.fastjgame.protobuffer","p_center_warzone","p_center_warzone_hello_result"),
     P_CENTER_COMMAND_SINGLE_SCENE_START(22887687,"com.wjybxx.fastjgame.protobuffer","p_sync_center_scene","p_center_command_single_scene_start"),
     P_CENTER_COMMAND_SINGLE_SCENE_START_RESULT(345645653,"com.wjybxx.fastjgame.protobuffer","p_sync_center_scene","p_center_command_single_scene_start_result"),
     P_CENTER_COMMAND_SINGLE_SCENE_ACTIVE_REGIONS(938600641,"com.wjybxx.fastjgame.protobuffer","p_sync_center_scene","p_center_command_single_scene_active_regions"),

@@ -21,21 +21,19 @@ import com.google.inject.Inject;
 import com.wjybxx.fastjgame.core.node.ZKOnlineCenterNode;
 import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.*;
-import com.wjybxx.fastjgame.net.async.S2CSession;
-import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
-import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
+import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
+import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
 import com.wjybxx.fastjgame.utils.ConcurrentUtils;
 import com.wjybxx.fastjgame.utils.GameUtils;
 import com.wjybxx.fastjgame.utils.ZKUtils;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
 
-import javax.annotation.Nonnull;
-
 import java.util.concurrent.TimeUnit;
 
 import static com.wjybxx.fastjgame.protobuffer.p_center_scene.*;
 import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello_result;
+import static com.wjybxx.fastjgame.protobuffer.p_center_warzone.*;
 
 /**
  * CENTER_SERVER
@@ -49,21 +47,23 @@ public class CenterWorld extends WorldCore {
     private final CenterDiscoverMrg centerDiscoverMrg;
     private final SceneInCenterInfoMrg sceneInCenterInfoMrg;
     private final CenterWorldInfoMrg centerWorldInfoMrg;
+    private final WarzoneInCenterInfoMrg warzoneInCenterInfoMrg;
 
     @Inject
-    public CenterWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper,
-                       CenterDiscoverMrg centerDiscoverMrg, SceneInCenterInfoMrg sceneInCenterInfoMrg) {
+    public CenterWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper, CenterDiscoverMrg centerDiscoverMrg,
+                       SceneInCenterInfoMrg sceneInCenterInfoMrg, WarzoneInCenterInfoMrg warzoneInCenterInfoMrg) {
         super(worldWrapper, coreWrapper);
         this.centerDiscoverMrg = centerDiscoverMrg;
         this.sceneInCenterInfoMrg = sceneInCenterInfoMrg;
         centerWorldInfoMrg = (CenterWorldInfoMrg) worldWrapper.getWorldInfoMrg();
+        this.warzoneInCenterInfoMrg = warzoneInCenterInfoMrg;
     }
 
     @Override
     protected void registerMessageHandlers() {
-        registerServerMessageHandler(p_center_single_scene_hello_result.class, sceneInCenterInfoMrg::p_center_single_scene_hello_result_handler);
-        registerServerMessageHandler(p_center_cross_scene_hello_result.class, sceneInCenterInfoMrg::p_center_cross_scene_hello_result_handler);
-
+        registerResponseMessageHandler(p_center_single_scene_hello_result.class, sceneInCenterInfoMrg::p_center_single_scene_hello_result_handler);
+        registerResponseMessageHandler(p_center_cross_scene_hello_result.class, sceneInCenterInfoMrg::p_center_cross_scene_hello_result_handler);
+        registerResponseMessageHandler(p_center_warzone_hello_result.class,warzoneInCenterInfoMrg::p_center_warzone_hello_result_handler);
     }
 
 
@@ -77,36 +77,14 @@ public class CenterWorld extends WorldCore {
 
     }
 
-    @Nonnull
     @Override
-    protected SessionLifecycleAware<S2CSession> newAsyncSessionLifecycleAware() {
-        return new SessionLifecycleAware<S2CSession>() {
-            @Override
-            public void onSessionConnected(S2CSession session) {
+    protected void registerAsyncSessionLifeAware(S2CSessionMrg s2CSessionMrg) {
 
-            }
-
-            @Override
-            public void onSessionDisconnected(S2CSession session) {
-
-            }
-        };
     }
 
-    @Nonnull
     @Override
-    protected SessionLifecycleAware<SyncS2CSession> newSyncSessionLifeCycleAware() {
-        return new SessionLifecycleAware<SyncS2CSession>() {
-            @Override
-            public void onSessionConnected(SyncS2CSession syncS2CSession) {
+    protected void registerSyncSessionLifeAware(SyncS2CSessionMrg syncS2CSessionMrg) {
 
-            }
-
-            @Override
-            public void onSessionDisconnected(SyncS2CSession syncS2CSession) {
-
-            }
-        };
     }
 
     @Override

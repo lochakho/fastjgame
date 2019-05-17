@@ -17,29 +17,28 @@
 package com.wjybxx.fastjgame.module;
 
 import com.google.inject.Singleton;
-import com.wjybxx.fastjgame.mrg.*;
-import com.wjybxx.fastjgame.world.CenterWorld;
+import com.wjybxx.fastjgame.mrg.WarzoneWorldInfoMrg;
+import com.wjybxx.fastjgame.mrg.WorldInfoMrg;
+import com.wjybxx.fastjgame.world.WarzoneWorld;
 import com.wjybxx.fastjgame.world.World;
 
 /**
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/15 23:07
+ * @date 2019/5/17 15:38
  * @github - https://github.com/hl845740757
  */
-public class CenterModule extends CoreModule {
+public class WarzoneModule extends CoreModule{
 
     @Override
     protected void bindWorldAndWorldInfoMrg() {
-        bind(World.class).to(CenterWorld.class).in(Singleton.class);
-        bind(WorldInfoMrg.class).to(CenterWorldInfoMrg.class).in(Singleton.class);
+        bind(World.class).to(WarzoneWorld.class).in(Singleton.class);
+        bind(WorldInfoMrg.class).to(WarzoneWorldInfoMrg.class).in(Singleton.class);
     }
 
     @Override
     protected void bindOthers() {
-        bind(CenterDiscoverMrg.class).in(Singleton.class);
-        bind(SceneInCenterInfoMrg.class).in(Singleton.class);
-        bind(WarzoneInCenterInfoMrg.class).in(Singleton.class);
-        bind(CenterWorldInfoMrg.class).in(Singleton.class);
+        // 方便子类直接使用
+        bind(WarzoneWorldInfoMrg.class).in(Singleton.class);
     }
 }

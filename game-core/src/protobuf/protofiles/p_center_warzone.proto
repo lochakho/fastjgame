@@ -13,3 +13,12 @@ option java_package="com.wjybxx.fastjgame.protobuffer";
 option java_outer_classname = "p_center_warzone";
 
 // 消息的命名格式由团队习惯决定
+
+// 当center服发现warzone时，打个招呼(我要注册)
+message p_center_warzone_hello{
+	int32 serverId=1;
+}
+// 打招呼的响应
+message p_center_warzone_hello_result{
+
+}

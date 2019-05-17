@@ -649,7 +649,7 @@ public class C2SSessionMrg {
         protected void onRcvServerMessage(Channel eventChannel, LogicMessageEventParam messageParam) {
             boolean success = tryUpdateMessageQueue(messageParam.messageTO());
             if (success){
-                dispatcherMrg.handleServerMessage(session,messageParam.messageTO().getMessage());
+                dispatcherMrg.handleResponseMessage(session,messageParam.messageTO().getMessage());
             }
         }
 

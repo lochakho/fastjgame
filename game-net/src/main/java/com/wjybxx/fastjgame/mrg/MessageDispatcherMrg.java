@@ -18,9 +18,9 @@ package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.net.async.C2SSession;
-import com.wjybxx.fastjgame.net.async.ClientMessageHandler;
+import com.wjybxx.fastjgame.net.async.RequestMessageHandler;
+import com.wjybxx.fastjgame.net.async.ResponseMessageHandler;
 import com.wjybxx.fastjgame.net.async.S2CSession;
-import com.wjybxx.fastjgame.net.async.ServerMessageHandler;
 import com.wjybxx.fastjgame.net.common.MessageMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +42,11 @@ public class MessageDispatcherMrg {
     /**
      * 收到客户端的消息时的消息处理器(连接是对方发起的)
      */
-    private final Map<Class<?>, ClientMessageHandler<?>> clientMessageHandlerMap =new IdentityHashMap<>();
+    private final Map<Class<?>, RequestMessageHandler<?>> requestMessageHandlerMap =new IdentityHashMap<>();
     /**
      * 收到服务器的消息时的消息处理器(连接是我发起的)
      */
-    private final Map<Class<?>, ServerMessageHandler<?>> serverMessageHandlerMap =new IdentityHashMap<>();
+    private final Map<Class<?>, ResponseMessageHandler<?>> responseMessageHandlerMap =new IdentityHashMap<>();
 
     @Inject
     public MessageDispatcherMrg() {
@@ -59,11 +59,11 @@ public class MessageDispatcherMrg {
      * @param messageHandler 消息处理器
      * @param <T> 消息的类型
      */
-    public <T> void registerClientMessageHandler(Class<T> messageClazz, ClientMessageHandler<? super T> messageHandler){
-        if (clientMessageHandlerMap.containsKey(messageClazz)){
+    public <T> void registerRequestMessageHandler(Class<T> messageClazz, RequestMessageHandler<? super T> messageHandler){
+        if (requestMessageHandlerMap.containsKey(messageClazz)){
             throw new IllegalArgumentException(messageClazz.getSimpleName() + " already registered.");
         }
-        clientMessageHandlerMap.put(messageClazz,messageHandler);
+        requestMessageHandlerMap.put(messageClazz,messageHandler);
     }
 
     /**
@@ -72,19 +72,19 @@ public class MessageDispatcherMrg {
      * @param messageHandler 消息的处理器
      * @param <T> 消息的类型
      */
-    public <T> void registerServerMessageHandler(Class<T> messageClazz, ServerMessageHandler<? super T> messageHandler){
-        if (serverMessageHandlerMap.containsKey(messageClazz)){
+    public <T> void registerResponseMessageHandler(Class<T> messageClazz, ResponseMessageHandler<? super T> messageHandler){
+        if (responseMessageHandlerMap.containsKey(messageClazz)){
             throw new IllegalArgumentException(messageClazz.getSimpleName() + " already registered.");
         }
-        serverMessageHandlerMap.put(messageClazz,messageHandler);
+        responseMessageHandlerMap.put(messageClazz,messageHandler);
     }
 
     /**
-     * 处理服务器发来的消息
+     * 处理发来的请求消息
      * @param session 会话信息
      * @param message 如果解码失败，则可能出现null
      */
-    public <T> void handleClientMessage(S2CSession session, @Nullable T message) {
+    public <T> void handleRequestMessage(S2CSession session, @Nullable T message) {
         // 未成功解码的消息，做个记录并丢弃(不影响其它请求)
         if (null==message){
             logger.warn("roleType={} sessionId={} send null message",
@@ -93,7 +93,7 @@ public class MessageDispatcherMrg {
         }
         // 未注册的消息，做个记录并丢弃(不影响其它请求)
         @SuppressWarnings("unchecked")
-        ClientMessageHandler<T> messageHandler = (ClientMessageHandler<T>) clientMessageHandlerMap.get(message.getClass());
+        RequestMessageHandler<T> messageHandler = (RequestMessageHandler<T>) requestMessageHandlerMap.get(message.getClass());
         if (null==messageHandler){
             logger.warn("roleType={} sessionId={} send unregistered message {}",
                     session.getRoleType(),session.getClientGuid(),message.getClass().getSimpleName());
@@ -107,11 +107,11 @@ public class MessageDispatcherMrg {
         }
     }
     /**
-     * 处理服务器发来的消息
+     * 处理服务器发来的(响应)消息
      * @param session 会话消息
      * @param message 消息内容，如果解码失败，则可能为null
      */
-    public <T> void handleServerMessage(C2SSession session, @Nullable T message) {
+    public <T> void handleResponseMessage(C2SSession session, @Nullable T message) {
         // 未成功解码的消息，做个记录并丢弃(不影响其它请求)
         if (null==message){
             logger.warn("roleType={} sessionId={} send null message",
@@ -120,7 +120,7 @@ public class MessageDispatcherMrg {
         }
         // 未注册的消息，做个记录并丢弃(不影响其它请求)
         @SuppressWarnings("unchecked")
-        ServerMessageHandler<T> messageHandler = (ServerMessageHandler<T>) serverMessageHandlerMap.get(message.getClass());
+        ResponseMessageHandler<T> messageHandler = (ResponseMessageHandler<T>) responseMessageHandlerMap.get(message.getClass());
         if (null==messageHandler){
             logger.warn("roleType={} sessionId={} send unregistered message {}",
                     session.getRoleType(),session.getServerGuid(),message.getClass().getSimpleName());

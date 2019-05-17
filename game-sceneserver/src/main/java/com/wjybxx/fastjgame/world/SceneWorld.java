@@ -4,16 +4,15 @@ import com.google.inject.Inject;
 import com.wjybxx.fastjgame.core.SceneProcessType;
 import com.wjybxx.fastjgame.core.node.ZKOnlineSceneNode;
 import com.wjybxx.fastjgame.misc.HostAndPort;
-import com.wjybxx.fastjgame.misc.ProtoBufHashMappingStrategy;
 import com.wjybxx.fastjgame.mrg.*;
+import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
+import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
 import com.wjybxx.fastjgame.net.async.S2CSession;
 import com.wjybxx.fastjgame.net.async.initializer.TCPServerChannelInitializer;
 import com.wjybxx.fastjgame.net.async.initializer.WsServerChannelInitializer;
 import com.wjybxx.fastjgame.net.common.CodecHelper;
-import com.wjybxx.fastjgame.net.common.ProtoBufMessageSerializer;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
-import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
 import com.wjybxx.fastjgame.utils.GameUtils;
 import com.wjybxx.fastjgame.utils.ZKUtils;
 import org.apache.curator.utils.ZKPaths;
@@ -21,10 +20,10 @@ import org.apache.zookeeper.CreateMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-
-import static com.wjybxx.fastjgame.protobuffer.p_center_scene.*;
-import static com.wjybxx.fastjgame.protobuffer.p_sync_center_scene.*;
+import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello;
+import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello;
+import static com.wjybxx.fastjgame.protobuffer.p_sync_center_scene.p_center_command_single_scene_active_regions;
+import static com.wjybxx.fastjgame.protobuffer.p_sync_center_scene.p_center_command_single_scene_start;
 
 /**
  * SceneServer
@@ -51,15 +50,15 @@ public class SceneWorld extends WorldCore {
 
     @Override
     protected void registerCodecHelper() throws Exception {
-        registerCodecHelper(GameUtils.INNER_CODEC_NAME,
-                new ProtoBufHashMappingStrategy(),
-                new ProtoBufMessageSerializer());
+        super.registerCodecHelper();
+        // 这里没有使用模板方法是因为不是都有额外的codec要注册，导致太多钩子方法也不好
+        // TODO 注册与玩家交互的codec帮助类
     }
 
     @Override
     protected void registerMessageHandlers() {
-        registerClientMessageHandler(p_center_single_scene_hello.class,centerInSceneInfoMrg::p_center_single_scene_hello_handler);
-        registerClientMessageHandler(p_center_cross_scene_hello.class,centerInSceneInfoMrg::p_center_cross_scene_hello_handler);
+        registerRequestMessageHandler(p_center_single_scene_hello.class,centerInSceneInfoMrg::p_center_single_scene_hello_handler);
+        registerRequestMessageHandler(p_center_cross_scene_hello.class,centerInSceneInfoMrg::p_center_cross_scene_hello_handler);
     }
 
     @Override
@@ -73,10 +72,9 @@ public class SceneWorld extends WorldCore {
         registerSyncRequestHandler(p_center_command_single_scene_active_regions.class,sceneRegionMrg::p_center_command_scene_active_regions_handler);
     }
 
-    @Nonnull
     @Override
-    protected SessionLifecycleAware<S2CSession> newAsyncSessionLifecycleAware() {
-        return new SessionLifecycleAware<S2CSession>() {
+    protected void registerAsyncSessionLifeAware(S2CSessionMrg s2CSessionMrg) {
+        this.s2CSessionMrg.registerLifeCycleAware(RoleType.CENTER_SERVER, new SessionLifecycleAware<S2CSession>() {
             @Override
             public void onSessionConnected(S2CSession session) {
 
@@ -84,27 +82,14 @@ public class SceneWorld extends WorldCore {
 
             @Override
             public void onSessionDisconnected(S2CSession session) {
-                if (session.getRoleType() == RoleType.CENTER_SERVER){
-                    centerInSceneInfoMrg.onDisconnect(session.getClientGuid(),SceneWorld.this);
-                }
+                centerInSceneInfoMrg.onDisconnect(session.getClientGuid(),SceneWorld.this);
             }
-        };
+        });
     }
 
-    @Nonnull
     @Override
-    protected SessionLifecycleAware<SyncS2CSession> newSyncSessionLifeCycleAware() {
-        return new SessionLifecycleAware<SyncS2CSession>() {
-            @Override
-            public void onSessionConnected(SyncS2CSession syncS2CSession) {
+    protected void registerSyncSessionLifeAware(SyncS2CSessionMrg syncS2CSessionMrg) {
 
-            }
-
-            @Override
-            public void onSessionDisconnected(SyncS2CSession syncS2CSession) {
-
-            }
-        };
     }
 
     @Override

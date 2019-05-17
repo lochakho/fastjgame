@@ -18,6 +18,7 @@ package com.wjybxx.fastjgame.utils;
 
 import com.google.gson.GsonBuilder;
 import com.wjybxx.fastjgame.misc.PortRange;
+import com.wjybxx.fastjgame.net.async.C2SSession;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -18,6 +18,10 @@ package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.net.common.CodecHelper;
+import com.wjybxx.fastjgame.net.common.MessageMapper;
+import com.wjybxx.fastjgame.net.common.MessageMappingStrategy;
+import com.wjybxx.fastjgame.net.common.MessageSerializer;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.HashMap;
@@ -38,6 +42,20 @@ public final class CodecHelperMrg {
     @Inject
     public CodecHelperMrg() {
 
+    }
+
+    /**
+     * 通过mappingStrategy和serializer注册codec
+     * @param name codec的名字
+     * @param mappingStrategy 消息映射策略
+     * @param messageSerializer 消息序列化方式
+     * @throws Exception mapping error , or init exception
+     */
+    public void registerCodecHelper(String name, MessageMappingStrategy mappingStrategy, MessageSerializer messageSerializer) throws Exception {
+        Object2IntMap<Class<?>> mapper = mappingStrategy.mapping();
+        MessageMapper messageMapper = new MessageMapper(mapper);
+        messageSerializer.init(messageMapper);
+        registerCodecHelper(name,new CodecHelper(messageMapper,messageSerializer));
     }
 
     /**

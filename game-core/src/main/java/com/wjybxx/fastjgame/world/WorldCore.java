@@ -45,6 +45,11 @@ public abstract class WorldCore extends World{
     }
 
     @Override
+    protected void registerCodecHelper() throws Exception {
+        innerAcceptorMrg.registerInnerCodecHelper();
+    }
+
+    @Override
     protected final void worldStartImp() throws Exception {
         startCore();
 

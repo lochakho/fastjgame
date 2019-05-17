@@ -113,7 +113,7 @@ public class SceneInCenterInfoMrg {
         HostAndPort syncRpcHostAndPort=HostAndPort.parseHostAndPort(onlineSceneNode.getInnerRpcAddress());
         innerAcceptorMrg.registerSyncRpcSession(singleSceneNodeName.getSceneProcessGuid(), RoleType.SCENE_SERVER,
                 syncRpcHostAndPort,
-                GameUtils.emptyAware());
+                session -> guid2InfoMap.containsKey(session.getServerGuid()));
     }
 
     /**
@@ -140,7 +140,7 @@ public class SceneInCenterInfoMrg {
         HostAndPort syncRpcHostAndPort=HostAndPort.parseHostAndPort(onlineSceneNode.getInnerRpcAddress());
         innerAcceptorMrg.registerSyncRpcSession(crossSceneNodeName.getSceneProcessGuid(), RoleType.SCENE_SERVER,
                 syncRpcHostAndPort,
-                GameUtils.emptyAware());
+                session -> guid2InfoMap.containsKey(session.getServerGuid()));
     }
 
     /**
@@ -214,6 +214,21 @@ public class SceneInCenterInfoMrg {
         @Override
         public void onSessionDisconnected(C2SSession session) {
             onSceneDisconnect(session.getServerGuid());
+        }
+    }
+
+    /**
+     * 重新注册
+     */
+    private class ReRegisterAware implements SessionLifecycleAware<SyncC2SSession>{
+
+        @Override
+        public void onSessionConnected(SyncC2SSession session) {
+
+        }
+
+        @Override
+        public void onSessionDisconnected(SyncC2SSession session) {
         }
     }
 

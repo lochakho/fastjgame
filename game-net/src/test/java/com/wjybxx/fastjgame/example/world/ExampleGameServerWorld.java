@@ -22,19 +22,19 @@ import com.wjybxx.fastjgame.example.jsonmsg.ExampleMappingStrategy;
 import com.wjybxx.fastjgame.example.mrg.ExampleGameServerInfoMrg;
 import com.wjybxx.fastjgame.misc.HttpResponseHelper;
 import com.wjybxx.fastjgame.mrg.WorldWrapper;
+import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
+import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
 import com.wjybxx.fastjgame.net.async.S2CSession;
 import com.wjybxx.fastjgame.net.async.initializer.HttpServerInitializer;
 import com.wjybxx.fastjgame.net.async.initializer.TCPServerChannelInitializer;
 import com.wjybxx.fastjgame.net.async.initializer.WsServerChannelInitializer;
 import com.wjybxx.fastjgame.net.common.JsonMessageSerializer;
+import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
-import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
 import com.wjybxx.fastjgame.net.sync.initializer.ServerSyncRpcInitializer;
 import com.wjybxx.fastjgame.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
 
 /**
  * 示例游戏世界服务器
@@ -62,7 +62,7 @@ public class ExampleGameServerWorld extends World {
 
     @Override
     protected void registerMessageHandlers() {
-        registerClientMessageHandler(ExampleJsonMsg.LoginRequest.class, ((session, message) -> {
+        registerRequestMessageHandler(ExampleJsonMsg.LoginRequest.class, ((session, message) -> {
             logger.info("rcv {}-{} {}.",session.getRoleType(),session.getClientGuid(),message);
             // 返回一个成功消息
             s2CSessionMrg.send(session.getClientGuid(), new ExampleJsonMsg.LoginResponse(message.getName(), message.getAccountId(),true));
@@ -111,15 +111,13 @@ public class ExampleGameServerWorld extends World {
     }
 
     @Override
-    @Nonnull
-    protected SessionLifecycleAware<S2CSession> newAsyncSessionLifecycleAware() {
-        return new ExampleS2CSessionLifecycleAware();
+    protected void registerAsyncSessionLifeAware(S2CSessionMrg s2CSessionMrg) {
+        this.s2CSessionMrg.registerLifeCycleAware(RoleType.LOGIN_SERVER,new ExampleS2CSessionLifecycleAware());
     }
 
-    @Nonnull
     @Override
-    protected SessionLifecycleAware<SyncS2CSession> newSyncSessionLifeCycleAware() {
-        return null;
+    protected void registerSyncSessionLifeAware(SyncS2CSessionMrg syncS2CSessionMrg) {
+
     }
 
     @Override

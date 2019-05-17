@@ -351,7 +351,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
             createNode(path,mode,initData);
             return true;
         }catch (KeeperException.NodeExistsException ignore){
-            // ignore
+            // ignore 等价于cas尝试失败
         }
         return false;
     }
@@ -377,23 +377,21 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
         try {
             client.delete().deletingChildrenIfNeeded().forPath(path);
         }catch (KeeperException.NoNodeException e){
-            // 没有影响
-            logger.warn("may other process delete {} node ",path,e);
+            // ignore 没有影响，别人帮助我完成了这件事
         }
     }
 
     /**
      * 获取某个节点的所有子节点属性
-     * @param path 父节点路径
-     * @return 所有的子节点路径,如果父节点不存在或没有子节点，则返回emptyList
+     * @param path 节点路径
+     * @return 所有的子节点路径,如果该节点不存在或没有子节点，则返回emptyList
      * @throws Exception zk errors
      */
     public List<String> getChildren(String path) throws Exception{
         try {
             return client.getChildren().forPath(path);
         }catch (KeeperException.NoNodeException e){
-            // 不影响
-            logger.warn("may other process delete {} node ",path,e);
+            // ignore 没有影响
             return Collections.emptyList();
         }
     }
@@ -495,6 +493,18 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
             if (interrupted){
                 Thread.currentThread().interrupt();
             }
+        }
+    }
+
+    /**
+     * 删除指定节点，如果该节点没有子节点的话。
+     * (该操作是一个复合操作，注意加锁)
+     * @param path 路径
+     */
+    public void deleteNodeIfNoChild(String path) throws Exception {
+        List<String> children = getChildren(path);
+        if (children.size()==0){
+            delete(path);
         }
     }
 

@@ -161,13 +161,13 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
             // 不是我的战区，这里不应该走到，因为该节点下的进程都是同一个进程的
             return;
         }
+        ZKOnlineWarzoneNode zkOnlineWarzoneNode=GameUtils.parseFromJsonBytes(childData.getData(),ZKOnlineWarzoneNode.class);
         if (type== Type.CHILD_ADDED){
-            ZKOnlineWarzoneNode zkOnlineWarzoneNode=GameUtils.parseFromJsonBytes(childData.getData(),ZKOnlineWarzoneNode.class);
             warzoneInCenterInfoMrg.onDiscoverWarzone(warzoneNodeName,zkOnlineWarzoneNode);
             logger.info("discover warzone {}",warzoneNodeName);
         }else {
             // child remove
-            warzoneInCenterInfoMrg.onWarzoneNodeRemoved(warzoneNodeName);
+            warzoneInCenterInfoMrg.onWarzoneNodeRemoved(warzoneNodeName,zkOnlineWarzoneNode);
             logger.info("child remove,warzone {}",warzoneNodeName);
         }
     }

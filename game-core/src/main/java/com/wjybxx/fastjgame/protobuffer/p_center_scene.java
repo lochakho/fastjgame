@@ -1722,7 +1722,7 @@ public final class p_center_scene {
 
     /**
      * <pre>
-     * 我成功启动了哪些区域
+     * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
      * <code>repeated int32 activeRegions = 3;</code>
@@ -1730,7 +1730,7 @@ public final class p_center_scene {
     java.util.List<java.lang.Integer> getActiveRegionsList();
     /**
      * <pre>
-     * 我成功启动了哪些区域
+     * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
      * <code>repeated int32 activeRegions = 3;</code>
@@ -1738,7 +1738,7 @@ public final class p_center_scene {
     int getActiveRegionsCount();
     /**
      * <pre>
-     * 我成功启动了哪些区域
+     * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
      * <code>repeated int32 activeRegions = 3;</code>
@@ -1929,7 +1929,7 @@ public final class p_center_scene {
     private java.util.List<java.lang.Integer> activeRegions_;
     /**
      * <pre>
-     * 我成功启动了哪些区域
+     * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
      * <code>repeated int32 activeRegions = 3;</code>
@@ -1940,7 +1940,7 @@ public final class p_center_scene {
     }
     /**
      * <pre>
-     * 我成功启动了哪些区域
+     * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
      * <code>repeated int32 activeRegions = 3;</code>
@@ -1950,7 +1950,7 @@ public final class p_center_scene {
     }
     /**
      * <pre>
-     * 我成功启动了哪些区域
+     * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
      * <code>repeated int32 activeRegions = 3;</code>
@@ -2482,7 +2482,7 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 我成功启动了哪些区域
+       * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
        * <code>repeated int32 activeRegions = 3;</code>
@@ -2493,7 +2493,7 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 我成功启动了哪些区域
+       * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
        * <code>repeated int32 activeRegions = 3;</code>
@@ -2503,7 +2503,7 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 我成功启动了哪些区域
+       * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
        * <code>repeated int32 activeRegions = 3;</code>
@@ -2513,7 +2513,7 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 我成功启动了哪些区域
+       * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
        * <code>repeated int32 activeRegions = 3;</code>
@@ -2527,7 +2527,7 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 我成功启动了哪些区域
+       * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
        * <code>repeated int32 activeRegions = 3;</code>
@@ -2540,7 +2540,7 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 我成功启动了哪些区域
+       * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
        * <code>repeated int32 activeRegions = 3;</code>
@@ -2555,7 +2555,7 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 我成功启动了哪些区域
+       * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
        * <code>repeated int32 activeRegions = 3;</code>

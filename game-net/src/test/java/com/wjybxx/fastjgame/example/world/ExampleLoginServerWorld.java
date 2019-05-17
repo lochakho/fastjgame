@@ -23,14 +23,14 @@ import com.wjybxx.fastjgame.example.jsonmsg.ExampleMappingStrategy;
 import com.wjybxx.fastjgame.example.mrg.ExampleLoginServerInfoMrg;
 import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.WorldWrapper;
+import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
+import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
 import com.wjybxx.fastjgame.net.async.C2SSession;
 import com.wjybxx.fastjgame.net.async.OkHttpResponseHandler;
-import com.wjybxx.fastjgame.net.async.S2CSession;
 import com.wjybxx.fastjgame.net.async.initializer.TCPClientChannelInitializer;
 import com.wjybxx.fastjgame.net.async.initializer.WsClientChannelInitializer;
 import com.wjybxx.fastjgame.net.common.*;
 import com.wjybxx.fastjgame.net.sync.SyncC2SSession;
-import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
 import com.wjybxx.fastjgame.net.sync.initializer.ClientSyncRpcInitializer;
 import com.wjybxx.fastjgame.world.World;
 import io.netty.channel.ChannelInitializer;
@@ -74,7 +74,7 @@ public class ExampleLoginServerWorld extends World {
 
     @Override
     protected void registerMessageHandlers() {
-        registerServerMessageHandler(ExampleJsonMsg.LoginResponse.class,((session, message) -> {
+        registerResponseMessageHandler(ExampleJsonMsg.LoginResponse.class,((session, message) -> {
             logger.info("rcv {}-{} {}",session.getRoleType(),session.getServerGuid(),message);
         }));
     }
@@ -89,38 +89,14 @@ public class ExampleLoginServerWorld extends World {
 
     }
 
-    @Nonnull
     @Override
-    protected SessionLifecycleAware<S2CSession> newAsyncSessionLifecycleAware() {
-        // 该示例不会走到这里
-        return new SessionLifecycleAware<S2CSession>() {
-            @Override
-            public void onSessionConnected(S2CSession session) {
+    protected void registerAsyncSessionLifeAware(S2CSessionMrg s2CSessionMrg) {
 
-            }
-
-            @Override
-            public void onSessionDisconnected(S2CSession session) {
-
-            }
-        };
     }
 
-    @Nonnull
     @Override
-    protected SessionLifecycleAware<SyncS2CSession> newSyncSessionLifeCycleAware() {
-        // 该示例不会走到这里
-        return new SessionLifecycleAware<SyncS2CSession>() {
-            @Override
-            public void onSessionConnected(SyncS2CSession syncS2CSession) {
+    protected void registerSyncSessionLifeAware(SyncS2CSessionMrg syncS2CSessionMrg) {
 
-            }
-
-            @Override
-            public void onSessionDisconnected(SyncS2CSession syncS2CSession) {
-
-            }
-        };
     }
 
     @Override

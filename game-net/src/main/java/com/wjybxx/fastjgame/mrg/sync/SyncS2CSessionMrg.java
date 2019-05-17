@@ -21,10 +21,7 @@ import com.wjybxx.fastjgame.constants.NetConstants;
 import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.misc.PortRange;
 import com.wjybxx.fastjgame.mrg.*;
-import com.wjybxx.fastjgame.net.common.FailReason;
-import com.wjybxx.fastjgame.net.common.ForbiddenTokenHelper;
-import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
-import com.wjybxx.fastjgame.net.common.Token;
+import com.wjybxx.fastjgame.net.common.*;
 import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
 import com.wjybxx.fastjgame.net.sync.event.SyncConnectRequestEvent;
 import com.wjybxx.fastjgame.net.sync.event.SyncLogicRequestEvent;
@@ -47,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.EnumMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -75,9 +73,11 @@ public class SyncS2CSessionMrg {
     private final SyncNettyThreadMrg syncNettyThreadMrg;
     private final ForbiddenTokenHelper forbiddenTokenHelper;
     /**
-     * 会话生命周期回调
+     * 会话生命周期回调。
+     * 这样设计是因为角色类型很多，而真正与你建立会话的角色类型很少。
      */
-    private SessionLifecycleAware<SyncS2CSession> lifecycleAware;
+    private final EnumMap<RoleType,SessionLifecycleAware<SyncS2CSession>> lifecycleAwareMap=new EnumMap<>(RoleType.class);
+
     /**
      * 与客户端建立的会话信息
      */
@@ -117,11 +117,16 @@ public class SyncS2CSessionMrg {
     }
 
     /**
-     * 设置同步会话生命周期回调函数
-     * @param lifecycleAware
+     * 注册针对某种类型的会话生命周期回调。
+     * 这样设计是因为角色类型很多，而真正与你建立会话的角色类型很少。
+     * @param roleType 角色类型
+     * @param lifecycleAware 会话通知
      */
-    public void setLifecycleAware(SessionLifecycleAware<SyncS2CSession> lifecycleAware) {
-        this.lifecycleAware = lifecycleAware;
+    public void registerLifeCycleAware(@Nonnull RoleType roleType,@Nonnull SessionLifecycleAware<SyncS2CSession> lifecycleAware){
+        if (lifecycleAwareMap.containsKey(roleType)){
+            throw new IllegalArgumentException("duplicate roleType " + roleType);
+        }
+        lifecycleAwareMap.put(roleType,lifecycleAware);
     }
 
     private void checkSessionTimeout(Timer timer){
@@ -169,6 +174,7 @@ public class SyncS2CSessionMrg {
         notifyClientExit(sessionWrapper.getChannel(),sessionWrapper);
         logger.info("remove session by reason of {}, session info={}.",reason, session);
 
+        SessionLifecycleAware<SyncS2CSession> lifecycleAware = lifecycleAwareMap.get(session.getRoleType());
         if (null != lifecycleAware){
             try {
                 lifecycleAware.onSessionDisconnected(session);
@@ -346,6 +352,7 @@ public class SyncS2CSessionMrg {
         logger.info("client login success, sessionInfo={}",session);
 
         // 连接建立回调(通知)
+        SessionLifecycleAware<SyncS2CSession> lifecycleAware = lifecycleAwareMap.get(session.getRoleType());
         if (lifecycleAware != null){
             try {
                 lifecycleAware.onSessionConnected(session);

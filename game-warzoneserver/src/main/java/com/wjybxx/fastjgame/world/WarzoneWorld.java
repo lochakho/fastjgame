@@ -17,13 +17,17 @@
 package com.wjybxx.fastjgame.world;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.mrg.CenterInWarzoneInfoMrg;
+import com.wjybxx.fastjgame.mrg.WarzoneWorldInfoMrg;
 import com.wjybxx.fastjgame.mrg.WorldCoreWrapper;
 import com.wjybxx.fastjgame.mrg.WorldWrapper;
+import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
+import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
 import com.wjybxx.fastjgame.net.async.S2CSession;
+import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
-import com.wjybxx.fastjgame.net.sync.SyncS2CSession;
 
-import javax.annotation.Nonnull;
+import static com.wjybxx.fastjgame.protobuffer.p_center_warzone.*;
 
 /**
  * WarzoneServer
@@ -34,19 +38,20 @@ import javax.annotation.Nonnull;
  */
 public class WarzoneWorld extends WorldCore {
 
+    private final WarzoneWorldInfoMrg warzoneWorldInfoMrg;
+    private final CenterInWarzoneInfoMrg centerInWarzoneInfoMrg;
+
     @Inject
-    public WarzoneWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
+    public WarzoneWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper, WarzoneWorldInfoMrg warzoneWorldInfoMrg,
+                        CenterInWarzoneInfoMrg centerInWarzoneInfoMrg) {
         super(worldWrapper, coreWrapper);
-    }
-
-    @Override
-    protected void registerCodecHelper() throws Exception {
-
+        this.warzoneWorldInfoMrg = warzoneWorldInfoMrg;
+        this.centerInWarzoneInfoMrg = centerInWarzoneInfoMrg;
     }
 
     @Override
     protected void registerMessageHandlers() {
-
+        registerRequestMessageHandler(p_center_warzone_hello.class,centerInWarzoneInfoMrg::p_center_warzone_hello_handler);
     }
 
     @Override
@@ -59,16 +64,24 @@ public class WarzoneWorld extends WorldCore {
 
     }
 
-    @Nonnull
     @Override
-    protected SessionLifecycleAware<S2CSession> newAsyncSessionLifecycleAware() {
-        return null;
+    protected void registerAsyncSessionLifeAware(S2CSessionMrg s2CSessionMrg) {
+        this.s2CSessionMrg.registerLifeCycleAware(RoleType.CENTER_SERVER, new SessionLifecycleAware<S2CSession>() {
+            @Override
+            public void onSessionConnected(S2CSession session) {
+
+            }
+
+            @Override
+            public void onSessionDisconnected(S2CSession session) {
+                centerInWarzoneInfoMrg.onCenterServerDisconnect(session);
+            }
+        });
     }
 
-    @Nonnull
     @Override
-    protected SessionLifecycleAware<SyncS2CSession> newSyncSessionLifeCycleAware() {
-        return null;
+    protected void registerSyncSessionLifeAware(SyncS2CSessionMrg syncS2CSessionMrg) {
+
     }
 
     @Override

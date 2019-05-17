@@ -14,26 +14,38 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core;
+package com.wjybxx.fastjgame.mrg;
+
+import com.google.inject.Inject;
+import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.net.common.RoleType;
 
 /**
- * WarzoneServer在CenterServer中的信息
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/15 13:51
+ * @date 2019/5/17 15:40
  * @github - https://github.com/hl845740757
  */
-public class WarzoneInCenterInfo {
-    /**
-     * 战区进程guid，也是会话id
-     */
-    private final long warzoneProcessGuid;
+public class WarzoneWorldInfoMrg extends WorldCoreInfoMrg{
 
-    public WarzoneInCenterInfo(long warzoneProcessGuid) {
-        this.warzoneProcessGuid = warzoneProcessGuid;
+    private int warzoneId;
+
+    @Inject
+    public WarzoneWorldInfoMrg(GuidMrg guidMrg) {
+        super(guidMrg);
     }
 
-    public long getWarzoneProcessGuid() {
-        return warzoneProcessGuid;
+    @Override
+    protected void initImp(ConfigWrapper startArgs) throws Exception {
+        warzoneId=startArgs.getAsInt("warzoneId");
+    }
+
+    @Override
+    public RoleType getProcessType() {
+        return RoleType.WARZONE_SERVER;
+    }
+
+    public int getWarzoneId() {
+        return warzoneId;
     }
 }

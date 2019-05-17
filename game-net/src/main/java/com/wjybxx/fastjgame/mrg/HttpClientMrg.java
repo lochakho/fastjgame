@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
+import java.net.BindException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -77,14 +78,14 @@ public class HttpClientMrg extends AbstractThreadLifeCycleHelper {
     /**
      * @see AcceptorMrg#bind(NettyThreadMrg, boolean, int, ChannelInitializer)
      */
-    public HostAndPort bind(boolean outer,int port,ChannelInitializer<SocketChannel> initializer){
+    public HostAndPort bind(boolean outer,int port,ChannelInitializer<SocketChannel> initializer) throws BindException {
         return acceptorMrg.bind(asyncNettyThreadMrg,outer,port,initializer);
     }
 
     /**
      * @see AcceptorMrg#bindRange(NettyThreadMrg, boolean, PortRange, ChannelInitializer)
      */
-    public HostAndPort bindRange(boolean outer, PortRange portRange, ChannelInitializer<SocketChannel> initializer){
+    public HostAndPort bindRange(boolean outer, PortRange portRange, ChannelInitializer<SocketChannel> initializer) throws BindException {
         return acceptorMrg.bindRange(asyncNettyThreadMrg,outer,portRange,initializer);
     }
 

@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.net.BindException;
 import java.util.EnumMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -138,14 +139,14 @@ public class SyncS2CSessionMrg {
     /**
      * @see AcceptorMrg#bind(NettyThreadMrg, boolean, int, ChannelInitializer)
      */
-    public HostAndPort bind(boolean outer, int port, ChannelInitializer<SocketChannel> initializer){
+    public HostAndPort bind(boolean outer, int port, ChannelInitializer<SocketChannel> initializer) throws BindException {
         return acceptorMrg.bind(syncNettyThreadMrg,outer,port,initializer);
     }
 
     /**
      * @see AcceptorMrg#bindRange(NettyThreadMrg, boolean, PortRange, ChannelInitializer)
      */
-    public HostAndPort bindRange(boolean outer, PortRange portRange, ChannelInitializer<SocketChannel> initializer){
+    public HostAndPort bindRange(boolean outer, PortRange portRange, ChannelInitializer<SocketChannel> initializer) throws BindException {
         return acceptorMrg.bindRange(syncNettyThreadMrg,outer,portRange,initializer);
     }
 

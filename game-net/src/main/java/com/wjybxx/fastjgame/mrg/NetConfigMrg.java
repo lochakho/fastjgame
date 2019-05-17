@@ -80,8 +80,8 @@ public class NetConfigMrg {
     @Inject
     public NetConfigMrg() throws IOException {
         configWrapper = ConfigLoader.loadConfig(NetConfigMrg.class.getClassLoader(), NetConstants.NET_CONFIG_NAME);
-        localIp= configWrapper.getAsString("localIp",NetUtils.findLocalIp());
-        outerIp= configWrapper.getAsString("outerIp",NetUtils.findOuterIp());
+        localIp= configWrapper.getAsString("localIp",NetUtils.getLocalIp());
+        outerIp= configWrapper.getAsString("outerIp",NetUtils.getOuterIp());
 
         tokenKeyBytes = configWrapper.getAsString("tokenKey").getBytes(StandardCharsets.UTF_8);
         tokenForbiddenTimeout = configWrapper.getAsInt("tokenForbiddenTimeout",3600);

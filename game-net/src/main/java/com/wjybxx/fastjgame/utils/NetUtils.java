@@ -40,19 +40,17 @@ public class NetUtils {
 
     private static final Logger logger= LoggerFactory.getLogger(NetUtils.class);
     /**
-     * 本机地址
+     * 本机内网地址
      */
-    private static final String localHost;
+    private static final String localIp=findLocalIp();
+    /**
+     * 本机外网地址
+     */
+    private static final String outerIp=findOuterIp();
 
     static {
-        String hostAddress="127.0.0.1";
-        try {
-            hostAddress= Inet4Address.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            logger.error("get localHost caught exception,use {} instead.",hostAddress,e);
-        }
-        localHost = hostAddress;
-        logger.info("localHost {}",hostAddress);
+        logger.info("localIp {}",localIp);
+        logger.info("outerIp {}",outerIp);
     }
 
     // close
@@ -133,11 +131,33 @@ public class NetUtils {
     }
 
     /**
+     * 获取机器内网ip
+     * @return
+     */
+    public static String getLocalIp(){
+        return localIp;
+    }
+
+    /**
+     * 获取机器外网ip
+     * @return
+     */
+    public static String getOuterIp(){
+        return outerIp;
+    }
+
+    /**
      * 查找内网ip。
      * @return
      */
-    public static String findLocalIp() {
-        return localHost;
+    private static String findLocalIp() {
+        String hostAddress="127.0.0.1";
+        try {
+            hostAddress= Inet4Address.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            logger.error("get localHost caught exception,use {} instead.",hostAddress,e);
+        }
+        return hostAddress;
     }
 
     /**
@@ -152,34 +172,40 @@ public class NetUtils {
      * {@link Inet4Address#isLoopbackAddress()} 是否是本机回环ip (127.x.x.x)
      * {@link Inet4Address#isAnyLocalAddress()} 是否是通配符地址 (0.0.0.0)
      * @return
-     * @throws SocketException
+     * @throws SocketException 并不知晓具体类型
      */
-    public static String findOuterIp() throws SocketException {
-        Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
-        while (netInterfaces.hasMoreElements()) {
-            NetworkInterface ni = netInterfaces.nextElement();
-            Enumeration<InetAddress> address = ni.getInetAddresses();
-            while (address.hasMoreElements()) {
-                InetAddress ip = address.nextElement();
-                if (!(ip instanceof Inet4Address)){
-                    continue;
+    private static String findOuterIp() {
+        try {
+            Enumeration<NetworkInterface> netInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (netInterfaces.hasMoreElements()) {
+                NetworkInterface ni = netInterfaces.nextElement();
+                Enumeration<InetAddress> address = ni.getInetAddresses();
+                while (address.hasMoreElements()) {
+                    InetAddress ip = address.nextElement();
+                    if (!(ip instanceof Inet4Address)){
+                        continue;
+                    }
+                    // 回环地址
+                    Inet4Address inet4Address= (Inet4Address) ip;
+                    if (inet4Address.isLoopbackAddress()){
+                        continue;
+                    }
+                    // 通配符地址
+                    if (inet4Address.isAnyLocalAddress()){
+                        continue;
+                    }
+                    // 私有地址(内网地址)
+                    if (ip.isSiteLocalAddress()){
+                        continue;
+                    }
+                    return inet4Address.getHostAddress();
                 }
-                // 回环地址
-                Inet4Address inet4Address= (Inet4Address) ip;
-                if (inet4Address.isLoopbackAddress()){
-                    continue;
-                }
-                // 通配符地址
-                if (inet4Address.isAnyLocalAddress()){
-                    continue;
-                }
-                // 私有地址(内网地址)
-                if (ip.isSiteLocalAddress()){
-                    continue;
-                }
-                return inet4Address.getHostAddress();
             }
+        } catch (SocketException e){
+            logger.error("find outerIp caught exception,will use localIp instead.",e);
+            return findLocalIp();
         }
+        logger.error("can't find outerIp, will use localIp instead.");
         return findLocalIp();
     }
 

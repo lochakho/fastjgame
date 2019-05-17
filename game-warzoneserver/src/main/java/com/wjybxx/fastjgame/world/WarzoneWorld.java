@@ -17,6 +17,8 @@
 package com.wjybxx.fastjgame.world;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.core.node.ZKOnlineCenterNode;
+import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.CenterInWarzoneInfoMrg;
 import com.wjybxx.fastjgame.mrg.WarzoneWorldInfoMrg;
 import com.wjybxx.fastjgame.mrg.WorldCoreWrapper;
@@ -26,6 +28,13 @@ import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
 import com.wjybxx.fastjgame.net.async.S2CSession;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.net.common.SessionLifecycleAware;
+import com.wjybxx.fastjgame.utils.ConcurrentUtils;
+import com.wjybxx.fastjgame.utils.GameUtils;
+import com.wjybxx.fastjgame.utils.ZKUtils;
+import org.apache.curator.utils.ZKPaths;
+import org.apache.zookeeper.CreateMode;
+
+import java.util.concurrent.TimeUnit;
 
 import static com.wjybxx.fastjgame.protobuffer.p_center_warzone.*;
 
@@ -86,7 +95,32 @@ public class WarzoneWorld extends WorldCore {
 
     @Override
     protected void startHook() throws Exception {
+        bindAndRegisterToZK();
+    }
 
+    private void bindAndRegisterToZK() throws Exception {
+        // 绑定3个内部交互的端口
+        HostAndPort tcpHostAndPort = innerAcceptorMrg.bindInnerTcpPort(true);
+        HostAndPort syncRpcHostAndPort = innerAcceptorMrg.bindInnerSyncRpcPort(true);
+        HostAndPort httpHostAndPort = innerAcceptorMrg.bindInnerHttpPort();
+
+        // 注册到zk
+        String parentPath= ZKUtils.onlineParentPath(warzoneWorldInfoMrg.getWarzoneId());
+        String nodeName= ZKUtils.buildWarzoneNodeName(warzoneWorldInfoMrg.getWarzoneId());
+
+        ZKOnlineCenterNode zkOnlineCenterNode=new ZKOnlineCenterNode(tcpHostAndPort.toString(),
+                syncRpcHostAndPort.toString(),
+                httpHostAndPort.toString(),
+                warzoneWorldInfoMrg.getProcessGuid());
+
+
+        final String path = ZKPaths.makePath(parentPath, nodeName);
+        curatorMrg.waitForNodeDelete(path);
+
+        final byte[] initData = GameUtils.serializeToJsonBytes(zkOnlineCenterNode);
+        ConcurrentUtils.awaitRemoteWithSleepingRetry(path, resource -> {
+            return curatorMrg.createNodeIfAbsent(path, CreateMode.EPHEMERAL,initData);
+        },3, TimeUnit.SECONDS);
     }
 
     @Override

@@ -32,6 +32,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.BindException;
+
 /**
  * 建立链接的帮助类。
  * 起名真实太难了，我之前项目就是这名，感觉不是很准确，但是又找不到更准确的。
@@ -59,9 +61,9 @@ public class AcceptorMrg {
      * @param outer 是否外网，若外网不存在，则绑定的是内网
      * @param port 需要绑定的端口
      * @param initializer channel初始化类，根据使用的协议(eg:tcp,ws) 和 序列化方式(eg:json,protoBuf)确定
-     * @return 是否监听成功
+     * @return 监听成功成功则返回绑定的地址，失败则返回null
      */
-    public HostAndPort bind(NettyThreadMrg nettyThreadMrg,boolean outer, int port, ChannelInitializer<SocketChannel> initializer){
+    public HostAndPort bind(NettyThreadMrg nettyThreadMrg,boolean outer, int port, ChannelInitializer<SocketChannel> initializer) throws BindException {
         ServerBootstrap serverBootstrap=new ServerBootstrap();
         serverBootstrap.group(nettyThreadMrg.getBossGroup(), nettyThreadMrg.getWorkerGroup());
 
@@ -94,7 +96,7 @@ public class AcceptorMrg {
             // ignore, may another process bind this port
             NetUtils.closeQuietly(channelFuture);
         }
-        return null;
+        throw new BindException("can't bind " + host + ":" + port);
     }
 
     /**
@@ -104,7 +106,7 @@ public class AcceptorMrg {
      * @param initializer channel初始化类
      * @return 监听成功的端口号，失败返回null
      */
-    public HostAndPort bindRange(NettyThreadMrg nettyThreadMrg,boolean outer, PortRange portRange, ChannelInitializer<SocketChannel> initializer){
+    public HostAndPort bindRange(NettyThreadMrg nettyThreadMrg,boolean outer, PortRange portRange, ChannelInitializer<SocketChannel> initializer) throws BindException {
         if (portRange.startPort <=0){
             throw new IllegalArgumentException("fromPort " + portRange.startPort);
         }
@@ -112,16 +114,17 @@ public class AcceptorMrg {
             throw new IllegalArgumentException("fromPort " + portRange.startPort + " toPort " + portRange.endPort);
         }
         for (int port = portRange.startPort; port<= portRange.endPort; port++){
-            HostAndPort hostAndPort=bind(nettyThreadMrg, outer,port, initializer);
-            if (null != hostAndPort){
-                return hostAndPort;
+            try {
+                return bind(nettyThreadMrg, outer,port, initializer);
+            }catch (BindException e){
+                // ignore
             }
         }
-        return null;
+        throw new BindException("can't bind port from " + portRange.startPort + " to " + portRange.endPort);
     }
 
     /**
-     * 异步建立连接
+     * 异步建立连接localHost
      * @param hostAndPort 服务器地址
      * @param initializer channel初始化类，根据使用的协议(eg:tcp,ws) 和 序列化方式(eg:json,protoBuf)确定
      * @return channelFuture 注意使用{@link ChannelFuture#sync()} 会抛出异常。

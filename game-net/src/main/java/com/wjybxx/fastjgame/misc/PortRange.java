@@ -39,4 +39,11 @@ public class PortRange {
         this.endPort = endPort;
     }
 
+    @Override
+    public String toString() {
+        return "PortRange{" +
+                "startPort=" + startPort +
+                ", endPort=" + endPort +
+                '}';
+    }
 }

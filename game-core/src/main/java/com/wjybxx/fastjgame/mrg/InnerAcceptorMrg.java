@@ -33,6 +33,7 @@ import com.wjybxx.fastjgame.net.sync.initializer.ClientSyncRpcInitializer;
 import com.wjybxx.fastjgame.net.sync.initializer.ServerSyncRpcInitializer;
 import com.wjybxx.fastjgame.utils.GameUtils;
 
+import java.net.BindException;
 import java.util.function.Predicate;
 
 /**
@@ -93,7 +94,7 @@ public class InnerAcceptorMrg {
      * @param outer 是否外网
      * @return
      */
-    public HostAndPort bindInnerTcpPort(boolean outer){
+    public HostAndPort bindInnerTcpPort(boolean outer) throws BindException {
         TCPServerChannelInitializer tcpServerChannelInitializer = new TCPServerChannelInitializer(netConfigMrg.maxFrameLength(),
                 getInnerCodecHelper(),
                 disruptorMrg);
@@ -128,7 +129,7 @@ public class InnerAcceptorMrg {
      * @param outer 是否外网
      * @return
      */
-    public HostAndPort bindInnerSyncRpcPort(boolean outer){
+    public HostAndPort bindInnerSyncRpcPort(boolean outer) throws BindException {
         ServerSyncRpcInitializer serverSyncRpcInitializer = new ServerSyncRpcInitializer(netConfigMrg.maxFrameLength(),
                 getInnerCodecHelper(), syncS2CSessionMrg);
         return syncS2CSessionMrg.bindRange(outer,GameUtils.INNER_SYNC_PORT_RANGE, serverSyncRpcInitializer);
@@ -154,7 +155,7 @@ public class InnerAcceptorMrg {
                 new ReRegisterAware(reRegisterMatcher));
     }
 
-    public HostAndPort bindInnerHttpPort(){
+    public HostAndPort bindInnerHttpPort() throws BindException {
         HttpServerInitializer httpServerInitializer = new HttpServerInitializer(disruptorMrg);
         return httpClientMrg.bindRange(true,GameUtils.INNER_HTTP_PORT_RANGE,httpServerInitializer);
     }

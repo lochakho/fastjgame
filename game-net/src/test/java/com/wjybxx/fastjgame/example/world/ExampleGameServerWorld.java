@@ -36,6 +36,8 @@ import com.wjybxx.fastjgame.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.BindException;
+
 /**
  * 示例游戏世界服务器
  * @author wjybxx
@@ -121,11 +123,11 @@ public class ExampleGameServerWorld extends World {
     }
 
     @Override
-    protected void worldStartImp() {
+    protected void worldStartImp() throws BindException {
         listenOrConnect();
     }
 
-    protected void listenOrConnect() {
+    protected void listenOrConnect() throws BindException {
         boolean outer=true;
         // tcp监听
         int tcpPort=gameServerInfoMrg.getTcpPort();

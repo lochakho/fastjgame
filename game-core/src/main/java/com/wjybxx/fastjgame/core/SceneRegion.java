@@ -83,7 +83,9 @@ public enum SceneRegion {
     }
 
     public static SceneRegion forNumber(int number){
-        return regionsMap.get(number);
+        SceneRegion sceneRegion = regionsMap.get(number);
+        assert null!=sceneRegion:"invalid number " + number;
+        return sceneRegion;
     }
 
     public int getNumber() {

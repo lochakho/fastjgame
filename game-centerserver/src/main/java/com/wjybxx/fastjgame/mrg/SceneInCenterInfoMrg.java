@@ -61,7 +61,7 @@ public class SceneInCenterInfoMrg {
     private final CenterWorldInfoMrg centerWorldInfoMrg;
     private final InnerAcceptorMrg innerAcceptorMrg;
     /**
-     * scene信息集合
+     * scene信息集合（我的私有场景和跨服场景）
      * sceneGuid->sceneInfo
      */
     private final Long2ObjectMap<SceneInCenterInfo> guid2InfoMap=new Long2ObjectOpenHashMap<>();

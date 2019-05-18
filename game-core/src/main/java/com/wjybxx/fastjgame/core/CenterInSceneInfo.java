@@ -16,6 +16,8 @@
 
 package com.wjybxx.fastjgame.core;
 
+import com.wjybxx.fastjgame.misc.PlatformType;
+
 /**
  * CenterServer在SceneServer中的信息
  *
@@ -31,17 +33,26 @@ public class CenterInSceneInfo {
      */
     private final long centerProcessGuid;
     /**
+     * 归属的平台
+     */
+    private final PlatformType platformType;
+    /**
      * 连接的是哪个服
      */
     private final int serverId;
 
-    public CenterInSceneInfo(long centerProcessGuid, int serverId) {
+    public CenterInSceneInfo(long centerProcessGuid, PlatformType platformType, int serverId) {
         this.centerProcessGuid = centerProcessGuid;
+        this.platformType = platformType;
         this.serverId = serverId;
     }
 
     public long getCenterProcessGuid() {
         return centerProcessGuid;
+    }
+
+    public PlatformType getPlatformType() {
+        return platformType;
     }
 
     public int getServerId() {

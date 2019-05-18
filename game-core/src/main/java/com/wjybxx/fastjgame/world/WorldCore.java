@@ -41,7 +41,7 @@ public abstract class WorldCore extends World{
         curatorMrg=coreWrapper.getCuratorMrg();
         gameConfigMrg=coreWrapper.getGameConfigMrg();
         guidMrg=coreWrapper.getGuidMrg();
-        innerAcceptorMrg =coreWrapper.getInnerAcceptorMrg();
+        innerAcceptorMrg=coreWrapper.getInnerAcceptorMrg();
     }
 
     @Override

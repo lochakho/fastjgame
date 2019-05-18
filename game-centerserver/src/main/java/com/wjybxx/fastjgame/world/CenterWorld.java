@@ -104,7 +104,7 @@ public class CenterWorld extends WorldCore {
 
         // 注册到zk
         String parentPath= ZKPathUtils.onlineParentPath(centerWorldInfoMrg.getWarzoneId());
-        String nodeName= ZKPathUtils.buildCenterNodeName(centerWorldInfoMrg.getWarzoneId(), centerWorldInfoMrg.getServerId());
+        String nodeName= ZKPathUtils.buildCenterNodeName(centerWorldInfoMrg.getPlatformType(), centerWorldInfoMrg.getServerId());
 
         ZKOnlineCenterNode zkOnlineCenterNode=new ZKOnlineCenterNode(tcpHostAndPort.toString(),
                 syncRpcHostAndPort.toString(),

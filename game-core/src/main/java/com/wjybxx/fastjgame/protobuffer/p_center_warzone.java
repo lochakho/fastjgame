@@ -19,7 +19,20 @@ public final class p_center_warzone {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 serverId = 1;</code>
+     * <pre>
+     * 所属的平台号
+     * </pre>
+     *
+     * <code>int32 platfomNumber = 1;</code>
+     */
+    int getPlatfomNumber();
+
+    /**
+     * <pre>
+     * 服务器id
+     * </pre>
+     *
+     * <code>int32 serverId = 2;</code>
      */
     int getServerId();
   }
@@ -40,6 +53,7 @@ public final class p_center_warzone {
       super(builder);
     }
     private p_center_warzone_hello() {
+      platfomNumber_ = 0;
       serverId_ = 0;
     }
 
@@ -76,6 +90,11 @@ public final class p_center_warzone {
             }
             case 8: {
 
+              platfomNumber_ = input.readInt32();
+              break;
+            }
+            case 16: {
+
               serverId_ = input.readInt32();
               break;
             }
@@ -103,10 +122,27 @@ public final class p_center_warzone {
               com.wjybxx.fastjgame.protobuffer.p_center_warzone.p_center_warzone_hello.class, com.wjybxx.fastjgame.protobuffer.p_center_warzone.p_center_warzone_hello.Builder.class);
     }
 
-    public static final int SERVERID_FIELD_NUMBER = 1;
+    public static final int PLATFOMNUMBER_FIELD_NUMBER = 1;
+    private int platfomNumber_;
+    /**
+     * <pre>
+     * 所属的平台号
+     * </pre>
+     *
+     * <code>int32 platfomNumber = 1;</code>
+     */
+    public int getPlatfomNumber() {
+      return platfomNumber_;
+    }
+
+    public static final int SERVERID_FIELD_NUMBER = 2;
     private int serverId_;
     /**
-     * <code>int32 serverId = 1;</code>
+     * <pre>
+     * 服务器id
+     * </pre>
+     *
+     * <code>int32 serverId = 2;</code>
      */
     public int getServerId() {
       return serverId_;
@@ -124,8 +160,11 @@ public final class p_center_warzone {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (platfomNumber_ != 0) {
+        output.writeInt32(1, platfomNumber_);
+      }
       if (serverId_ != 0) {
-        output.writeInt32(1, serverId_);
+        output.writeInt32(2, serverId_);
       }
       unknownFields.writeTo(output);
     }
@@ -135,9 +174,13 @@ public final class p_center_warzone {
       if (size != -1) return size;
 
       size = 0;
+      if (platfomNumber_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, platfomNumber_);
+      }
       if (serverId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, serverId_);
+          .computeInt32Size(2, serverId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -155,6 +198,8 @@ public final class p_center_warzone {
       com.wjybxx.fastjgame.protobuffer.p_center_warzone.p_center_warzone_hello other = (com.wjybxx.fastjgame.protobuffer.p_center_warzone.p_center_warzone_hello) obj;
 
       boolean result = true;
+      result = result && (getPlatfomNumber()
+          == other.getPlatfomNumber());
       result = result && (getServerId()
           == other.getServerId());
       result = result && unknownFields.equals(other.unknownFields);
@@ -168,6 +213,8 @@ public final class p_center_warzone {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + PLATFOMNUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getPlatfomNumber();
       hash = (37 * hash) + SERVERID_FIELD_NUMBER;
       hash = (53 * hash) + getServerId();
       hash = (29 * hash) + unknownFields.hashCode();
@@ -303,6 +350,8 @@ public final class p_center_warzone {
       }
       public Builder clear() {
         super.clear();
+        platfomNumber_ = 0;
+
         serverId_ = 0;
 
         return this;
@@ -327,6 +376,7 @@ public final class p_center_warzone {
 
       public com.wjybxx.fastjgame.protobuffer.p_center_warzone.p_center_warzone_hello buildPartial() {
         com.wjybxx.fastjgame.protobuffer.p_center_warzone.p_center_warzone_hello result = new com.wjybxx.fastjgame.protobuffer.p_center_warzone.p_center_warzone_hello(this);
+        result.platfomNumber_ = platfomNumber_;
         result.serverId_ = serverId_;
         onBuilt();
         return result;
@@ -369,6 +419,9 @@ public final class p_center_warzone {
 
       public Builder mergeFrom(com.wjybxx.fastjgame.protobuffer.p_center_warzone.p_center_warzone_hello other) {
         if (other == com.wjybxx.fastjgame.protobuffer.p_center_warzone.p_center_warzone_hello.getDefaultInstance()) return this;
+        if (other.getPlatfomNumber() != 0) {
+          setPlatfomNumber(other.getPlatfomNumber());
+        }
         if (other.getServerId() != 0) {
           setServerId(other.getServerId());
         }
@@ -399,15 +452,61 @@ public final class p_center_warzone {
         return this;
       }
 
+      private int platfomNumber_ ;
+      /**
+       * <pre>
+       * 所属的平台号
+       * </pre>
+       *
+       * <code>int32 platfomNumber = 1;</code>
+       */
+      public int getPlatfomNumber() {
+        return platfomNumber_;
+      }
+      /**
+       * <pre>
+       * 所属的平台号
+       * </pre>
+       *
+       * <code>int32 platfomNumber = 1;</code>
+       */
+      public Builder setPlatfomNumber(int value) {
+        
+        platfomNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 所属的平台号
+       * </pre>
+       *
+       * <code>int32 platfomNumber = 1;</code>
+       */
+      public Builder clearPlatfomNumber() {
+        
+        platfomNumber_ = 0;
+        onChanged();
+        return this;
+      }
+
       private int serverId_ ;
       /**
-       * <code>int32 serverId = 1;</code>
+       * <pre>
+       * 服务器id
+       * </pre>
+       *
+       * <code>int32 serverId = 2;</code>
        */
       public int getServerId() {
         return serverId_;
       }
       /**
-       * <code>int32 serverId = 1;</code>
+       * <pre>
+       * 服务器id
+       * </pre>
+       *
+       * <code>int32 serverId = 2;</code>
        */
       public Builder setServerId(int value) {
         
@@ -416,7 +515,11 @@ public final class p_center_warzone {
         return this;
       }
       /**
-       * <code>int32 serverId = 1;</code>
+       * <pre>
+       * 服务器id
+       * </pre>
+       *
+       * <code>int32 serverId = 2;</code>
        */
       public Builder clearServerId() {
         
@@ -888,11 +991,11 @@ public final class p_center_warzone {
   static {
     java.lang.String[] descriptorData = {
       "\n\026p_center_warzone.proto\022\tfastjgame\032\014p_e" +
-      "num.proto\032\016p_struct.proto\"*\n\026p_center_wa" +
-      "rzone_hello\022\020\n\010serverId\030\001 \001(\005\"\037\n\035p_cente" +
-      "r_warzone_hello_resultB6\n com.wjybxx.fas" +
-      "tjgame.protobufferB\020p_center_warzoneH\001b\006" +
-      "proto3"
+      "num.proto\032\016p_struct.proto\"A\n\026p_center_wa" +
+      "rzone_hello\022\025\n\rplatfomNumber\030\001 \001(\005\022\020\n\010se" +
+      "rverId\030\002 \001(\005\"\037\n\035p_center_warzone_hello_r" +
+      "esultB6\n com.wjybxx.fastjgame.protobuffe" +
+      "rB\020p_center_warzoneH\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -913,7 +1016,7 @@ public final class p_center_warzone {
     internal_static_fastjgame_p_center_warzone_hello_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fastjgame_p_center_warzone_hello_descriptor,
-        new java.lang.String[] { "ServerId", });
+        new java.lang.String[] { "PlatfomNumber", "ServerId", });
     internal_static_fastjgame_p_center_warzone_hello_result_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_fastjgame_p_center_warzone_hello_result_fieldAccessorTable = new

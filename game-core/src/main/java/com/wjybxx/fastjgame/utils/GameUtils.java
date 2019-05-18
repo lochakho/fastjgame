@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 游戏帮助类;
@@ -141,6 +143,25 @@ public class GameUtils {
      */
     public static <T> T parseFromJsonBytes(byte[] json, Class<T> clazz){
         return parseFromJson(new String(json,StandardCharsets.UTF_8),clazz);
+    }
+
+    /**
+     * 使用UTF-8字符集创建字符串
+     * @param utf8Bytes 使用UTF-8编码的字节数组
+     * @return
+     */
+    public static String newString(byte[] utf8Bytes){
+        return new String(utf8Bytes,StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 当json对象字节数组表示一个map对象时，返回对应的map对象
+     * @param jsonBytes json序列化的对象
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<String,String> newJsonMap(byte[] jsonBytes){
+        return parseFromJsonBytes(jsonBytes, LinkedHashMap.class);
     }
 
     /**

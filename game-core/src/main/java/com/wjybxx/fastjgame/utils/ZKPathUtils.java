@@ -26,7 +26,11 @@ import com.wjybxx.fastjgame.net.common.RoleType;
 import org.apache.curator.utils.PathUtils;
 
 /**
- * zookeeper节点路径辅助类
+ * zookeeper节点路径辅助类。
+ * 注意区分： 节点名字和节点路径的概念。
+ * 节点路径：从根节点到当前节点的完整路径。
+ * 节点名字：节点路径的最后一部分。
+ *
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/16 20:49
@@ -60,6 +64,15 @@ public class ZKPathUtils {
             throw new IllegalArgumentException("path " + path + " is root");
         }
         return path.substring(0,delimiterIndex);
+    }
+
+    /**
+     * 获取父节点的名字
+     * @param path
+     * @return
+     */
+    private static String findParentNodeName(String path){
+        return findNodeName(findParentPath(path));
     }
 
     /**
@@ -116,11 +129,11 @@ public class ZKPathUtils {
     /**
      * 真实服配置节点
      * @param platformType 平台枚举
-     * @param serverId 真实服id，现存的服务器
+     * @param actualServerId 真实服id，现存的服务器
      * @return
      */
-    public static String serverConfigPath(PlatformType platformType,int serverId){
-        return platParamPath(platformType) +"/serverparam/" + serverId;
+    public static String actualServerConfigPath(PlatformType platformType, int actualServerId){
+        return platParamPath(platformType) +"/actualserver/" + actualServerId;
     }
 
     /**
@@ -129,8 +142,8 @@ public class ZKPathUtils {
      * @param logicServerId 逻辑服id(合服前的服id)
      * @return
      */
-    public static String serverMappingPath(PlatformType platformType,int logicServerId){
-        return platParamPath(platformType) +"/servermapping" + logicServerId;
+    public static String logicServerConfigPath(PlatformType platformType, int logicServerId){
+        return platParamPath(platformType) +"/logicserver/" + logicServerId;
     }
 
     /**
@@ -194,6 +207,19 @@ public class ZKPathUtils {
     public static String onlineParentPath(int warzoneId){
         return "/online/warzone-" + warzoneId;
     }
+
+    /**
+     * 寻找在线节点所属的战区
+     * @param onlinePath 在线节点的路径，在线节点全部在战区节点之下
+     * @return
+     */
+    private static int findWarzoneId(String onlinePath){
+        // "warzone-x"
+        String onlineParentNodeName = findParentNodeName(onlinePath);
+        String[] params = onlineParentNodeName.split("-", 2);
+        return Integer.parseInt(params[1]);
+    }
+
     // endregion 在线节点路径
 
     // region 在线节点名字
@@ -223,31 +249,52 @@ public class ZKPathUtils {
      * @return 战区基本信息
      */
     public static WarzoneNodeName parseWarzoneNodeNode(String path) {
-        String[] params = findNodeName(path).split("-", 2);
+        String[] params = findNodeName(path).split("-");
         int warzoneId = Integer.parseInt(params[1]);
         return new WarzoneNodeName(warzoneId);
     }
 
     /**
      * 为指定服创建一个有意义的节点名字
-     * @param warzoneId 战区id
+     * @param platformType 平台
      * @param serverId 几服
      * @return 唯一的有意义的名字
      */
-    public static String buildCenterNodeName(int warzoneId, int serverId){
-        return RoleType.CENTER + "-" + warzoneId + "-" + serverId;
+    public static String buildCenterNodeName(PlatformType platformType, int serverId){
+        return RoleType.CENTER + "-" + platformType + "-" + serverId;
     }
 
     /**
      * 解析game节点的路径(名字)
-     * @param gameNodeName fullpath
+     * @param centerPath fullpath
      * @return game服的信息
      */
-    public static CenterServerNodeName parseCenterNodeName(String gameNodeName){
-        String[] params = findNodeName(gameNodeName).split("-", 3);
-        int warzoneId = Integer.parseInt(params[1]);
+    public static CenterServerNodeName parseCenterNodeName(String centerPath){
+        int warzoneId = findWarzoneId(centerPath);
+        String[] params = findNodeName(centerPath).split("-");
+        PlatformType platformType = PlatformType.valueOf(params[1]);
         int serverId = Integer.parseInt(params[2]);
-        return new CenterServerNodeName(warzoneId, null, serverId);
+        return new CenterServerNodeName(warzoneId, platformType, serverId);
+    }
+
+    /**
+     * 为指定本服scene进程创建一个有意义的节点名字，用于注册到zookeeper
+     * @param platformType 所属的平台
+     * @param serverId 几服
+     * @param processGuid 进程guid
+     * @return 唯一的有意义的名字
+     */
+    public static String buildSingleSceneNodeName(PlatformType platformType, int serverId, long processGuid){
+        return RoleType.SCENE + "-" + SceneProcessType.SINGLE.name() + "-" + platformType + "-" + serverId + "-" + processGuid;
+    }
+
+    /**
+     * 为跨服节点创建一个有意义的节点名字，用于注册到zookeeper
+     * @param processGuid 进程guid
+     * @return 唯一的有意义的名字
+     */
+    public static String buildCrossSceneNodeName(long processGuid){
+        return RoleType.SCENE + "-" + SceneProcessType.CROSS.name() + "-" + processGuid;
     }
 
     /**
@@ -256,42 +303,22 @@ public class ZKPathUtils {
      * @return scene进程的类型
      */
     public static SceneProcessType parseSceneType(String sceneNodePath){
-        String[] params = findNodeName(sceneNodePath).split("-");
+        String[] params = findNodeName(sceneNodePath).split("-", 3);
         return SceneProcessType.valueOf(params[1]);
     }
 
     /**
-     * 为指定本服scene进程创建一个有意义的节点名字，用于注册到zookeeper
-     * @param warzoneId 战区id
-     * @param serverId 几服
-     * @param processGuid 进程guid
-     * @return 唯一的有意义的名字
-     */
-    public static String buildSingleSceneNodeName(int warzoneId, int serverId, long processGuid){
-        return RoleType.SCENE + "-" + SceneProcessType.SINGLE.name() + "-" + warzoneId + "-" + serverId + "-" + processGuid;
-    }
-
-    /**
-     * 解析本地scene进程的节点路径(名字)
+     * 解析单服scene进程的节点路径(名字)
      * @param path fullpath
      * @return scene包含的基本信息
      */
     public static SingleSceneNodeName parseSingleSceneNodeName(String path){
-        String[] params = findNodeName(path).split("-",5);
-        int warzoneId = Integer.parseInt(params[2]);
+        int warzoneId = findWarzoneId(path);
+        String[] params = findNodeName(path).split("-");
+        PlatformType platformType = PlatformType.valueOf(params[2]);
         int serverId = Integer.parseInt(params[3]);
         long processGuid = Long.parseLong(params[4]);
-        return new SingleSceneNodeName(warzoneId, null, serverId,processGuid);
-    }
-
-    /**
-     * 为跨服节点创建一个有意义的节点名字，用于注册到zookeeper
-     * @param warzoneId 战区id
-     * @param processGuid 进程guid
-     * @return 唯一的有意义的名字
-     */
-    public static String buildCrossSceneNodeName(int warzoneId, long processGuid){
-        return RoleType.SCENE + "-" + SceneProcessType.CROSS.name() + "-" + warzoneId + "-" + processGuid;
+        return new SingleSceneNodeName(warzoneId, platformType, serverId,processGuid);
     }
 
     /**
@@ -300,9 +327,9 @@ public class ZKPathUtils {
      * @return 跨服节点信息
      */
     public static CrossSceneNodeName parseCrossSceneNodeName(String path){
-        String[] params = findNodeName(path).split("-", 4);
-        int warzoneId = Integer.parseInt(params[2]);
-        long processGuid = Long.parseLong(params[3]);
+        int warzoneId = findWarzoneId(path);
+        String[] params = findNodeName(path).split("-");
+        long processGuid = Long.parseLong(params[2]);
         return new CrossSceneNodeName(warzoneId,processGuid);
     }
 

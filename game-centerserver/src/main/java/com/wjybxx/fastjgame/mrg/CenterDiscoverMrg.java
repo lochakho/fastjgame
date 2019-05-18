@@ -122,13 +122,18 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
         }
     }
 
+    /**
+     * 该节点下会有我的私有场景、其它服的场景和跨服场景
+     * @param type 事件类型
+     * @param childData 场景数据
+     */
     private void onSceneEvent(Type type, ChildData childData) {
         SceneProcessType sceneProcessType = ZKPathUtils.parseSceneType(childData.getPath());
         ZKOnlineSceneNode zkOnlineSceneNode=GameUtils.parseFromJsonBytes(childData.getData(),ZKOnlineSceneNode.class);
         if (sceneProcessType==SceneProcessType.SINGLE){
             // 单服场景
             SingleSceneNodeName singleSceneNodeName = ZKPathUtils.parseSingleSceneNodeName(childData.getPath());
-            if (singleSceneNodeName.getWarzoneId() != centerWorldInfoMrg.getWarzoneId()
+            if (singleSceneNodeName.getPlatformType() != centerWorldInfoMrg.getPlatformType()
                     || singleSceneNodeName.getServerId() != centerWorldInfoMrg.getServerId()){
                 // 不是我的场景
                 return;
@@ -155,12 +160,13 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
         }
     }
 
+    /**
+     * 监测的路径下只会有一个战区节点
+     * @param type 事件类型
+     * @param childData 战区数据
+     */
     private void onWarzoneEvent(Type type, ChildData childData) {
         WarzoneNodeName warzoneNodeName= ZKPathUtils.parseWarzoneNodeNode(childData.getPath());
-        if (warzoneNodeName.getWarzoneId()!=centerWorldInfoMrg.getWarzoneId()){
-            // 不是我的战区，这里不应该走到，因为该节点下的进程都是同一个进程的
-            return;
-        }
         ZKOnlineWarzoneNode zkOnlineWarzoneNode=GameUtils.parseFromJsonBytes(childData.getData(),ZKOnlineWarzoneNode.class);
         if (type== Type.CHILD_ADDED){
             warzoneInCenterInfoMrg.onDiscoverWarzone(warzoneNodeName,zkOnlineWarzoneNode);

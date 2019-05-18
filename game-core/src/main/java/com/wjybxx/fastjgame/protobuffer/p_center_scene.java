@@ -20,10 +20,19 @@ public final class p_center_scene {
 
     /**
      * <pre>
-     * 服务器id，用于核对
+     * 所属的平台号
      * </pre>
      *
-     * <code>int32 serverId = 1;</code>
+     * <code>int32 platfomNumber = 1;</code>
+     */
+    int getPlatfomNumber();
+
+    /**
+     * <pre>
+     * 服务器id
+     * </pre>
+     *
+     * <code>int32 serverId = 2;</code>
      */
     int getServerId();
   }
@@ -45,6 +54,7 @@ public final class p_center_scene {
       super(builder);
     }
     private p_center_single_scene_hello() {
+      platfomNumber_ = 0;
       serverId_ = 0;
     }
 
@@ -81,6 +91,11 @@ public final class p_center_scene {
             }
             case 8: {
 
+              platfomNumber_ = input.readInt32();
+              break;
+            }
+            case 16: {
+
               serverId_ = input.readInt32();
               break;
             }
@@ -108,14 +123,27 @@ public final class p_center_scene {
               com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello.class, com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello.Builder.class);
     }
 
-    public static final int SERVERID_FIELD_NUMBER = 1;
+    public static final int PLATFOMNUMBER_FIELD_NUMBER = 1;
+    private int platfomNumber_;
+    /**
+     * <pre>
+     * 所属的平台号
+     * </pre>
+     *
+     * <code>int32 platfomNumber = 1;</code>
+     */
+    public int getPlatfomNumber() {
+      return platfomNumber_;
+    }
+
+    public static final int SERVERID_FIELD_NUMBER = 2;
     private int serverId_;
     /**
      * <pre>
-     * 服务器id，用于核对
+     * 服务器id
      * </pre>
      *
-     * <code>int32 serverId = 1;</code>
+     * <code>int32 serverId = 2;</code>
      */
     public int getServerId() {
       return serverId_;
@@ -133,8 +161,11 @@ public final class p_center_scene {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (platfomNumber_ != 0) {
+        output.writeInt32(1, platfomNumber_);
+      }
       if (serverId_ != 0) {
-        output.writeInt32(1, serverId_);
+        output.writeInt32(2, serverId_);
       }
       unknownFields.writeTo(output);
     }
@@ -144,9 +175,13 @@ public final class p_center_scene {
       if (size != -1) return size;
 
       size = 0;
+      if (platfomNumber_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, platfomNumber_);
+      }
       if (serverId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, serverId_);
+          .computeInt32Size(2, serverId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -164,6 +199,8 @@ public final class p_center_scene {
       com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello other = (com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello) obj;
 
       boolean result = true;
+      result = result && (getPlatfomNumber()
+          == other.getPlatfomNumber());
       result = result && (getServerId()
           == other.getServerId());
       result = result && unknownFields.equals(other.unknownFields);
@@ -177,6 +214,8 @@ public final class p_center_scene {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + PLATFOMNUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getPlatfomNumber();
       hash = (37 * hash) + SERVERID_FIELD_NUMBER;
       hash = (53 * hash) + getServerId();
       hash = (29 * hash) + unknownFields.hashCode();
@@ -313,6 +352,8 @@ public final class p_center_scene {
       }
       public Builder clear() {
         super.clear();
+        platfomNumber_ = 0;
+
         serverId_ = 0;
 
         return this;
@@ -337,6 +378,7 @@ public final class p_center_scene {
 
       public com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello buildPartial() {
         com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello result = new com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello(this);
+        result.platfomNumber_ = platfomNumber_;
         result.serverId_ = serverId_;
         onBuilt();
         return result;
@@ -379,6 +421,9 @@ public final class p_center_scene {
 
       public Builder mergeFrom(com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello other) {
         if (other == com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello.getDefaultInstance()) return this;
+        if (other.getPlatfomNumber() != 0) {
+          setPlatfomNumber(other.getPlatfomNumber());
+        }
         if (other.getServerId() != 0) {
           setServerId(other.getServerId());
         }
@@ -409,23 +454,61 @@ public final class p_center_scene {
         return this;
       }
 
+      private int platfomNumber_ ;
+      /**
+       * <pre>
+       * 所属的平台号
+       * </pre>
+       *
+       * <code>int32 platfomNumber = 1;</code>
+       */
+      public int getPlatfomNumber() {
+        return platfomNumber_;
+      }
+      /**
+       * <pre>
+       * 所属的平台号
+       * </pre>
+       *
+       * <code>int32 platfomNumber = 1;</code>
+       */
+      public Builder setPlatfomNumber(int value) {
+        
+        platfomNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 所属的平台号
+       * </pre>
+       *
+       * <code>int32 platfomNumber = 1;</code>
+       */
+      public Builder clearPlatfomNumber() {
+        
+        platfomNumber_ = 0;
+        onChanged();
+        return this;
+      }
+
       private int serverId_ ;
       /**
        * <pre>
-       * 服务器id，用于核对
+       * 服务器id
        * </pre>
        *
-       * <code>int32 serverId = 1;</code>
+       * <code>int32 serverId = 2;</code>
        */
       public int getServerId() {
         return serverId_;
       }
       /**
        * <pre>
-       * 服务器id，用于核对
+       * 服务器id
        * </pre>
        *
-       * <code>int32 serverId = 1;</code>
+       * <code>int32 serverId = 2;</code>
        */
       public Builder setServerId(int value) {
         
@@ -435,10 +518,10 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 服务器id，用于核对
+       * 服务器id
        * </pre>
        *
-       * <code>int32 serverId = 1;</code>
+       * <code>int32 serverId = 2;</code>
        */
       public Builder clearServerId() {
         
@@ -501,41 +584,32 @@ public final class p_center_scene {
 
     /**
      * <pre>
-     * 分配给该scene的频道id
+     * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
      * </pre>
      *
-     * <code>int32 channelId = 1;</code>
-     */
-    int getChannelId();
-
-    /**
-     * <pre>
-     * 配置(或启动参数)中的支持的区域
-     * </pre>
-     *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     java.util.List<java.lang.Integer> getConfiguredRegionsList();
     /**
      * <pre>
-     * 配置(或启动参数)中的支持的区域
+     * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
      * </pre>
      *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     int getConfiguredRegionsCount();
     /**
      * <pre>
-     * 配置(或启动参数)中的支持的区域
+     * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
      * </pre>
      *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     int getConfiguredRegions(int index);
   }
   /**
    * <pre>
-   * scene返回的信息
+   * singlescene返回的信息
    * </pre>
    *
    * Protobuf type {@code fastjgame.p_center_single_scene_hello_result}
@@ -550,7 +624,6 @@ public final class p_center_scene {
       super(builder);
     }
     private p_center_single_scene_hello_result() {
-      channelId_ = 0;
       configuredRegions_ = java.util.Collections.emptyList();
     }
 
@@ -586,24 +659,19 @@ public final class p_center_scene {
               break;
             }
             case 8: {
-
-              channelId_ = input.readInt32();
-              break;
-            }
-            case 16: {
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
                 configuredRegions_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000002;
+                mutable_bitField0_ |= 0x00000001;
               }
               configuredRegions_.add(input.readInt32());
               break;
             }
-            case 18: {
+            case 10: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
                 configuredRegions_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000002;
+                mutable_bitField0_ |= 0x00000001;
               }
               while (input.getBytesUntilLimit() > 0) {
                 configuredRegions_.add(input.readInt32());
@@ -619,7 +687,7 @@ public final class p_center_scene {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           configuredRegions_ = java.util.Collections.unmodifiableList(configuredRegions_);
         }
         this.unknownFields = unknownFields.build();
@@ -638,28 +706,14 @@ public final class p_center_scene {
               com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello_result.class, com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello_result.Builder.class);
     }
 
-    private int bitField0_;
-    public static final int CHANNELID_FIELD_NUMBER = 1;
-    private int channelId_;
-    /**
-     * <pre>
-     * 分配给该scene的频道id
-     * </pre>
-     *
-     * <code>int32 channelId = 1;</code>
-     */
-    public int getChannelId() {
-      return channelId_;
-    }
-
-    public static final int CONFIGUREDREGIONS_FIELD_NUMBER = 2;
+    public static final int CONFIGUREDREGIONS_FIELD_NUMBER = 1;
     private java.util.List<java.lang.Integer> configuredRegions_;
     /**
      * <pre>
-     * 配置(或启动参数)中的支持的区域
+     * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
      * </pre>
      *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     public java.util.List<java.lang.Integer>
         getConfiguredRegionsList() {
@@ -667,20 +721,20 @@ public final class p_center_scene {
     }
     /**
      * <pre>
-     * 配置(或启动参数)中的支持的区域
+     * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
      * </pre>
      *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     public int getConfiguredRegionsCount() {
       return configuredRegions_.size();
     }
     /**
      * <pre>
-     * 配置(或启动参数)中的支持的区域
+     * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
      * </pre>
      *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     public int getConfiguredRegions(int index) {
       return configuredRegions_.get(index);
@@ -700,11 +754,8 @@ public final class p_center_scene {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      if (channelId_ != 0) {
-        output.writeInt32(1, channelId_);
-      }
       if (getConfiguredRegionsList().size() > 0) {
-        output.writeUInt32NoTag(18);
+        output.writeUInt32NoTag(10);
         output.writeUInt32NoTag(configuredRegionsMemoizedSerializedSize);
       }
       for (int i = 0; i < configuredRegions_.size(); i++) {
@@ -718,10 +769,6 @@ public final class p_center_scene {
       if (size != -1) return size;
 
       size = 0;
-      if (channelId_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, channelId_);
-      }
       {
         int dataSize = 0;
         for (int i = 0; i < configuredRegions_.size(); i++) {
@@ -752,8 +799,6 @@ public final class p_center_scene {
       com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello_result other = (com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello_result) obj;
 
       boolean result = true;
-      result = result && (getChannelId()
-          == other.getChannelId());
       result = result && getConfiguredRegionsList()
           .equals(other.getConfiguredRegionsList());
       result = result && unknownFields.equals(other.unknownFields);
@@ -767,8 +812,6 @@ public final class p_center_scene {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + CHANNELID_FIELD_NUMBER;
-      hash = (53 * hash) + getChannelId();
       if (getConfiguredRegionsCount() > 0) {
         hash = (37 * hash) + CONFIGUREDREGIONS_FIELD_NUMBER;
         hash = (53 * hash) + getConfiguredRegionsList().hashCode();
@@ -868,7 +911,7 @@ public final class p_center_scene {
     }
     /**
      * <pre>
-     * scene返回的信息
+     * singlescene返回的信息
      * </pre>
      *
      * Protobuf type {@code fastjgame.p_center_single_scene_hello_result}
@@ -906,10 +949,8 @@ public final class p_center_scene {
       }
       public Builder clear() {
         super.clear();
-        channelId_ = 0;
-
         configuredRegions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -933,14 +974,11 @@ public final class p_center_scene {
       public com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello_result buildPartial() {
         com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello_result result = new com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello_result(this);
         int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        result.channelId_ = channelId_;
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
           configuredRegions_ = java.util.Collections.unmodifiableList(configuredRegions_);
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000001);
         }
         result.configuredRegions_ = configuredRegions_;
-        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -982,13 +1020,10 @@ public final class p_center_scene {
 
       public Builder mergeFrom(com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello_result other) {
         if (other == com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello_result.getDefaultInstance()) return this;
-        if (other.getChannelId() != 0) {
-          setChannelId(other.getChannelId());
-        }
         if (!other.configuredRegions_.isEmpty()) {
           if (configuredRegions_.isEmpty()) {
             configuredRegions_ = other.configuredRegions_;
-            bitField0_ = (bitField0_ & ~0x00000002);
+            bitField0_ = (bitField0_ & ~0x00000001);
           } else {
             ensureConfiguredRegionsIsMutable();
             configuredRegions_.addAll(other.configuredRegions_);
@@ -1023,57 +1058,19 @@ public final class p_center_scene {
       }
       private int bitField0_;
 
-      private int channelId_ ;
-      /**
-       * <pre>
-       * 分配给该scene的频道id
-       * </pre>
-       *
-       * <code>int32 channelId = 1;</code>
-       */
-      public int getChannelId() {
-        return channelId_;
-      }
-      /**
-       * <pre>
-       * 分配给该scene的频道id
-       * </pre>
-       *
-       * <code>int32 channelId = 1;</code>
-       */
-      public Builder setChannelId(int value) {
-        
-        channelId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * 分配给该scene的频道id
-       * </pre>
-       *
-       * <code>int32 channelId = 1;</code>
-       */
-      public Builder clearChannelId() {
-        
-        channelId_ = 0;
-        onChanged();
-        return this;
-      }
-
       private java.util.List<java.lang.Integer> configuredRegions_ = java.util.Collections.emptyList();
       private void ensureConfiguredRegionsIsMutable() {
-        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
           configuredRegions_ = new java.util.ArrayList<java.lang.Integer>(configuredRegions_);
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000001;
          }
       }
       /**
        * <pre>
-       * 配置(或启动参数)中的支持的区域
+       * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public java.util.List<java.lang.Integer>
           getConfiguredRegionsList() {
@@ -1081,30 +1078,30 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 配置(或启动参数)中的支持的区域
+       * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public int getConfiguredRegionsCount() {
         return configuredRegions_.size();
       }
       /**
        * <pre>
-       * 配置(或启动参数)中的支持的区域
+       * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public int getConfiguredRegions(int index) {
         return configuredRegions_.get(index);
       }
       /**
        * <pre>
-       * 配置(或启动参数)中的支持的区域
+       * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public Builder setConfiguredRegions(
           int index, int value) {
@@ -1115,10 +1112,10 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 配置(或启动参数)中的支持的区域
+       * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public Builder addConfiguredRegions(int value) {
         ensureConfiguredRegionsIsMutable();
@@ -1128,10 +1125,10 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 配置(或启动参数)中的支持的区域
+       * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public Builder addAllConfiguredRegions(
           java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -1143,14 +1140,14 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 配置(或启动参数)中的支持的区域
+       * 配置(或启动参数)中的支持的区域(非互斥区域已启动)
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public Builder clearConfiguredRegions() {
         configuredRegions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -1209,10 +1206,19 @@ public final class p_center_scene {
 
     /**
      * <pre>
-     * 服务器id，用于核对
+     * 所属的平台号
      * </pre>
      *
-     * <code>int32 serverId = 1;</code>
+     * <code>int32 platfomNumber = 1;</code>
+     */
+    int getPlatfomNumber();
+
+    /**
+     * <pre>
+     * 服务器id
+     * </pre>
+     *
+     * <code>int32 serverId = 2;</code>
      */
     int getServerId();
   }
@@ -1233,6 +1239,7 @@ public final class p_center_scene {
       super(builder);
     }
     private p_center_cross_scene_hello() {
+      platfomNumber_ = 0;
       serverId_ = 0;
     }
 
@@ -1269,6 +1276,11 @@ public final class p_center_scene {
             }
             case 8: {
 
+              platfomNumber_ = input.readInt32();
+              break;
+            }
+            case 16: {
+
               serverId_ = input.readInt32();
               break;
             }
@@ -1296,14 +1308,27 @@ public final class p_center_scene {
               com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello.class, com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello.Builder.class);
     }
 
-    public static final int SERVERID_FIELD_NUMBER = 1;
+    public static final int PLATFOMNUMBER_FIELD_NUMBER = 1;
+    private int platfomNumber_;
+    /**
+     * <pre>
+     * 所属的平台号
+     * </pre>
+     *
+     * <code>int32 platfomNumber = 1;</code>
+     */
+    public int getPlatfomNumber() {
+      return platfomNumber_;
+    }
+
+    public static final int SERVERID_FIELD_NUMBER = 2;
     private int serverId_;
     /**
      * <pre>
-     * 服务器id，用于核对
+     * 服务器id
      * </pre>
      *
-     * <code>int32 serverId = 1;</code>
+     * <code>int32 serverId = 2;</code>
      */
     public int getServerId() {
       return serverId_;
@@ -1321,8 +1346,11 @@ public final class p_center_scene {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (platfomNumber_ != 0) {
+        output.writeInt32(1, platfomNumber_);
+      }
       if (serverId_ != 0) {
-        output.writeInt32(1, serverId_);
+        output.writeInt32(2, serverId_);
       }
       unknownFields.writeTo(output);
     }
@@ -1332,9 +1360,13 @@ public final class p_center_scene {
       if (size != -1) return size;
 
       size = 0;
+      if (platfomNumber_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, platfomNumber_);
+      }
       if (serverId_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, serverId_);
+          .computeInt32Size(2, serverId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -1352,6 +1384,8 @@ public final class p_center_scene {
       com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello other = (com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello) obj;
 
       boolean result = true;
+      result = result && (getPlatfomNumber()
+          == other.getPlatfomNumber());
       result = result && (getServerId()
           == other.getServerId());
       result = result && unknownFields.equals(other.unknownFields);
@@ -1365,6 +1399,8 @@ public final class p_center_scene {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + PLATFOMNUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getPlatfomNumber();
       hash = (37 * hash) + SERVERID_FIELD_NUMBER;
       hash = (53 * hash) + getServerId();
       hash = (29 * hash) + unknownFields.hashCode();
@@ -1500,6 +1536,8 @@ public final class p_center_scene {
       }
       public Builder clear() {
         super.clear();
+        platfomNumber_ = 0;
+
         serverId_ = 0;
 
         return this;
@@ -1524,6 +1562,7 @@ public final class p_center_scene {
 
       public com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello buildPartial() {
         com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello result = new com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello(this);
+        result.platfomNumber_ = platfomNumber_;
         result.serverId_ = serverId_;
         onBuilt();
         return result;
@@ -1566,6 +1605,9 @@ public final class p_center_scene {
 
       public Builder mergeFrom(com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello other) {
         if (other == com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello.getDefaultInstance()) return this;
+        if (other.getPlatfomNumber() != 0) {
+          setPlatfomNumber(other.getPlatfomNumber());
+        }
         if (other.getServerId() != 0) {
           setServerId(other.getServerId());
         }
@@ -1596,23 +1638,61 @@ public final class p_center_scene {
         return this;
       }
 
+      private int platfomNumber_ ;
+      /**
+       * <pre>
+       * 所属的平台号
+       * </pre>
+       *
+       * <code>int32 platfomNumber = 1;</code>
+       */
+      public int getPlatfomNumber() {
+        return platfomNumber_;
+      }
+      /**
+       * <pre>
+       * 所属的平台号
+       * </pre>
+       *
+       * <code>int32 platfomNumber = 1;</code>
+       */
+      public Builder setPlatfomNumber(int value) {
+        
+        platfomNumber_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 所属的平台号
+       * </pre>
+       *
+       * <code>int32 platfomNumber = 1;</code>
+       */
+      public Builder clearPlatfomNumber() {
+        
+        platfomNumber_ = 0;
+        onChanged();
+        return this;
+      }
+
       private int serverId_ ;
       /**
        * <pre>
-       * 服务器id，用于核对
+       * 服务器id
        * </pre>
        *
-       * <code>int32 serverId = 1;</code>
+       * <code>int32 serverId = 2;</code>
        */
       public int getServerId() {
         return serverId_;
       }
       /**
        * <pre>
-       * 服务器id，用于核对
+       * 服务器id
        * </pre>
        *
-       * <code>int32 serverId = 1;</code>
+       * <code>int32 serverId = 2;</code>
        */
       public Builder setServerId(int value) {
         
@@ -1622,10 +1702,10 @@ public final class p_center_scene {
       }
       /**
        * <pre>
-       * 服务器id，用于核对
+       * 服务器id
        * </pre>
        *
-       * <code>int32 serverId = 1;</code>
+       * <code>int32 serverId = 2;</code>
        */
       public Builder clearServerId() {
         
@@ -1688,19 +1768,10 @@ public final class p_center_scene {
 
     /**
      * <pre>
-     * 分配给该scene的频道id
-     * </pre>
-     *
-     * <code>int32 channelId = 1;</code>
-     */
-    int getChannelId();
-
-    /**
-     * <pre>
      * 配置(或启动参数)中的支持的区域
      * </pre>
      *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     java.util.List<java.lang.Integer> getConfiguredRegionsList();
     /**
@@ -1708,7 +1779,7 @@ public final class p_center_scene {
      * 配置(或启动参数)中的支持的区域
      * </pre>
      *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     int getConfiguredRegionsCount();
     /**
@@ -1716,7 +1787,7 @@ public final class p_center_scene {
      * 配置(或启动参数)中的支持的区域
      * </pre>
      *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     int getConfiguredRegions(int index);
 
@@ -1725,7 +1796,7 @@ public final class p_center_scene {
      * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
-     * <code>repeated int32 activeRegions = 3;</code>
+     * <code>repeated int32 activeRegions = 2;</code>
      */
     java.util.List<java.lang.Integer> getActiveRegionsList();
     /**
@@ -1733,7 +1804,7 @@ public final class p_center_scene {
      * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
-     * <code>repeated int32 activeRegions = 3;</code>
+     * <code>repeated int32 activeRegions = 2;</code>
      */
     int getActiveRegionsCount();
     /**
@@ -1741,7 +1812,7 @@ public final class p_center_scene {
      * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
-     * <code>repeated int32 activeRegions = 3;</code>
+     * <code>repeated int32 activeRegions = 2;</code>
      */
     int getActiveRegions(int index);
   }
@@ -1763,7 +1834,6 @@ public final class p_center_scene {
       super(builder);
     }
     private p_center_cross_scene_hello_result() {
-      channelId_ = 0;
       configuredRegions_ = java.util.Collections.emptyList();
       activeRegions_ = java.util.Collections.emptyList();
     }
@@ -1800,24 +1870,19 @@ public final class p_center_scene {
               break;
             }
             case 8: {
-
-              channelId_ = input.readInt32();
-              break;
-            }
-            case 16: {
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
                 configuredRegions_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000002;
+                mutable_bitField0_ |= 0x00000001;
               }
               configuredRegions_.add(input.readInt32());
               break;
             }
-            case 18: {
+            case 10: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001) && input.getBytesUntilLimit() > 0) {
                 configuredRegions_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000002;
+                mutable_bitField0_ |= 0x00000001;
               }
               while (input.getBytesUntilLimit() > 0) {
                 configuredRegions_.add(input.readInt32());
@@ -1825,20 +1890,20 @@ public final class p_center_scene {
               input.popLimit(limit);
               break;
             }
-            case 24: {
-              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+            case 16: {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
                 activeRegions_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000004;
+                mutable_bitField0_ |= 0x00000002;
               }
               activeRegions_.add(input.readInt32());
               break;
             }
-            case 26: {
+            case 18: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00000002) == 0x00000002) && input.getBytesUntilLimit() > 0) {
                 activeRegions_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000004;
+                mutable_bitField0_ |= 0x00000002;
               }
               while (input.getBytesUntilLimit() > 0) {
                 activeRegions_.add(input.readInt32());
@@ -1854,10 +1919,10 @@ public final class p_center_scene {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           configuredRegions_ = java.util.Collections.unmodifiableList(configuredRegions_);
         }
-        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+        if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
           activeRegions_ = java.util.Collections.unmodifiableList(activeRegions_);
         }
         this.unknownFields = unknownFields.build();
@@ -1876,28 +1941,14 @@ public final class p_center_scene {
               com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello_result.class, com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello_result.Builder.class);
     }
 
-    private int bitField0_;
-    public static final int CHANNELID_FIELD_NUMBER = 1;
-    private int channelId_;
-    /**
-     * <pre>
-     * 分配给该scene的频道id
-     * </pre>
-     *
-     * <code>int32 channelId = 1;</code>
-     */
-    public int getChannelId() {
-      return channelId_;
-    }
-
-    public static final int CONFIGUREDREGIONS_FIELD_NUMBER = 2;
+    public static final int CONFIGUREDREGIONS_FIELD_NUMBER = 1;
     private java.util.List<java.lang.Integer> configuredRegions_;
     /**
      * <pre>
      * 配置(或启动参数)中的支持的区域
      * </pre>
      *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     public java.util.List<java.lang.Integer>
         getConfiguredRegionsList() {
@@ -1908,7 +1959,7 @@ public final class p_center_scene {
      * 配置(或启动参数)中的支持的区域
      * </pre>
      *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     public int getConfiguredRegionsCount() {
       return configuredRegions_.size();
@@ -1918,21 +1969,21 @@ public final class p_center_scene {
      * 配置(或启动参数)中的支持的区域
      * </pre>
      *
-     * <code>repeated int32 configuredRegions = 2;</code>
+     * <code>repeated int32 configuredRegions = 1;</code>
      */
     public int getConfiguredRegions(int index) {
       return configuredRegions_.get(index);
     }
     private int configuredRegionsMemoizedSerializedSize = -1;
 
-    public static final int ACTIVEREGIONS_FIELD_NUMBER = 3;
+    public static final int ACTIVEREGIONS_FIELD_NUMBER = 2;
     private java.util.List<java.lang.Integer> activeRegions_;
     /**
      * <pre>
      * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
-     * <code>repeated int32 activeRegions = 3;</code>
+     * <code>repeated int32 activeRegions = 2;</code>
      */
     public java.util.List<java.lang.Integer>
         getActiveRegionsList() {
@@ -1943,7 +1994,7 @@ public final class p_center_scene {
      * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
-     * <code>repeated int32 activeRegions = 3;</code>
+     * <code>repeated int32 activeRegions = 2;</code>
      */
     public int getActiveRegionsCount() {
       return activeRegions_.size();
@@ -1953,7 +2004,7 @@ public final class p_center_scene {
      * 我成功启动了哪些区域(包含互斥区)
      * </pre>
      *
-     * <code>repeated int32 activeRegions = 3;</code>
+     * <code>repeated int32 activeRegions = 2;</code>
      */
     public int getActiveRegions(int index) {
       return activeRegions_.get(index);
@@ -1973,18 +2024,15 @@ public final class p_center_scene {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      if (channelId_ != 0) {
-        output.writeInt32(1, channelId_);
-      }
       if (getConfiguredRegionsList().size() > 0) {
-        output.writeUInt32NoTag(18);
+        output.writeUInt32NoTag(10);
         output.writeUInt32NoTag(configuredRegionsMemoizedSerializedSize);
       }
       for (int i = 0; i < configuredRegions_.size(); i++) {
         output.writeInt32NoTag(configuredRegions_.get(i));
       }
       if (getActiveRegionsList().size() > 0) {
-        output.writeUInt32NoTag(26);
+        output.writeUInt32NoTag(18);
         output.writeUInt32NoTag(activeRegionsMemoizedSerializedSize);
       }
       for (int i = 0; i < activeRegions_.size(); i++) {
@@ -1998,10 +2046,6 @@ public final class p_center_scene {
       if (size != -1) return size;
 
       size = 0;
-      if (channelId_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(1, channelId_);
-      }
       {
         int dataSize = 0;
         for (int i = 0; i < configuredRegions_.size(); i++) {
@@ -2046,8 +2090,6 @@ public final class p_center_scene {
       com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello_result other = (com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello_result) obj;
 
       boolean result = true;
-      result = result && (getChannelId()
-          == other.getChannelId());
       result = result && getConfiguredRegionsList()
           .equals(other.getConfiguredRegionsList());
       result = result && getActiveRegionsList()
@@ -2063,8 +2105,6 @@ public final class p_center_scene {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + CHANNELID_FIELD_NUMBER;
-      hash = (53 * hash) + getChannelId();
       if (getConfiguredRegionsCount() > 0) {
         hash = (37 * hash) + CONFIGUREDREGIONS_FIELD_NUMBER;
         hash = (53 * hash) + getConfiguredRegionsList().hashCode();
@@ -2207,12 +2247,10 @@ public final class p_center_scene {
       }
       public Builder clear() {
         super.clear();
-        channelId_ = 0;
-
         configuredRegions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         activeRegions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -2236,19 +2274,16 @@ public final class p_center_scene {
       public com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello_result buildPartial() {
         com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello_result result = new com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello_result(this);
         int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        result.channelId_ = channelId_;
-        if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
           configuredRegions_ = java.util.Collections.unmodifiableList(configuredRegions_);
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000001);
         }
         result.configuredRegions_ = configuredRegions_;
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        if (((bitField0_ & 0x00000002) == 0x00000002)) {
           activeRegions_ = java.util.Collections.unmodifiableList(activeRegions_);
-          bitField0_ = (bitField0_ & ~0x00000004);
+          bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.activeRegions_ = activeRegions_;
-        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -2290,13 +2325,10 @@ public final class p_center_scene {
 
       public Builder mergeFrom(com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello_result other) {
         if (other == com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello_result.getDefaultInstance()) return this;
-        if (other.getChannelId() != 0) {
-          setChannelId(other.getChannelId());
-        }
         if (!other.configuredRegions_.isEmpty()) {
           if (configuredRegions_.isEmpty()) {
             configuredRegions_ = other.configuredRegions_;
-            bitField0_ = (bitField0_ & ~0x00000002);
+            bitField0_ = (bitField0_ & ~0x00000001);
           } else {
             ensureConfiguredRegionsIsMutable();
             configuredRegions_.addAll(other.configuredRegions_);
@@ -2306,7 +2338,7 @@ public final class p_center_scene {
         if (!other.activeRegions_.isEmpty()) {
           if (activeRegions_.isEmpty()) {
             activeRegions_ = other.activeRegions_;
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000002);
           } else {
             ensureActiveRegionsIsMutable();
             activeRegions_.addAll(other.activeRegions_);
@@ -2341,49 +2373,11 @@ public final class p_center_scene {
       }
       private int bitField0_;
 
-      private int channelId_ ;
-      /**
-       * <pre>
-       * 分配给该scene的频道id
-       * </pre>
-       *
-       * <code>int32 channelId = 1;</code>
-       */
-      public int getChannelId() {
-        return channelId_;
-      }
-      /**
-       * <pre>
-       * 分配给该scene的频道id
-       * </pre>
-       *
-       * <code>int32 channelId = 1;</code>
-       */
-      public Builder setChannelId(int value) {
-        
-        channelId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * 分配给该scene的频道id
-       * </pre>
-       *
-       * <code>int32 channelId = 1;</code>
-       */
-      public Builder clearChannelId() {
-        
-        channelId_ = 0;
-        onChanged();
-        return this;
-      }
-
       private java.util.List<java.lang.Integer> configuredRegions_ = java.util.Collections.emptyList();
       private void ensureConfiguredRegionsIsMutable() {
-        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
           configuredRegions_ = new java.util.ArrayList<java.lang.Integer>(configuredRegions_);
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000001;
          }
       }
       /**
@@ -2391,7 +2385,7 @@ public final class p_center_scene {
        * 配置(或启动参数)中的支持的区域
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public java.util.List<java.lang.Integer>
           getConfiguredRegionsList() {
@@ -2402,7 +2396,7 @@ public final class p_center_scene {
        * 配置(或启动参数)中的支持的区域
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public int getConfiguredRegionsCount() {
         return configuredRegions_.size();
@@ -2412,7 +2406,7 @@ public final class p_center_scene {
        * 配置(或启动参数)中的支持的区域
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public int getConfiguredRegions(int index) {
         return configuredRegions_.get(index);
@@ -2422,7 +2416,7 @@ public final class p_center_scene {
        * 配置(或启动参数)中的支持的区域
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public Builder setConfiguredRegions(
           int index, int value) {
@@ -2436,7 +2430,7 @@ public final class p_center_scene {
        * 配置(或启动参数)中的支持的区域
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public Builder addConfiguredRegions(int value) {
         ensureConfiguredRegionsIsMutable();
@@ -2449,7 +2443,7 @@ public final class p_center_scene {
        * 配置(或启动参数)中的支持的区域
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public Builder addAllConfiguredRegions(
           java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -2464,20 +2458,20 @@ public final class p_center_scene {
        * 配置(或启动参数)中的支持的区域
        * </pre>
        *
-       * <code>repeated int32 configuredRegions = 2;</code>
+       * <code>repeated int32 configuredRegions = 1;</code>
        */
       public Builder clearConfiguredRegions() {
         configuredRegions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
 
       private java.util.List<java.lang.Integer> activeRegions_ = java.util.Collections.emptyList();
       private void ensureActiveRegionsIsMutable() {
-        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+        if (!((bitField0_ & 0x00000002) == 0x00000002)) {
           activeRegions_ = new java.util.ArrayList<java.lang.Integer>(activeRegions_);
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000002;
          }
       }
       /**
@@ -2485,7 +2479,7 @@ public final class p_center_scene {
        * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
-       * <code>repeated int32 activeRegions = 3;</code>
+       * <code>repeated int32 activeRegions = 2;</code>
        */
       public java.util.List<java.lang.Integer>
           getActiveRegionsList() {
@@ -2496,7 +2490,7 @@ public final class p_center_scene {
        * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
-       * <code>repeated int32 activeRegions = 3;</code>
+       * <code>repeated int32 activeRegions = 2;</code>
        */
       public int getActiveRegionsCount() {
         return activeRegions_.size();
@@ -2506,7 +2500,7 @@ public final class p_center_scene {
        * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
-       * <code>repeated int32 activeRegions = 3;</code>
+       * <code>repeated int32 activeRegions = 2;</code>
        */
       public int getActiveRegions(int index) {
         return activeRegions_.get(index);
@@ -2516,7 +2510,7 @@ public final class p_center_scene {
        * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
-       * <code>repeated int32 activeRegions = 3;</code>
+       * <code>repeated int32 activeRegions = 2;</code>
        */
       public Builder setActiveRegions(
           int index, int value) {
@@ -2530,7 +2524,7 @@ public final class p_center_scene {
        * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
-       * <code>repeated int32 activeRegions = 3;</code>
+       * <code>repeated int32 activeRegions = 2;</code>
        */
       public Builder addActiveRegions(int value) {
         ensureActiveRegionsIsMutable();
@@ -2543,7 +2537,7 @@ public final class p_center_scene {
        * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
-       * <code>repeated int32 activeRegions = 3;</code>
+       * <code>repeated int32 activeRegions = 2;</code>
        */
       public Builder addAllActiveRegions(
           java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -2558,11 +2552,11 @@ public final class p_center_scene {
        * 我成功启动了哪些区域(包含互斥区)
        * </pre>
        *
-       * <code>repeated int32 activeRegions = 3;</code>
+       * <code>repeated int32 activeRegions = 2;</code>
        */
       public Builder clearActiveRegions() {
         activeRegions_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -2645,16 +2639,16 @@ public final class p_center_scene {
   static {
     java.lang.String[] descriptorData = {
       "\n\024p_center_scene.proto\022\tfastjgame\032\014p_enu" +
-      "m.proto\032\016p_struct.proto\"/\n\033p_center_sing" +
-      "le_scene_hello\022\020\n\010serverId\030\001 \001(\005\"R\n\"p_ce" +
-      "nter_single_scene_hello_result\022\021\n\tchanne" +
-      "lId\030\001 \001(\005\022\031\n\021configuredRegions\030\002 \003(\005\".\n\032" +
-      "p_center_cross_scene_hello\022\020\n\010serverId\030\001" +
-      " \001(\005\"h\n!p_center_cross_scene_hello_resul" +
-      "t\022\021\n\tchannelId\030\001 \001(\005\022\031\n\021configuredRegion" +
-      "s\030\002 \003(\005\022\025\n\ractiveRegions\030\003 \003(\005B4\n com.wj" +
-      "ybxx.fastjgame.protobufferB\016p_center_sce" +
-      "neH\001b\006proto3"
+      "m.proto\032\016p_struct.proto\"F\n\033p_center_sing" +
+      "le_scene_hello\022\025\n\rplatfomNumber\030\001 \001(\005\022\020\n" +
+      "\010serverId\030\002 \001(\005\"?\n\"p_center_single_scene" +
+      "_hello_result\022\031\n\021configuredRegions\030\001 \003(\005" +
+      "\"E\n\032p_center_cross_scene_hello\022\025\n\rplatfo" +
+      "mNumber\030\001 \001(\005\022\020\n\010serverId\030\002 \001(\005\"U\n!p_cen" +
+      "ter_cross_scene_hello_result\022\031\n\021configur" +
+      "edRegions\030\001 \003(\005\022\025\n\ractiveRegions\030\002 \003(\005B4" +
+      "\n com.wjybxx.fastjgame.protobufferB\016p_ce" +
+      "nter_sceneH\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2675,25 +2669,25 @@ public final class p_center_scene {
     internal_static_fastjgame_p_center_single_scene_hello_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fastjgame_p_center_single_scene_hello_descriptor,
-        new java.lang.String[] { "ServerId", });
+        new java.lang.String[] { "PlatfomNumber", "ServerId", });
     internal_static_fastjgame_p_center_single_scene_hello_result_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_fastjgame_p_center_single_scene_hello_result_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fastjgame_p_center_single_scene_hello_result_descriptor,
-        new java.lang.String[] { "ChannelId", "ConfiguredRegions", });
+        new java.lang.String[] { "ConfiguredRegions", });
     internal_static_fastjgame_p_center_cross_scene_hello_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_fastjgame_p_center_cross_scene_hello_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fastjgame_p_center_cross_scene_hello_descriptor,
-        new java.lang.String[] { "ServerId", });
+        new java.lang.String[] { "PlatfomNumber", "ServerId", });
     internal_static_fastjgame_p_center_cross_scene_hello_result_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_fastjgame_p_center_cross_scene_hello_result_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_fastjgame_p_center_cross_scene_hello_result_descriptor,
-        new java.lang.String[] { "ChannelId", "ConfiguredRegions", "ActiveRegions", });
+        new java.lang.String[] { "ConfiguredRegions", "ActiveRegions", });
     com.wjybxx.fastjgame.protobuffer.p_enum.getDescriptor();
     com.wjybxx.fastjgame.protobuffer.p_struct.getDescriptor();
   }

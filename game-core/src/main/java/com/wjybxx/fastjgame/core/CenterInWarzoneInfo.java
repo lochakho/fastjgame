@@ -15,6 +15,8 @@
  */
 package com.wjybxx.fastjgame.core;
 
+import com.wjybxx.fastjgame.misc.PlatformType;
+
 /**
  * CenterServer在WarzoneServer信息
  * @author wjybxx
@@ -26,15 +28,22 @@ public class CenterInWarzoneInfo {
 
     private final long gameProcessGuid;
 
+    private final PlatformType platformType;
+
     private final int serverId;
 
-    public CenterInWarzoneInfo(long gameProcessGuid, int serverId) {
+    public CenterInWarzoneInfo(long gameProcessGuid, PlatformType platformType, int serverId) {
         this.gameProcessGuid = gameProcessGuid;
+        this.platformType = platformType;
         this.serverId = serverId;
     }
 
     public long getGameProcessGuid() {
         return gameProcessGuid;
+    }
+
+    public PlatformType getPlatformType() {
+        return platformType;
     }
 
     public int getServerId() {

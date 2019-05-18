@@ -16,7 +16,10 @@ option java_outer_classname = "p_center_warzone";
 
 // 当center服发现warzone时，打个招呼(我要注册)
 message p_center_warzone_hello{
-	int32 serverId=1;
+	// 所属的平台号
+	int32 platfomNumber=1;
+	// 服务器id
+	int32 serverId=2;
 }
 // 打招呼的响应
 message p_center_warzone_hello_result{

@@ -145,7 +145,7 @@ public class WarzoneInCenterInfoMrg {
         warzoneInCenterInfo=new WarzoneInCenterInfo(session.getServerGuid());
 
         // TODO 战区连接成功逻辑(eg.恢复特殊玩法)
-        logger.info("connect warzone {} success",centerWorldInfoMrg.getWarzoneId());
+        logger.info("connect WARZONE-{} success",centerWorldInfoMrg.getWarzoneId());
     }
 
 }

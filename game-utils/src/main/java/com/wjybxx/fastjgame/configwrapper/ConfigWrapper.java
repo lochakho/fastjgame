@@ -16,7 +16,8 @@
 
 package com.wjybxx.fastjgame.configwrapper;
 
-import jdk.nashorn.internal.ir.annotations.Immutable;
+
+import javax.annotation.concurrent.Immutable;
 
 /**
  * 键值对类型配置包装对象，为其增强功能，子类实现必须为不可变对象，以实现线程安全。

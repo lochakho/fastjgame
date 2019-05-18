@@ -56,6 +56,8 @@ public enum PlatformType {
     }
 
     public static PlatformType forNumber(int number){
-        return number2PlatformMap.get(number);
+        PlatformType platformType = number2PlatformMap.get(number);
+        assert null!=platformType:"invalid number "+number;
+        return platformType;
     }
 }

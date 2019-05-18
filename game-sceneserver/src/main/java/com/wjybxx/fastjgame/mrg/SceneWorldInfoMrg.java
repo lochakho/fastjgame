@@ -18,9 +18,12 @@ package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
+import com.wjybxx.fastjgame.configwrapper.MapConfigWrapper;
 import com.wjybxx.fastjgame.core.SceneProcessType;
 import com.wjybxx.fastjgame.core.SceneRegion;
+import com.wjybxx.fastjgame.misc.PlatformType;
 import com.wjybxx.fastjgame.net.common.RoleType;
+import com.wjybxx.fastjgame.utils.GameUtils;
 import com.wjybxx.fastjgame.utils.ZKPathUtils;
 import org.apache.zookeeper.CreateMode;
 
@@ -47,6 +50,11 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
      * 所属的战区
      */
     private int warzoneId;
+
+    /**
+     * 如果是单服进程，表示它所属的平台
+     */
+    private PlatformType platformType;
     /**
      * 如果的单服进程，那么表示它所属的服务器
      */
@@ -58,7 +66,7 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
     /**
      * 复合当前进程类型的场景区域
      */
-    private Set<SceneRegion> configuredRegions=EnumSet.noneOf(SceneRegion.class);
+    private Set<SceneRegion> configuredRegions;
 
     private final CuratorMrg curatorMrg;
 
@@ -70,30 +78,41 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
 
     @Override
     protected void initImp(ConfigWrapper startArgs) throws Exception {
+        // 场景进程类型决定参数配置
         sceneProcessType = SceneProcessType.forName(startArgs.getAsString("sceneType"));
-        warzoneId = startArgs.getAsInt("warzoneId");
 
-
-        // 只有本服场景才支持指定服务器id
         if(sceneProcessType == SceneProcessType.SINGLE){
+            // 本服场景配置平台和服id，战区id由zookeeper配置指定
+            platformType = PlatformType.valueOf(startArgs.getAsString("platform"));
             serverId = startArgs.getAsInt("serverId");
+
+            // 查询zookeeper，获取该平台该服对应的战区id
+            String actualServerConfigPath = ZKPathUtils.actualServerConfigPath(platformType, serverId);
+            ConfigWrapper serverConfig  = new MapConfigWrapper(GameUtils.newJsonMap(curatorMrg.getData(actualServerConfigPath)));
+            warzoneId = serverConfig.getAsInt("warzoneId");
+
             final String originPath = ZKPathUtils.singleChannelPath(warzoneId, serverId);
             this.initChannelId(originPath,SINGLE_SCENE_MIN_CHANNEL_ID);
         }else {
+            // 跨服场景的 战区id由启动参数决定
+            warzoneId = startArgs.getAsInt("warzoneId");
             serverId = -1;
+
             String originPath = ZKPathUtils.crossChannelPath(warzoneId);
             this.initChannelId(originPath,CROSS_SCENE_MIN_CHANNEL_ID);
         }
 
         // 配置的要启动的区域 TODO 这种配置方式不方便配置
         String[] configuredRegionArray = startArgs.getAsStringArray("configuredRegions");
+        Set<SceneRegion> modifiableRegionSet=EnumSet.noneOf(SceneRegion.class);
         for (String regionName:configuredRegionArray){
             SceneRegion sceneRegion = SceneRegion.valueOf(regionName);
             if (sceneRegion.getSceneProcessType()!= sceneProcessType){
                 throw new IllegalArgumentException(sceneProcessType + " doesn't support " + sceneRegion);
             }
-            configuredRegions.add(sceneRegion);
+            modifiableRegionSet.add(sceneRegion);
         }
+        this.configuredRegions=Collections.unmodifiableSet(modifiableRegionSet);
     }
 
     @Override
@@ -105,6 +124,10 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
         return sceneProcessType;
     }
 
+    public PlatformType getPlatformType() {
+        return platformType;
+    }
+
     public int getWarzoneId() {
         return warzoneId;
     }
@@ -114,14 +137,14 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
      * @return 如果是本服场景，则存在，否则抛出异常
      */
     public int getServerId() {
-        if (serverId>0){
+        if (sceneProcessType == SceneProcessType.SINGLE){
             return serverId;
         }
         throw new UnsupportedOperationException("cross scene serverId");
     }
 
     public Set<SceneRegion> getConfiguredRegions() {
-        return Collections.unmodifiableSet(configuredRegions);
+        return configuredRegions;
     }
 
     public int getChannelId() {

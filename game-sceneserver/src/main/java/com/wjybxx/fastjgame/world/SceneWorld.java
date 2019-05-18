@@ -125,9 +125,9 @@ public class SceneWorld extends WorldCore {
         String parentPath= ZKPathUtils.onlineParentPath(sceneWorldInfoMrg.getWarzoneId());
         String nodeName;
         if (sceneWorldInfoMrg.getSceneProcessType()== SceneProcessType.SINGLE){
-            nodeName= ZKPathUtils.buildSingleSceneNodeName(sceneWorldInfoMrg.getWarzoneId(),sceneWorldInfoMrg.getServerId(),sceneWorldInfoMrg.getProcessGuid());
+            nodeName= ZKPathUtils.buildSingleSceneNodeName(sceneWorldInfoMrg.getPlatformType(),sceneWorldInfoMrg.getServerId(),sceneWorldInfoMrg.getProcessGuid());
         }else {
-            nodeName= ZKPathUtils.buildCrossSceneNodeName(sceneWorldInfoMrg.getWarzoneId(),sceneWorldInfoMrg.getProcessGuid());
+            nodeName= ZKPathUtils.buildCrossSceneNodeName(sceneWorldInfoMrg.getProcessGuid());
         }
         curatorMrg.createNode(ZKPaths.makePath(parentPath,nodeName), CreateMode.EPHEMERAL,GameUtils.serializeToJsonBytes(zkOnlineSceneNode));
     }

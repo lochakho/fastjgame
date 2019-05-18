@@ -23,7 +23,7 @@ import java.io.File;
 
 /**
  * 启动参数：
- platform=TEST warzoneId=1 serverId=1
+ platform=TEST serverId=1
  *
  * @author wjybxx
  * @version 1.0

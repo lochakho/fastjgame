@@ -33,7 +33,8 @@ public class WorldCoreWrapper {
     private final InnerAcceptorMrg innerAcceptorMrg;
 
     @Inject
-    public WorldCoreWrapper(CuratorMrg curatorMrg, GuidMrg guidMrg, GameConfigMrg gameConfigMrg, InnerAcceptorMrg innerAcceptorMrg) {
+    public WorldCoreWrapper(CuratorMrg curatorMrg, GuidMrg guidMrg, GameConfigMrg gameConfigMrg,
+                            InnerAcceptorMrg innerAcceptorMrg) {
         this.curatorMrg = curatorMrg;
         this.guidMrg = guidMrg;
         this.gameConfigMrg = gameConfigMrg;

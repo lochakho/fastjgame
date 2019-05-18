@@ -17,20 +17,24 @@ option java_outer_classname = "p_center_scene";
 // centerserver向sceneserver打招呼，期望获得scene的一些基本信息
 // 为何要主动告诉scene地址呢，减少scene使用zookeeper的压力
 message p_center_single_scene_hello{
-	// 服务器id，用于核对
-	int32 serverId=1;
+	// 所属的平台号
+	int32 platfomNumber=1;
+	// 服务器id
+	int32 serverId=2;
 }
 
-// scene返回的信息
+// singlescene返回的信息
 message p_center_single_scene_hello_result{
-    // 配置(或启动参数)中的支持的区域
+    // 配置(或启动参数)中的支持的区域(非互斥区域已启动)
     repeated int32 configuredRegions=1;
 }
 
 //centerserver向跨服scene进程打招呼
 message p_center_cross_scene_hello{
-	// 服务器id，用于核对
-	int32 serverId=1;
+	// 所属的平台号
+	int32 platfomNumber=1;
+	// 服务器id
+	int32 serverId=2;
 }
 
 // 跨服scene通知该centerserver我启动了哪些区域

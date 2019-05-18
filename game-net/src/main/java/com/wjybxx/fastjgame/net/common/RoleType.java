@@ -87,6 +87,8 @@ public enum RoleType {
     }
 
     public static RoleType forNumber(int number){
-        return mapper.get(number);
+        RoleType roleType = mapper.get(number);
+        assert null!=roleType:"invalid number " + number;
+        return roleType;
     }
 }

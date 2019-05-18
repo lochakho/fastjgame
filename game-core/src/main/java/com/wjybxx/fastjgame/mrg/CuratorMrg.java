@@ -46,6 +46,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <h3>Curator</h3>
  * 官网：http://curator.apache.org/getting-started.html<br>
  * 使用zookeeper建议配合ZKUI。
+ *
+ * <h3>ZKUI</h3>
+ *  ZKUI是我常用的zookeeper图形化界面工具，我自己的版本修正了原始版本的中文乱码问题(配置支持中文会好很多)，
+ *  和根节点属性导出之后无法导入的问题。
+ *  地址： - https://github.com/hl845740757/zkui
+ *
  * <P>
  *     Curator控制器，管理Curator客户端和提供一些简便方法。
  *     设计给游戏逻辑线程使用，因此不是线程安全的。

@@ -111,7 +111,6 @@ public class CenterWorld extends WorldCore {
                 httpHostAndPort.toString(),
                 centerWorldInfoMrg.getProcessGuid());
 
-
         final String path = ZKPaths.makePath(parentPath, nodeName);
         curatorMrg.waitForNodeDelete(path);
 

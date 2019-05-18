@@ -16,6 +16,7 @@
 
 package com.wjybxx.fastjgame.mrg;
 
+import com.google.inject.Inject;
 import com.wjybxx.fastjgame.configwrapper.ConfigWrapper;
 import com.wjybxx.fastjgame.net.common.RoleType;
 
@@ -32,6 +33,7 @@ public class LoginWorldInfoMrg extends WorldCoreInfoMrg{
 
     private int port;
 
+    @Inject
     public LoginWorldInfoMrg(GuidMrg guidMrg) {
         super(guidMrg);
     }

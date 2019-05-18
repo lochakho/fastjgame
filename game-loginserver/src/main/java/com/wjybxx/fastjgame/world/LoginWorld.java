@@ -17,10 +17,18 @@
 package com.wjybxx.fastjgame.world;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.mrg.WorldCoreWrapper;
-import com.wjybxx.fastjgame.mrg.WorldWrapper;
+import com.wjybxx.fastjgame.core.node.ZKOnlineLoginNode;
+import com.wjybxx.fastjgame.misc.HostAndPort;
+import com.wjybxx.fastjgame.mrg.*;
 import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
+import com.wjybxx.fastjgame.net.async.initializer.HttpServerInitializer;
+import com.wjybxx.fastjgame.utils.GameUtils;
+import com.wjybxx.fastjgame.utils.ZKPathUtils;
+import org.apache.curator.utils.ZKPaths;
+import org.apache.zookeeper.CreateMode;
+
+import java.net.BindException;
 
 /**
  * @author wjybxx
@@ -30,9 +38,17 @@ import com.wjybxx.fastjgame.mrg.sync.SyncS2CSessionMrg;
  */
 public class LoginWorld extends WorldCore{
 
+    private final LoginDiscoverMrg loginDiscoverMrg;
+    private final LoginWorldInfoMrg loginWorldInfoMrg;
+    private final CenterInLoginInfoMrg centerInLoginInfoMrg;
+
     @Inject
-    public LoginWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
+    public LoginWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper, LoginDiscoverMrg loginDiscoverMrg,
+                      CenterInLoginInfoMrg centerInLoginInfoMrg) {
         super(worldWrapper, coreWrapper);
+        this.loginDiscoverMrg = loginDiscoverMrg;
+        this.loginWorldInfoMrg = (LoginWorldInfoMrg) worldWrapper.getWorldInfoMrg();
+        this.centerInLoginInfoMrg = centerInLoginInfoMrg;
     }
 
     @Override
@@ -62,16 +78,33 @@ public class LoginWorld extends WorldCore{
 
     @Override
     protected void startHook() throws Exception {
+        bindAndregisterToZK();
 
+        loginDiscoverMrg.start();
+    }
+
+    private void bindAndregisterToZK() throws Exception {
+        HostAndPort innerHttpAddress = innerAcceptorMrg.bindInnerHttpPort();
+        HostAndPort outerHttpAddress = httpClientMrg.bind(true, loginWorldInfoMrg.getPort(), new HttpServerInitializer(disruptorMrg));
+
+        String parentPath= ZKPathUtils.onlineRootPath();
+        String nodeName = ZKPathUtils.buildLoginNodeName(loginWorldInfoMrg.getPort(),loginWorldInfoMrg.getProcessGuid());
+
+        ZKOnlineLoginNode zkOnlineLoginNode=new ZKOnlineLoginNode(innerHttpAddress.toString(),
+                outerHttpAddress.toString());
+
+        final String path = ZKPaths.makePath(parentPath, nodeName);
+        final byte[] initData = GameUtils.serializeToJsonBytes(zkOnlineLoginNode);
+        curatorMrg.createNode(path, CreateMode.EPHEMERAL,initData);
     }
 
     @Override
     protected void tickHook() {
-
+        loginDiscoverMrg.tick();
     }
 
     @Override
     protected void shutdownHook() {
-
+        loginDiscoverMrg.shutdown();
     }
 }

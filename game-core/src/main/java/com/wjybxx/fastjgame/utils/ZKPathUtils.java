@@ -17,10 +17,7 @@
 package com.wjybxx.fastjgame.utils;
 
 import com.wjybxx.fastjgame.core.SceneProcessType;
-import com.wjybxx.fastjgame.core.nodename.CenterServerNodeName;
-import com.wjybxx.fastjgame.core.nodename.CrossSceneNodeName;
-import com.wjybxx.fastjgame.core.nodename.SingleSceneNodeName;
-import com.wjybxx.fastjgame.core.nodename.WarzoneNodeName;
+import com.wjybxx.fastjgame.core.nodename.*;
 import com.wjybxx.fastjgame.misc.PlatformType;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import org.apache.curator.utils.PathUtils;
@@ -333,5 +330,26 @@ public class ZKPathUtils {
         return new CrossSceneNodeName(warzoneId,processGuid);
     }
 
+    /**
+     * 为loginserver创建一个节点名字
+     * @param port 端口号
+     * @param processGuid 进程guid
+     * @return 一个唯一的有意义的名字
+     */
+    public static String buildLoginNodeName(int port,long processGuid){
+        return RoleType.LOGIN + "-" + port + "-"+processGuid;
+    }
+
+    /**
+     * 解析loginserver的节点名字
+     * @param path 节点路径
+     * @return
+     */
+    public static LoginServerNodeName parseLoginNodeName(String path){
+        String[] params = findNodeName(path).split("-");
+        int port=Integer.parseInt(params[1]);
+        long processGuid = Long.parseLong(params[2]);
+        return new LoginServerNodeName(port,processGuid);
+    }
     // endregion
 }

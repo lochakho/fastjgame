@@ -17,13 +17,13 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.core.node.ZKOnlineCenterNode;
+import com.wjybxx.fastjgame.core.nodename.CenterServerNodeName;
 import com.wjybxx.fastjgame.misc.AbstractThreadLifeCycleHelper;
 import com.wjybxx.fastjgame.net.common.RoleType;
+import com.wjybxx.fastjgame.utils.GameUtils;
 import com.wjybxx.fastjgame.utils.ZKPathUtils;
-import org.apache.curator.framework.recipes.cache.TreeCache;
-import org.apache.curator.framework.recipes.cache.TreeCacheEvent;
-import org.apache.curator.framework.recipes.cache.PathChildrenCache;
-import org.apache.curator.framework.recipes.cache.TreeCacheSelector;
+import org.apache.curator.framework.recipes.cache.*;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadFactory;
@@ -46,15 +46,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class LoginDiscoverMrg extends AbstractThreadLifeCycleHelper {
 
     private final CuratorMrg curatorMrg;
+    private final CenterInLoginInfoMrg centerInLoginInfoMrg;
 
     private final ConcurrentLinkedQueue<TreeCacheEvent> eventQueue=new ConcurrentLinkedQueue<>();
-
     private TreeCache treeCache;
 
     @Inject
-    public LoginDiscoverMrg(CuratorMrg curatorMrg) {
-
+    public LoginDiscoverMrg(CuratorMrg curatorMrg, CenterInLoginInfoMrg centerInLoginInfoMrg) {
         this.curatorMrg = curatorMrg;
+        this.centerInLoginInfoMrg = centerInLoginInfoMrg;
     }
 
     @Override
@@ -77,10 +77,37 @@ public class LoginDiscoverMrg extends AbstractThreadLifeCycleHelper {
     public void tick(){
         TreeCacheEvent e;
         while ((e=eventQueue.poll())!=null){
-
+            onEvent(e);
         }
     }
 
+    private void onEvent(TreeCacheEvent event){
+        if (event.getType() != TreeCacheEvent.Type.NODE_ADDED
+                && event.getType() != TreeCacheEvent.Type.NODE_REMOVED){
+            return;
+        }
+        ChildData childData = event.getData();
+        // 根节点
+        if (childData.getPath().equals(ZKPathUtils.onlineRootPath())){
+            return;
+        }
+        // 战区节点
+        String nodeName = ZKPathUtils.findNodeName(childData.getPath());
+        if (nodeName.startsWith("warzone")){
+            return;
+        }
+        // 战区子节点
+        RoleType serverType = ZKPathUtils.parseServerType(nodeName);
+        assert serverType == RoleType.CENTER;
+
+        CenterServerNodeName centerServerNodeName= ZKPathUtils.parseCenterNodeName(childData.getPath());
+        ZKOnlineCenterNode centerNode=GameUtils.parseFromJsonBytes(childData.getData(),ZKOnlineCenterNode.class);
+        if (event.getType() == TreeCacheEvent.Type.NODE_ADDED){
+            centerInLoginInfoMrg.onDiscoverCenterServer(centerServerNodeName,centerNode);
+        } else if (event.getType() == TreeCacheEvent.Type.NODE_REMOVED){
+            centerInLoginInfoMrg.onCenterServerNodeRemove(centerServerNodeName,centerNode);
+        }
+    }
 
     /**
      * loginServer专用的watcherThread
@@ -107,7 +134,11 @@ public class LoginDiscoverMrg extends AbstractThreadLifeCycleHelper {
          */
         @Override
         public boolean traverseChildren(String fullPath) {
-            return ZKPathUtils.findNodeName(fullPath).startsWith("warzone");
+            if (fullPath.equals(ZKPathUtils.onlineRootPath())){
+                return true;
+            }else {
+                return ZKPathUtils.findNodeName(fullPath).startsWith("warzone");
+            }
         }
 
         /**
@@ -118,8 +149,14 @@ public class LoginDiscoverMrg extends AbstractThreadLifeCycleHelper {
         @Override
         public boolean acceptChild(String fullPath) {
             String nodeName = ZKPathUtils.findNodeName(fullPath);
-            RoleType serverType = ZKPathUtils.parseServerType(nodeName);
-            return serverType == RoleType.CENTER;
+            // 战区节点(容器)
+            if (nodeName.startsWith("warzone")){
+                return true;
+            }else {
+                // 叶子节点
+                RoleType serverType = ZKPathUtils.parseServerType(nodeName);
+                return serverType == RoleType.CENTER;
+            }
         }
     }
 }

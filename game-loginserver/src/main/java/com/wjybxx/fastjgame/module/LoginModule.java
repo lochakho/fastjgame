@@ -16,6 +16,14 @@
 
 package com.wjybxx.fastjgame.module;
 
+import com.google.inject.Singleton;
+import com.wjybxx.fastjgame.mrg.CenterInLoginInfoMrg;
+import com.wjybxx.fastjgame.mrg.LoginDiscoverMrg;
+import com.wjybxx.fastjgame.mrg.LoginWorldInfoMrg;
+import com.wjybxx.fastjgame.mrg.WorldInfoMrg;
+import com.wjybxx.fastjgame.world.LoginWorld;
+import com.wjybxx.fastjgame.world.World;
+
 /**
  * @author wjybxx
  * @version 1.0
@@ -26,11 +34,14 @@ public class LoginModule extends CoreModule{
 
     @Override
     protected void bindWorldAndWorldInfoMrg() {
-
+        bind(World.class).to(LoginWorld.class).in(Singleton.class);
+        bind(WorldInfoMrg.class).to(LoginWorldInfoMrg.class).in(Singleton.class);
     }
 
     @Override
     protected void bindOthers() {
-
+        bind(LoginWorldInfoMrg.class).in(Singleton.class);
+        bind(LoginDiscoverMrg.class).in(Singleton.class);
+        bind(CenterInLoginInfoMrg.class).in(Singleton.class);
     }
 }

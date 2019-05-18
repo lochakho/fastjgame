@@ -18,6 +18,7 @@ package com.wjybxx.fastjgame.core;
 
 import com.wjybxx.fastjgame.core.node.ZKOnlineCenterNode;
 import com.wjybxx.fastjgame.core.nodename.CenterServerNodeName;
+import com.wjybxx.fastjgame.misc.PlatformType;
 
 /**
  * @author wjybxx
@@ -26,15 +27,43 @@ import com.wjybxx.fastjgame.core.nodename.CenterServerNodeName;
  * @github - https://github.com/hl845740757
  */
 public class CenterInLoginInfo {
+    /**
+     * 进程guid
+     */
+    private final long processGuid;
+    /**
+     * 平台
+     */
+    private final PlatformType platformType;
+    /**
+     * 服id
+     */
+    private final int serverId;
+    /**
+     * 使用http与center通信(没必要长链接)
+     */
+    private final String innerHttpAddress;
 
-    private final CenterServerNodeName nodeName;
-
-    private final ZKOnlineCenterNode nodeData;
-
-    public CenterInLoginInfo(CenterServerNodeName nodeName, ZKOnlineCenterNode nodeData) {
-        this.nodeName = nodeName;
-        this.nodeData = nodeData;
+    public CenterInLoginInfo(long processGuid, PlatformType platformType, int serverId, String innerHttpAddress) {
+        this.processGuid = processGuid;
+        this.platformType = platformType;
+        this.serverId = serverId;
+        this.innerHttpAddress = innerHttpAddress;
     }
 
+    public long getProcessGuid() {
+        return processGuid;
+    }
 
+    public PlatformType getPlatformType() {
+        return platformType;
+    }
+
+    public int getServerId() {
+        return serverId;
+    }
+
+    public String getInnerHttpAddress() {
+        return innerHttpAddress;
+    }
 }

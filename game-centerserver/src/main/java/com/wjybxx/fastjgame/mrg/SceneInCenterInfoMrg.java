@@ -20,9 +20,9 @@ import com.google.inject.Inject;
 import com.wjybxx.fastjgame.core.SceneInCenterInfo;
 import com.wjybxx.fastjgame.core.SceneProcessType;
 import com.wjybxx.fastjgame.core.SceneRegion;
-import com.wjybxx.fastjgame.core.node.ZKOnlineSceneNode;
-import com.wjybxx.fastjgame.core.nodename.CrossSceneNodeName;
-import com.wjybxx.fastjgame.core.nodename.SingleSceneNodeName;
+import com.wjybxx.fastjgame.core.onlinenode.SceneNodeData;
+import com.wjybxx.fastjgame.core.onlinenode.CrossSceneNodeName;
+import com.wjybxx.fastjgame.core.onlinenode.SingleSceneNodeName;
 import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.async.C2SSessionMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncC2SSessionMrg;
@@ -84,7 +84,7 @@ public class SceneInCenterInfoMrg {
         guid2InfoMap.put(sceneInCenterInfo.getSceneProcessGuid(), sceneInCenterInfo);
         channelId2InfoMap.put(sceneInCenterInfo.getChanelId(), sceneInCenterInfo);
 
-        logger.info("connect {} scene ,channelId={}",sceneInCenterInfo.getProcessType(),sceneInCenterInfo.getChanelId());
+        logger.info("add {} scene ,channelId={}",sceneInCenterInfo.getProcessType(),sceneInCenterInfo.getChanelId());
     }
 
     private void removeSceneInfo(SceneInCenterInfo sceneInCenterInfo) {
@@ -99,7 +99,7 @@ public class SceneInCenterInfoMrg {
      * @param singleSceneNodeName 本服scene节点名字信息
      * @param onlineSceneNode 本服scene节点其它信息
      */
-    public void onDiscoverSingleScene(SingleSceneNodeName singleSceneNodeName, ZKOnlineSceneNode onlineSceneNode){
+    public void onDiscoverSingleScene(SingleSceneNodeName singleSceneNodeName, SceneNodeData onlineSceneNode){
         // 注册异步tcp会话
         HostAndPort tcpHostAndPort=HostAndPort.parseHostAndPort(onlineSceneNode.getInnerTcpAddress());
         innerAcceptorMrg.registerAsyncTcpSession(singleSceneNodeName.getSceneProcessGuid(),RoleType.SCENE,
@@ -134,7 +134,7 @@ public class SceneInCenterInfoMrg {
      * @param crossSceneNodeName 跨服场景名字信息
      * @param onlineSceneNode  跨服场景其它信息
      */
-    public void onDiscoverCrossScene(CrossSceneNodeName crossSceneNodeName, ZKOnlineSceneNode onlineSceneNode){
+    public void onDiscoverCrossScene(CrossSceneNodeName crossSceneNodeName, SceneNodeData onlineSceneNode){
         // 注册异步会话
         HostAndPort tcpHostAndPort=HostAndPort.parseHostAndPort(onlineSceneNode.getInnerTcpAddress());
         innerAcceptorMrg.registerAsyncTcpSession(crossSceneNodeName.getSceneProcessGuid(), RoleType.SCENE,
@@ -202,6 +202,7 @@ public class SceneInCenterInfoMrg {
         public void onSessionConnected(C2SSession session) {
             p_center_single_scene_hello hello = p_center_single_scene_hello
                     .newBuilder()
+                    .setPlatfomNumber(centerWorldInfoMrg.getPlatformType().getNumber())
                     .setServerId(centerWorldInfoMrg.getServerId())
                     .build();
             c2SSessionMrg.send(session.getServerGuid(), hello);
@@ -222,6 +223,7 @@ public class SceneInCenterInfoMrg {
         public void onSessionConnected(C2SSession session) {
             p_center_cross_scene_hello hello = p_center_cross_scene_hello
                     .newBuilder()
+                    .setPlatfomNumber(centerWorldInfoMrg.getPlatformType().getNumber())
                     .setServerId(centerWorldInfoMrg.getServerId())
                     .build();
             c2SSessionMrg.send(session.getServerGuid(), hello);

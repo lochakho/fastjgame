@@ -14,26 +14,36 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core.node;
+package com.wjybxx.fastjgame.core.onlinenode;
 
 /**
- * zookeeper在线WarzoneServer节点信息
- *
+ * 登录服务器节点名字
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/15 17:22
+ * @date 2019/5/17 21:27
  * @github - https://github.com/hl845740757
  */
-public class ZKOnlineWarzoneNode extends ZKOnlineNode{
+public class LoginNodeName {
 
-    private final long processGuid;
+    /**
+     * 登录服绑定的端口
+     */
+    private final int port;
+    /**
+     * 登录服进程guid
+     */
+    private final long loginProcessGuid;
 
-    public ZKOnlineWarzoneNode(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress, long processGuid) {
-        super(innerTcpAddress, innerRpcAddress, innerHttpAddress);
-        this.processGuid=processGuid;
+    public LoginNodeName(int port, long loginProcessGuid) {
+        this.port = port;
+        this.loginProcessGuid = loginProcessGuid;
     }
 
-    public long getProcessGuid() {
-        return processGuid;
+    public int getPort() {
+        return port;
+    }
+
+    public long getLoginProcessGuid() {
+        return loginProcessGuid;
     }
 }

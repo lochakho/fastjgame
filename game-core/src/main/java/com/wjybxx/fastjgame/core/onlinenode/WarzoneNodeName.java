@@ -14,44 +14,34 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core.nodename;
+package com.wjybxx.fastjgame.core.onlinenode;
 
 /**
- * 跨服场景节点名字。
- * 场景服需要不同的名字，场景进程之间没有直接的互斥关系，后启动的可以和先启动的同时存在。
+ * 战区服也必须总是生成相同的名字，以使得同时只能有一个战区服存在。
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/16 0:19
+ * @date 2019/5/16 0:14
  * @github - https://github.com/hl845740757
  */
-public class CrossSceneNodeName {
+public class WarzoneNodeName {
     /**
-     * 战区id，来自父节点
+     * 其实可以不要的
      */
     private final int warzoneId;
-    /**
-     * guid
-     */
-    private final long sceneProcessGuid;
 
-    public CrossSceneNodeName(int warzoneId, long sceneProcessGuid) {
+    public WarzoneNodeName(int warzoneId) {
         this.warzoneId = warzoneId;
-        this.sceneProcessGuid = sceneProcessGuid;
     }
 
     public int getWarzoneId() {
         return warzoneId;
     }
 
-    public long getSceneProcessGuid() {
-        return sceneProcessGuid;
-    }
 
     @Override
     public String toString() {
-        return "CrossSceneNodeName{" +
+        return "WarzoneNodeName{" +
                 "warzoneId=" + warzoneId +
-                ", sceneProcessGuid=" + sceneProcessGuid +
                 '}';
     }
 }

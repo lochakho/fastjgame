@@ -18,8 +18,8 @@ package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.core.CenterInLoginInfo;
-import com.wjybxx.fastjgame.core.node.ZKOnlineCenterNode;
-import com.wjybxx.fastjgame.core.nodename.CenterServerNodeName;
+import com.wjybxx.fastjgame.core.onlinenode.CenterNodeData;
+import com.wjybxx.fastjgame.core.onlinenode.CenterNodeName;
 import com.wjybxx.fastjgame.misc.PlatformType;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -49,7 +49,7 @@ public class CenterInLoginInfoMrg {
 
     }
 
-    public void onDiscoverCenterServer(CenterServerNodeName nodeName, ZKOnlineCenterNode centerNode){
+    public void onDiscoverCenterServer(CenterNodeName nodeName, CenterNodeData centerNode){
         Int2ObjectMap<CenterInLoginInfo> serverId2InfoMap = platInfoMap.computeIfAbsent(nodeName.getPlatformType()
                 , platformType -> new Int2ObjectOpenHashMap<>());
         assert !serverId2InfoMap.containsKey(nodeName.getServerId());
@@ -60,7 +60,7 @@ public class CenterInLoginInfoMrg {
         logger.info("{}-{} centerNode added.",nodeName.getPlatformType(),nodeName.getServerId());
     }
 
-    public void onCenterServerNodeRemove(CenterServerNodeName nodeName, ZKOnlineCenterNode centerNode){
+    public void onCenterServerNodeRemove(CenterNodeName nodeName, CenterNodeData centerNode){
         Int2ObjectMap<CenterInLoginInfo> serverId2InfoMap = platInfoMap.computeIfAbsent(nodeName.getPlatformType()
                 , platformType -> new Int2ObjectOpenHashMap<>());
 

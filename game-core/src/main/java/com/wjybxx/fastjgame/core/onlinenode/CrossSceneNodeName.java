@@ -14,55 +14,44 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core.nodename;
-
-import com.wjybxx.fastjgame.misc.PlatformType;
+package com.wjybxx.fastjgame.core.onlinenode;
 
 /**
- * 中心服需要总是生成相同的名字，以使得只有一个center进程存在
+ * 跨服场景节点名字。
+ * 场景服需要不同的名字，场景进程之间没有直接的互斥关系，后启动的可以和先启动的同时存在。
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/16 0:14
+ * @date 2019/5/16 0:19
  * @github - https://github.com/hl845740757
  */
-public class CenterServerNodeName {
+public class CrossSceneNodeName {
     /**
-     * 战区id来自父节点
+     * 战区id，来自父节点
      */
     private final int warzoneId;
     /**
-     * 平台类型
+     * guid
      */
-    private final PlatformType platformType;
-    /**
-     * 服id
-     */
-    private final int serverId;
+    private final long sceneProcessGuid;
 
-    public CenterServerNodeName(int warzoneId, PlatformType platformType, int serverId) {
-        this.platformType = platformType;
+    public CrossSceneNodeName(int warzoneId, long sceneProcessGuid) {
         this.warzoneId = warzoneId;
-        this.serverId = serverId;
+        this.sceneProcessGuid = sceneProcessGuid;
     }
 
     public int getWarzoneId() {
         return warzoneId;
     }
 
-    public PlatformType getPlatformType() {
-        return platformType;
-    }
-
-    public int getServerId() {
-        return serverId;
+    public long getSceneProcessGuid() {
+        return sceneProcessGuid;
     }
 
     @Override
     public String toString() {
-        return "CenterServerNodeName{" +
-                "platformType=" + platformType +
-                ", warzoneId=" + warzoneId +
-                ", serverId=" + serverId +
+        return "CrossSceneNodeName{" +
+                "warzoneId=" + warzoneId +
+                ", sceneProcessGuid=" + sceneProcessGuid +
                 '}';
     }
 }

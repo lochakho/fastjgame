@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core.node;
+package com.wjybxx.fastjgame.core.onlinenode;
 
 /**
  * zookeeper上在线SceneServer节点信息
@@ -23,7 +23,7 @@ package com.wjybxx.fastjgame.core.node;
  * @date 2019/5/15 17:21
  * @github - https://github.com/hl845740757
  */
-public class ZKOnlineSceneNode extends ZKOnlineNode{
+public class SceneNodeData extends OnlineNodeData {
     /**
      * 该场景进程的频道id
      */
@@ -37,8 +37,8 @@ public class ZKOnlineSceneNode extends ZKOnlineNode{
      */
     private final String outerWebsocketAddress;
 
-    public ZKOnlineSceneNode(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress,
-                             int channelId, String outerTcpAddress, String outerWebsocketAddress) {
+    public SceneNodeData(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress,
+                         int channelId, String outerTcpAddress, String outerWebsocketAddress) {
         super(innerTcpAddress, innerRpcAddress, innerHttpAddress);
         this.channelId = channelId;
         this.outerTcpAddress = outerTcpAddress;

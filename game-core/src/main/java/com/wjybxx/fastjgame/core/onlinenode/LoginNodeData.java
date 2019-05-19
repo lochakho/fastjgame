@@ -14,29 +14,35 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core.node;
+package com.wjybxx.fastjgame.core.onlinenode;
 
 /**
- * zookeeper上在线CenterServer节点信息
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/15 17:21
+ * @date 2019/5/17 21:28
  * @github - https://github.com/hl845740757
  */
-public class ZKOnlineCenterNode extends ZKOnlineNode{
+public class LoginNodeData {
 
     /**
-     * 进程唯一标识
+     * 用于GM等工具而绑定的http端口信息
      */
-    private final long processGuid;
+    private final String innerHttpAddress;
+    /**
+     * 为玩家服务的http端口
+     */
+    private final String outerHttpAddress;
 
-    public ZKOnlineCenterNode(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress, long processGuid) {
-        super(innerTcpAddress, innerRpcAddress, innerHttpAddress);
-        this.processGuid=processGuid;
+    public LoginNodeData(String innerHttpAddress, String outerHttpAddress) {
+        this.innerHttpAddress = innerHttpAddress;
+        this.outerHttpAddress = outerHttpAddress;
     }
 
+    public String getInnerHttpAddress() {
+        return innerHttpAddress;
+    }
 
-    public long getProcessGuid() {
-        return processGuid;
+    public String getOuterHttpAddress() {
+        return outerHttpAddress;
     }
 }

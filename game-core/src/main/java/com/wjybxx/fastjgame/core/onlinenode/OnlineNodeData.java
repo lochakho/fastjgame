@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core.node;
+package com.wjybxx.fastjgame.core.onlinenode;
 
 /**
  *
@@ -23,7 +23,7 @@ package com.wjybxx.fastjgame.core.node;
  * @date 2019/5/15 17:23
  * @github - https://github.com/hl845740757
  */
-public abstract class ZKOnlineNode {
+public abstract class OnlineNodeData {
 
     /**
      * 服务器之间通信用的tcp端口信息，格式  host:port
@@ -40,7 +40,7 @@ public abstract class ZKOnlineNode {
      */
     private final String innerHttpAddress;
 
-    public ZKOnlineNode(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress) {
+    public OnlineNodeData(String innerTcpAddress, String innerRpcAddress, String innerHttpAddress) {
         this.innerTcpAddress = innerTcpAddress;
         this.innerRpcAddress = innerRpcAddress;
         this.innerHttpAddress = innerHttpAddress;

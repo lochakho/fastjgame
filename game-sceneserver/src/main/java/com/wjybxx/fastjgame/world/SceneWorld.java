@@ -2,7 +2,7 @@ package com.wjybxx.fastjgame.world;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.core.SceneProcessType;
-import com.wjybxx.fastjgame.core.node.ZKOnlineSceneNode;
+import com.wjybxx.fastjgame.core.onlinenode.SceneNodeData;
 import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.*;
 import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
@@ -117,7 +117,7 @@ public class SceneWorld extends WorldCore {
                 codecHelper,disruptorMrg);
         HostAndPort outerWebsocketHostAndPort = s2CSessionMrg.bindRange(true,GameUtils.OUTER_WS_PORT_RANGE,wsInitializer);
 
-        ZKOnlineSceneNode zkOnlineSceneNode=new ZKOnlineSceneNode(tcpHostAndPort.toString(),
+        SceneNodeData sceneNodeData =new SceneNodeData(tcpHostAndPort.toString(),
                 syncRpcHostAndPort.toString(), httpHostAndPort.toString(),
                 sceneWorldInfoMrg.getChannelId(),
                 outerTcpHostAndPort.toString(),outerWebsocketHostAndPort.toString());
@@ -129,7 +129,7 @@ public class SceneWorld extends WorldCore {
         }else {
             nodeName= ZKPathUtils.buildCrossSceneNodeName(sceneWorldInfoMrg.getProcessGuid());
         }
-        curatorMrg.createNode(ZKPaths.makePath(parentPath,nodeName), CreateMode.EPHEMERAL,GameUtils.serializeToJsonBytes(zkOnlineSceneNode));
+        curatorMrg.createNode(ZKPaths.makePath(parentPath,nodeName), CreateMode.EPHEMERAL,GameUtils.serializeToJsonBytes(sceneNodeData));
     }
 
 

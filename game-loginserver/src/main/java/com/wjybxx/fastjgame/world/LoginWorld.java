@@ -17,7 +17,7 @@
 package com.wjybxx.fastjgame.world;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.core.node.ZKOnlineLoginNode;
+import com.wjybxx.fastjgame.core.onlinenode.LoginNodeData;
 import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.*;
 import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
@@ -27,8 +27,6 @@ import com.wjybxx.fastjgame.utils.GameUtils;
 import com.wjybxx.fastjgame.utils.ZKPathUtils;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.CreateMode;
-
-import java.net.BindException;
 
 /**
  * @author wjybxx
@@ -90,11 +88,11 @@ public class LoginWorld extends WorldCore{
         String parentPath= ZKPathUtils.onlineRootPath();
         String nodeName = ZKPathUtils.buildLoginNodeName(loginWorldInfoMrg.getPort(),loginWorldInfoMrg.getProcessGuid());
 
-        ZKOnlineLoginNode zkOnlineLoginNode=new ZKOnlineLoginNode(innerHttpAddress.toString(),
+        LoginNodeData loginNodeData =new LoginNodeData(innerHttpAddress.toString(),
                 outerHttpAddress.toString());
 
         final String path = ZKPaths.makePath(parentPath, nodeName);
-        final byte[] initData = GameUtils.serializeToJsonBytes(zkOnlineLoginNode);
+        final byte[] initData = GameUtils.serializeToJsonBytes(loginNodeData);
         curatorMrg.createNode(path, CreateMode.EPHEMERAL,initData);
     }
 

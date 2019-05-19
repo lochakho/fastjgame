@@ -17,7 +17,8 @@
 package com.wjybxx.fastjgame.world;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.core.node.ZKOnlineCenterNode;
+import com.wjybxx.fastjgame.core.onlinenode.CenterNodeData;
+import com.wjybxx.fastjgame.core.onlinenode.WarzoneNodeData;
 import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.CenterInWarzoneInfoMrg;
 import com.wjybxx.fastjgame.mrg.WarzoneWorldInfoMrg;
@@ -108,16 +109,15 @@ public class WarzoneWorld extends WorldCore {
         String parentPath= ZKPathUtils.onlineParentPath(warzoneWorldInfoMrg.getWarzoneId());
         String nodeName= ZKPathUtils.buildWarzoneNodeName(warzoneWorldInfoMrg.getWarzoneId());
 
-        ZKOnlineCenterNode zkOnlineCenterNode=new ZKOnlineCenterNode(tcpHostAndPort.toString(),
+        WarzoneNodeData centerNodeData =new WarzoneNodeData(tcpHostAndPort.toString(),
                 syncRpcHostAndPort.toString(),
                 httpHostAndPort.toString(),
                 warzoneWorldInfoMrg.getProcessGuid());
 
-
         final String path = ZKPaths.makePath(parentPath, nodeName);
         curatorMrg.waitForNodeDelete(path);
 
-        final byte[] initData = GameUtils.serializeToJsonBytes(zkOnlineCenterNode);
+        final byte[] initData = GameUtils.serializeToJsonBytes(centerNodeData);
         ConcurrentUtils.awaitRemoteWithSleepingRetry(path, resource -> {
             return curatorMrg.createNodeIfAbsent(path, CreateMode.EPHEMERAL,initData);
         },3, TimeUnit.SECONDS);

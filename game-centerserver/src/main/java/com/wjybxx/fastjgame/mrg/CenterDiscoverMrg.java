@@ -18,11 +18,7 @@ package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.core.SceneProcessType;
-import com.wjybxx.fastjgame.core.node.ZKOnlineSceneNode;
-import com.wjybxx.fastjgame.core.node.ZKOnlineWarzoneNode;
-import com.wjybxx.fastjgame.core.nodename.CrossSceneNodeName;
-import com.wjybxx.fastjgame.core.nodename.SingleSceneNodeName;
-import com.wjybxx.fastjgame.core.nodename.WarzoneNodeName;
+import com.wjybxx.fastjgame.core.onlinenode.*;
 import com.wjybxx.fastjgame.misc.AbstractThreadLifeCycleHelper;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.utils.GameUtils;
@@ -129,7 +125,7 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
      */
     private void onSceneEvent(Type type, ChildData childData) {
         SceneProcessType sceneProcessType = ZKPathUtils.parseSceneType(childData.getPath());
-        ZKOnlineSceneNode zkOnlineSceneNode=GameUtils.parseFromJsonBytes(childData.getData(),ZKOnlineSceneNode.class);
+        SceneNodeData sceneNodeData =GameUtils.parseFromJsonBytes(childData.getData(), SceneNodeData.class);
         if (sceneProcessType==SceneProcessType.SINGLE){
             // 单服场景
             SingleSceneNodeName singleSceneNodeName = ZKPathUtils.parseSingleSceneNodeName(childData.getPath());
@@ -139,42 +135,46 @@ public class CenterDiscoverMrg extends AbstractThreadLifeCycleHelper {
                 return;
             }
             if (type==Type.CHILD_ADDED) {
-                sceneInCenterInfoMrg.onDiscoverSingleScene(singleSceneNodeName,zkOnlineSceneNode);
-                logger.info("discover single scene {}",singleSceneNodeName);
+                sceneInCenterInfoMrg.onDiscoverSingleScene(singleSceneNodeName, sceneNodeData);
+                logger.debug("discover single scene {}-{}-{}", singleSceneNodeName.getPlatformType(),singleSceneNodeName.getServerId(),sceneNodeData.getChannelId());
             } else {
                 // remove
                 sceneInCenterInfoMrg.onSingleSceneNodeRemoved(singleSceneNodeName);
-                logger.info("child remove,single scene {}",singleSceneNodeName);
+                logger.debug("child remove single scene {}-{}-{}", singleSceneNodeName.getPlatformType(),singleSceneNodeName.getServerId(),sceneNodeData.getChannelId());
             }
         }else {
             // 跨服场景
-            CrossSceneNodeName crossSceneNodeName= ZKPathUtils.parseCrossSceneNodeName(childData.getPath());
+            CrossSceneNodeName crossSceneNodeName = ZKPathUtils.parseCrossSceneNodeName(childData.getPath());
             if (type==Type.CHILD_ADDED){
-                sceneInCenterInfoMrg.onDiscoverCrossScene(crossSceneNodeName,zkOnlineSceneNode);
-                logger.info("discover cross scene {}",crossSceneNodeName);
+                sceneInCenterInfoMrg.onDiscoverCrossScene(crossSceneNodeName, sceneNodeData);
+                logger.debug("discover cross scene {}", sceneNodeData.getChannelId());
             }else {
                 // remove
                 sceneInCenterInfoMrg.onCrossSceneNodeRemoved(crossSceneNodeName);
-                logger.info("child remove,cross scene {}",crossSceneNodeName);
+                logger.debug("child remove,cross scene {}", sceneNodeData.getChannelId());
             }
         }
     }
 
     /**
-     * 监测的路径下只会有一个战区节点
+     * 监测的路径下只会有一个战区节点，且节点名字是不会变的。
+     *
+     * 由于节点名字不会变，那么只能保证 有一次add必然有一次remove，但是remove对应的数据可能和add并不一致！
+     * 见测试用例中的 WatcherTest说明
+     *
      * @param type 事件类型
      * @param childData 战区数据
      */
     private void onWarzoneEvent(Type type, ChildData childData) {
-        WarzoneNodeName warzoneNodeName= ZKPathUtils.parseWarzoneNodeNode(childData.getPath());
-        ZKOnlineWarzoneNode zkOnlineWarzoneNode=GameUtils.parseFromJsonBytes(childData.getData(),ZKOnlineWarzoneNode.class);
+        WarzoneNodeName warzoneNodeName = ZKPathUtils.parseWarzoneNodeName(childData.getPath());
+        WarzoneNodeData warzoneNodeData =GameUtils.parseFromJsonBytes(childData.getData(), WarzoneNodeData.class);
         if (type== Type.CHILD_ADDED){
-            warzoneInCenterInfoMrg.onDiscoverWarzone(warzoneNodeName,zkOnlineWarzoneNode);
-            logger.info("discover warzone {}",warzoneNodeName.getWarzoneId());
+            warzoneInCenterInfoMrg.onDiscoverWarzone(warzoneNodeName, warzoneNodeData);
+            logger.debug("discover warzone {}", warzoneNodeName.getWarzoneId());
         }else {
             // child remove
-            warzoneInCenterInfoMrg.onWarzoneNodeRemoved(warzoneNodeName,zkOnlineWarzoneNode);
-            logger.info("child remove,warzone {}",warzoneNodeName.getWarzoneId());
+            warzoneInCenterInfoMrg.onWarzoneNodeRemoved(warzoneNodeName, warzoneNodeData);
+            logger.debug("child remove,warzone {}", warzoneNodeName.getWarzoneId());
         }
     }
 }

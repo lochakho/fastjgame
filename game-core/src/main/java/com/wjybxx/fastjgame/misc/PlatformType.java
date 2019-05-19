@@ -43,6 +43,10 @@ public enum PlatformType {
         this.number = number;
     }
 
+    public int getNumber() {
+        return number;
+    }
+
     private static final Int2ObjectMap<PlatformType> number2PlatformMap;
 
     static {

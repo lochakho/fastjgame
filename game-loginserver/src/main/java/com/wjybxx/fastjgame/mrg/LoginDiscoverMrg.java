@@ -17,8 +17,8 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
-import com.wjybxx.fastjgame.core.node.ZKOnlineCenterNode;
-import com.wjybxx.fastjgame.core.nodename.CenterServerNodeName;
+import com.wjybxx.fastjgame.core.onlinenode.CenterNodeData;
+import com.wjybxx.fastjgame.core.onlinenode.CenterNodeName;
 import com.wjybxx.fastjgame.misc.AbstractThreadLifeCycleHelper;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import com.wjybxx.fastjgame.utils.GameUtils;
@@ -100,12 +100,12 @@ public class LoginDiscoverMrg extends AbstractThreadLifeCycleHelper {
         RoleType serverType = ZKPathUtils.parseServerType(nodeName);
         assert serverType == RoleType.CENTER;
 
-        CenterServerNodeName centerServerNodeName= ZKPathUtils.parseCenterNodeName(childData.getPath());
-        ZKOnlineCenterNode centerNode=GameUtils.parseFromJsonBytes(childData.getData(),ZKOnlineCenterNode.class);
+        CenterNodeName centerNodeName = ZKPathUtils.parseCenterNodeName(childData.getPath());
+        CenterNodeData centerNode=GameUtils.parseFromJsonBytes(childData.getData(), CenterNodeData.class);
         if (event.getType() == TreeCacheEvent.Type.NODE_ADDED){
-            centerInLoginInfoMrg.onDiscoverCenterServer(centerServerNodeName,centerNode);
+            centerInLoginInfoMrg.onDiscoverCenterServer(centerNodeName,centerNode);
         } else if (event.getType() == TreeCacheEvent.Type.NODE_REMOVED){
-            centerInLoginInfoMrg.onCenterServerNodeRemove(centerServerNodeName,centerNode);
+            centerInLoginInfoMrg.onCenterServerNodeRemove(centerNodeName,centerNode);
         }
     }
 

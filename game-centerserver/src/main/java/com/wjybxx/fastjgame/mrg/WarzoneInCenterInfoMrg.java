@@ -18,8 +18,8 @@ package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
 import com.wjybxx.fastjgame.core.WarzoneInCenterInfo;
-import com.wjybxx.fastjgame.core.node.ZKOnlineWarzoneNode;
-import com.wjybxx.fastjgame.core.nodename.WarzoneNodeName;
+import com.wjybxx.fastjgame.core.onlinenode.WarzoneNodeData;
+import com.wjybxx.fastjgame.core.onlinenode.WarzoneNodeName;
 import com.wjybxx.fastjgame.misc.HostAndPort;
 import com.wjybxx.fastjgame.mrg.async.C2SSessionMrg;
 import com.wjybxx.fastjgame.mrg.sync.SyncC2SSessionMrg;
@@ -52,7 +52,7 @@ public class WarzoneInCenterInfoMrg {
     private final CenterWorldInfoMrg centerWorldInfoMrg;
 
     /**
-     * 连接的战区信息
+     * 连接的战区信息，一定是发现的那个节点的session。
      */
     private WarzoneInCenterInfo warzoneInCenterInfo;
 
@@ -69,20 +69,22 @@ public class WarzoneInCenterInfoMrg {
     /**
      * 发现战区出现(zk上出现了该服务器对应的战区节点)
      * @param warzoneNodeName 战区节点名字信息
-     * @param zkOnlineWarzoneNode  战区其它信息
+     * @param warzoneNodeData  战区其它信息
      */
-    public void onDiscoverWarzone(WarzoneNodeName warzoneNodeName, ZKOnlineWarzoneNode zkOnlineWarzoneNode){
+    public void onDiscoverWarzone(WarzoneNodeName warzoneNodeName, WarzoneNodeData warzoneNodeData){
         if (null != warzoneInCenterInfo){
-            throw new IllegalStateException("may forget trigger disconnect.");
+            // 可能丢失了节点消失事件
+            logger.error("my loss childRemove event");
+            onWarzoneDisconnect(warzoneInCenterInfo.getWarzoneProcessGuid());
         }
         // 注册异步tcp会话
-        HostAndPort tcpHostAndPort=HostAndPort.parseHostAndPort(zkOnlineWarzoneNode.getInnerTcpAddress());
-        innerAcceptorMrg.registerAsyncTcpSession(zkOnlineWarzoneNode.getProcessGuid(), RoleType.WARZONE,
+        HostAndPort tcpHostAndPort=HostAndPort.parseHostAndPort(warzoneNodeData.getInnerTcpAddress());
+        innerAcceptorMrg.registerAsyncTcpSession(warzoneNodeData.getProcessGuid(), RoleType.WARZONE,
                 tcpHostAndPort,new WarzoneSessionLifeAware());
 
         // 注册同步rpc会话(异步连接管理更加稳健，如果异步连接有效，那么同步连接也能保持有效)
-        HostAndPort syncRpcHostAndPort=HostAndPort.parseHostAndPort(zkOnlineWarzoneNode.getInnerRpcAddress());
-        innerAcceptorMrg.registerSyncRpcSession(zkOnlineWarzoneNode.getProcessGuid(), RoleType.WARZONE,
+        HostAndPort syncRpcHostAndPort=HostAndPort.parseHostAndPort(warzoneNodeData.getInnerRpcAddress());
+        innerAcceptorMrg.registerSyncRpcSession(warzoneNodeData.getProcessGuid(), RoleType.WARZONE,
                 syncRpcHostAndPort,
                 session -> {
                     return  null != warzoneInCenterInfo && warzoneInCenterInfo.getWarzoneProcessGuid() == session.getServerGuid();
@@ -90,11 +92,11 @@ public class WarzoneInCenterInfoMrg {
     }
 
     /**
-     * 发现战区断开连接(异步tcp会话断掉，或zk节点消失)
+     * 发现战区断开连接(这里现在没有严格的测试，是否可能是不同的节点)
      * @param warzoneNodeName 战区节点名字信息
      */
-    public void onWarzoneNodeRemoved(WarzoneNodeName warzoneNodeName,ZKOnlineWarzoneNode zkOnlineWarzoneNode){
-        onWarzoneDisconnect(zkOnlineWarzoneNode.getProcessGuid());
+    public void onWarzoneNodeRemoved(WarzoneNodeName warzoneNodeName, WarzoneNodeData warzoneNodeData){
+        onWarzoneDisconnect(warzoneNodeData.getProcessGuid());
     }
 
     /**
@@ -108,12 +110,13 @@ public class WarzoneInCenterInfoMrg {
     private void onWarzoneDisconnect(long processGuid){
         c2SSessionMrg.removeSession(processGuid,"node remove or disconnected");
         syncC2SSessionMrg.removeSession(processGuid,"node remove or disconnected");
-        if (null==warzoneInCenterInfo){
+        if (null == warzoneInCenterInfo){
             return;
         }
         if (warzoneInCenterInfo.getWarzoneProcessGuid() != processGuid){
             return;
         }
+        warzoneInCenterInfo=null;
         // TODO 战区宕机需要处理的逻辑
     }
 
@@ -123,6 +126,7 @@ public class WarzoneInCenterInfoMrg {
         public void onSessionConnected(C2SSession session) {
             p_center_warzone_hello hello = p_center_warzone_hello
                     .newBuilder()
+                    .setPlatfomNumber(centerWorldInfoMrg.getPlatformType().getNumber())
                     .setServerId(centerWorldInfoMrg.getServerId())
                     .build();
 
@@ -136,7 +140,7 @@ public class WarzoneInCenterInfoMrg {
     }
 
     /**
-     * 收到了战区的响应信息
+     * 收到了战区的响应信息。
      * @param session 与战区的会话
      * @param result 战区返回的信息
      */

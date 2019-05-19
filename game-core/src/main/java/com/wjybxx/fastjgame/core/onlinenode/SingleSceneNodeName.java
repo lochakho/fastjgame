@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core.nodename;
+package com.wjybxx.fastjgame.core.onlinenode;
 
 import com.wjybxx.fastjgame.misc.PlatformType;
 

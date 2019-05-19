@@ -14,34 +14,55 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.core.nodename;
+package com.wjybxx.fastjgame.core.onlinenode;
+
+import com.wjybxx.fastjgame.misc.PlatformType;
 
 /**
- * 战区服也必须总是生成相同的名字，以使得同时只能有一个战区服存在。
+ * 中心服需要总是生成相同的名字，以使得只有一个center进程存在
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/16 0:14
  * @github - https://github.com/hl845740757
  */
-public class WarzoneNodeName {
+public class CenterNodeName {
     /**
-     * 其实可以不要的
+     * 战区id来自父节点
      */
     private final int warzoneId;
+    /**
+     * 平台类型
+     */
+    private final PlatformType platformType;
+    /**
+     * 服id
+     */
+    private final int serverId;
 
-    public WarzoneNodeName(int warzoneId) {
+    public CenterNodeName(int warzoneId, PlatformType platformType, int serverId) {
+        this.platformType = platformType;
         this.warzoneId = warzoneId;
+        this.serverId = serverId;
     }
 
     public int getWarzoneId() {
         return warzoneId;
     }
 
+    public PlatformType getPlatformType() {
+        return platformType;
+    }
+
+    public int getServerId() {
+        return serverId;
+    }
 
     @Override
     public String toString() {
-        return "WarzoneNodeName{" +
-                "warzoneId=" + warzoneId +
+        return "CenterNodeName{" +
+                "platformType=" + platformType +
+                ", warzoneId=" + warzoneId +
+                ", serverId=" + serverId +
                 '}';
     }
 }

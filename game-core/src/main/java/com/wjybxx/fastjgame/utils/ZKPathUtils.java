@@ -17,7 +17,7 @@
 package com.wjybxx.fastjgame.utils;
 
 import com.wjybxx.fastjgame.core.SceneProcessType;
-import com.wjybxx.fastjgame.core.nodename.*;
+import com.wjybxx.fastjgame.core.onlinenode.*;
 import com.wjybxx.fastjgame.misc.PlatformType;
 import com.wjybxx.fastjgame.net.common.RoleType;
 import org.apache.curator.utils.PathUtils;
@@ -245,7 +245,7 @@ public class ZKPathUtils {
      * @param path fullpath
      * @return 战区基本信息
      */
-    public static WarzoneNodeName parseWarzoneNodeNode(String path) {
+    public static WarzoneNodeName parseWarzoneNodeName(String path) {
         String[] params = findNodeName(path).split("-");
         int warzoneId = Integer.parseInt(params[1]);
         return new WarzoneNodeName(warzoneId);
@@ -266,12 +266,12 @@ public class ZKPathUtils {
      * @param centerPath fullpath
      * @return game服的信息
      */
-    public static CenterServerNodeName parseCenterNodeName(String centerPath){
+    public static CenterNodeName parseCenterNodeName(String centerPath){
         int warzoneId = findWarzoneId(centerPath);
         String[] params = findNodeName(centerPath).split("-");
         PlatformType platformType = PlatformType.valueOf(params[1]);
         int serverId = Integer.parseInt(params[2]);
-        return new CenterServerNodeName(warzoneId, platformType, serverId);
+        return new CenterNodeName(warzoneId, platformType, serverId);
     }
 
     /**
@@ -345,11 +345,11 @@ public class ZKPathUtils {
      * @param path 节点路径
      * @return
      */
-    public static LoginServerNodeName parseLoginNodeName(String path){
+    public static LoginNodeName parseLoginNodeName(String path){
         String[] params = findNodeName(path).split("-");
         int port=Integer.parseInt(params[1]);
         long processGuid = Long.parseLong(params[2]);
-        return new LoginServerNodeName(port,processGuid);
+        return new LoginNodeName(port,processGuid);
     }
     // endregion
 }

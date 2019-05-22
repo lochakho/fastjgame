@@ -13,32 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.wjybxx.fastjgame.holder;
 
 /**
- * long变量holder，在lambda表达式中使用
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/14 16:04
+ * @date 2019/5/22 11:11
  * @github - https://github.com/hl845740757
  */
-public class LongHolder {
+public class DoubleHolder {
 
-    private long value;
+    private double value;
 
-    public LongHolder() {
+    public DoubleHolder() {
         this(0);
     }
 
-    public LongHolder(long value) {
+    public DoubleHolder(double value) {
         this.value = value;
     }
 
-    public long getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(long value) {
+    public void setValue(double value) {
         this.value = value;
     }
 }

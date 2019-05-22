@@ -33,6 +33,7 @@ public abstract class WorldCore extends World{
     protected final GameConfigMrg gameConfigMrg;
     protected final GuidMrg guidMrg;
     protected final InnerAcceptorMrg innerAcceptorMrg;
+    protected final MongoDBMrg mongoDBMrg;
 
     @Inject
     public WorldCore(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper) {
@@ -42,6 +43,7 @@ public abstract class WorldCore extends World{
         gameConfigMrg=coreWrapper.getGameConfigMrg();
         guidMrg=coreWrapper.getGuidMrg();
         innerAcceptorMrg=coreWrapper.getInnerAcceptorMrg();
+        mongoDBMrg=coreWrapper.getMongoDBMrg();
     }
 
     @Override

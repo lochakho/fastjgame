@@ -13,32 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wjybxx.fastjgame.holder;
+
+package com.wjybxx.fastjgame.misc;
 
 /**
- * long变量holder，在lambda表达式中使用
+ * 使用到的数据库名字枚举，避免直接使用字符串
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/14 16:04
+ * @date 2019/5/21 17:50
  * @github - https://github.com/hl845740757
  */
-public class LongHolder {
-
-    private long value;
-
-    public LongHolder() {
-        this(0);
-    }
-
-    public LongHolder(long value) {
-        this.value = value;
-    }
-
-    public long getValue() {
-        return value;
-    }
-
-    public void setValue(long value) {
-        this.value = value;
-    }
+public enum MongoDatabaseName {
+    /**
+     * 测试用，和数据库名字一致
+     */
+    test,
 }

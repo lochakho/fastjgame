@@ -26,6 +26,14 @@ public class ObjectHolder<T> {
 
     private T value;
 
+    public ObjectHolder() {
+        this(null);
+    }
+
+    public ObjectHolder(T value) {
+        this.value = value;
+    }
+
     public T getValue() {
         return value;
     }

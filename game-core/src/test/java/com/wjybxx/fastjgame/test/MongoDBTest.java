@@ -13,32 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.wjybxx.fastjgame.holder;
+
+package com.wjybxx.fastjgame.test;
+
+import com.wjybxx.fastjgame.mrg.CuratorMrg;
+import com.wjybxx.fastjgame.mrg.GameConfigMrg;
+import com.wjybxx.fastjgame.mrg.MongoDBMrg;
 
 /**
- * long变量holder，在lambda表达式中使用
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/14 16:04
+ * @date 2019/5/21 22:56
  * @github - https://github.com/hl845740757
  */
-public class LongHolder {
+public class MongoDBTest {
 
-    private long value;
+    public static void main(String[] args) throws Exception {
+        GameConfigMrg gameConfigMrg = new GameConfigMrg();
+        CuratorMrg curatorMrg = new CuratorMrg(gameConfigMrg);
+        MongoDBMrg mongoDBMrg=new MongoDBMrg(gameConfigMrg,curatorMrg);
 
-    public LongHolder() {
-        this(0);
+        System.out.println("在这里打个断点,使用idea debug 界面测试");
     }
 
-    public LongHolder(long value) {
-        this.value = value;
-    }
-
-    public long getValue() {
-        return value;
-    }
-
-    public void setValue(long value) {
-        this.value = value;
-    }
 }

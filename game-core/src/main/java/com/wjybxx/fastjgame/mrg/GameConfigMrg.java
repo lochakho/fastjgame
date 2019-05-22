@@ -48,6 +48,14 @@ public class GameConfigMrg {
      * zookeeper命名空间
      */
     private final String zkNameSpace;
+    /**
+     * mongodb建立连接超时时间
+     */
+    private final int mongoConnectionTimeoutMs;
+    /**
+     * mongodb每个服务器建立几个连接
+     */
+    private final int mongoConnectionsPerHost;
 
     @Inject
     public GameConfigMrg() throws IOException {
@@ -56,6 +64,8 @@ public class GameConfigMrg {
         zkConnectionTimeoutMs=configWrapper.getAsInt("zkConnectionTimeoutMs");
         zkSessionTimeoutMs=configWrapper.getAsInt("zkSessionTimeoutMs");
         zkNameSpace=configWrapper.getAsString("zkNameSpace");
+        mongoConnectionTimeoutMs=configWrapper.getAsInt("mongoConnectionTimeoutMs");
+        mongoConnectionsPerHost=configWrapper.getAsInt("mongoConnectionsPerHost");
     }
 
     public ConfigWrapper getConfigWrapper() {
@@ -76,5 +86,13 @@ public class GameConfigMrg {
 
     public String getZkNameSpace() {
         return zkNameSpace;
+    }
+
+    public int getMongoConnectionTimeoutMs() {
+        return mongoConnectionTimeoutMs;
+    }
+
+    public int getMongoConnectionsPerHost() {
+        return mongoConnectionsPerHost;
     }
 }

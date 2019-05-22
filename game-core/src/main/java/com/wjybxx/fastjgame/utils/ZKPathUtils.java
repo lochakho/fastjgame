@@ -144,12 +144,20 @@ public class ZKPathUtils {
     }
 
     /**
-     *
+     * 获取战区的配置路径
      * @param warzoneId
      * @return
      */
     public static String warzoneConfigPath(int warzoneId){
         return "/config/warzone/"+warzoneId;
+    }
+
+    /**
+     * mongodb的配置路径
+     * @return
+     */
+    public static String mongoConfigPath(){
+        return "/config/mongodb";
     }
 
     /**

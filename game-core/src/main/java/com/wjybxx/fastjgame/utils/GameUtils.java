@@ -185,4 +185,14 @@ public class GameUtils {
 
         }
     };
+
+    /**
+     * 是否是null字符串或空字符串
+     * @param str 待检查的字符串
+     * @return true or false
+     */
+    public static boolean isNullOrEmptyString(String str) {
+        return null == str || str.length() == 0 || str.trim().length() == 0;
+    }
+
 }

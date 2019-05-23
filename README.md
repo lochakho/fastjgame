@@ -3,7 +3,7 @@ fastjgame 为 fast java game framework的缩写，如名字一样，该项目的
 它将是一个分布式多进程架构，游戏逻辑线程为单线程。 游戏逻辑运行在Disruptor消费者线程中，其它线程都为辅助线程，整体为多生产者单消费者模式。  
 
 高性能从网络层开始：  
-IO框架为Netty,HttpClient为OkHttp3; 
+IO框架为Netty,HttpClient为OkHttp3;   
 支持断线重连，支持websocket和tcp同时接入。  
 支持google protoBuf，json以及自定义消息序列化方式。   
 支持自定义消息映射;  

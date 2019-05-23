@@ -120,7 +120,6 @@ public class MongoDBMrg extends AbstractThreadLifeCycleHelper {
                 MongoClient.getDefaultCodecRegistry(),
                 independentCodecs(),
                 dependentCodecs()
-
         );
     }
 
@@ -152,7 +151,7 @@ public class MongoDBMrg extends AbstractThreadLifeCycleHelper {
                 return null;
             }
         };
-        // 这种方式可以结局复杂依赖 和 循环依赖问题
+        // 这种方式可以解决复杂依赖 和 循环依赖问题
         return CodecRegistries.fromProviders(dependentProvider);
     }
 
@@ -178,8 +177,7 @@ public class MongoDBMrg extends AbstractThreadLifeCycleHelper {
      */
     public <T> MongoCollection<T> getCollection(MongoDatabaseName databaseName, MongoCollectionName collectionName,Class<T> documentClass){
         // 在我之前的项目中，是有缓存对象的，感觉意义不大，因为只是创建了一些简单对象，并未占用别的资源。
-        return mongoClient
-                .getDatabase(databaseName.name())
+        return mongoClient.getDatabase(databaseName.name())
                 .getCollection(collectionName.name(),documentClass);
     }
 
@@ -189,8 +187,7 @@ public class MongoDBMrg extends AbstractThreadLifeCycleHelper {
      * @param collectionNameEnum 集合名字
      */
     public void dropCollection(MongoDatabaseName databaseName, MongoCollectionName collectionNameEnum) {
-        getCollection(databaseName, collectionNameEnum,BsonDocument.class)
-                .drop();
+        getCollection(databaseName, collectionNameEnum).drop();
     }
 
     // region 增删改查 CRUD
@@ -232,7 +229,7 @@ public class MongoDBMrg extends AbstractThreadLifeCycleHelper {
      * @param filter 匹配条件，匹配到多个时，也只会删除第一个元素。
      */
     public DeleteResult deleteOne(MongoDatabaseName databaseName, MongoCollectionName collectionName, Bson filter){
-        return getCollection(databaseName,collectionName,BsonDocument.class)
+        return getCollection(databaseName,collectionName)
                 .deleteOne(filter);
     }
 
@@ -243,7 +240,7 @@ public class MongoDBMrg extends AbstractThreadLifeCycleHelper {
      * @param filter 匹配条件
      */
     public DeleteResult deleteMany(MongoDatabaseName databaseName, MongoCollectionName collectionName, Bson filter){
-        return getCollection(databaseName,collectionName,BsonDocument.class)
+        return getCollection(databaseName,collectionName)
                 .deleteMany(filter);
     }
 
@@ -255,7 +252,7 @@ public class MongoDBMrg extends AbstractThreadLifeCycleHelper {
      * @param updater 更新器
      */
     public UpdateResult updateOne(MongoDatabaseName databaseName, MongoCollectionName collectionName, Bson filter, Bson updater){
-        return getCollection(databaseName,collectionName, BsonDocument.class)
+        return getCollection(databaseName,collectionName)
                 .updateOne(filter,updater);
     }
 
@@ -267,7 +264,7 @@ public class MongoDBMrg extends AbstractThreadLifeCycleHelper {
      * @param updater 更新器
      */
     public UpdateResult updateMany(MongoDatabaseName databaseName, MongoCollectionName collectionName, Bson filter, Bson updater){
-        return getCollection(databaseName,collectionName, BsonDocument.class)
+        return getCollection(databaseName,collectionName)
                 .updateMany(filter,updater);
     }
 

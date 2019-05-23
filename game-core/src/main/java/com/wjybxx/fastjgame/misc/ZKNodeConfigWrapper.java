@@ -43,11 +43,8 @@ public class ZKNodeConfigWrapper extends ConfigWrapper {
 
     @Override
     public String getAsString(String key) {
-        if (childrenData.containsKey(key)){
-            return new String(childrenData.get(key), StandardCharsets.UTF_8);
-        }else {
-            return null;
-        }
+        byte[] data = childrenData.get(key);
+        return null == data ? null : new String(data, StandardCharsets.UTF_8);
     }
 
     @Override
@@ -58,7 +55,6 @@ public class ZKNodeConfigWrapper extends ConfigWrapper {
         }
         return new MapConfigWrapper(resultMap);
     }
-
 
     @Override
     public String toString() {

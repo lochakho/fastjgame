@@ -17,6 +17,7 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.holder.ObjectHolder;
 import com.wjybxx.fastjgame.misc.AbstractThreadLifeCycleHelper;
 import com.wjybxx.fastjgame.misc.BackoffRetryForever;
 import com.wjybxx.fastjgame.misc.LockPathAction;
@@ -343,7 +344,6 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
     }
 
     /**
-     *
      * 如果节点不存在的话创建一个节点，并以指定数据初始化它。
      * 它是一个原子操作，不是一个先检查后执行的复合操作。
      * @param path 路径
@@ -458,23 +458,12 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
     public byte[] waitForNodeCreate(String path) throws Exception {
         // 使用NodeCache的话，写了太多代码，搞得复杂了，不利于维护，使用简单的轮询代替。
         // 轮询虽然不雅观，但是正确性易保证
-        boolean interrupted=false;
-        byte[] data;
-        try {
-            while ((data=getDataIfPresent(path)) == null){
-                try {
-                    Thread.sleep(500);
-                }catch (InterruptedException e){
-                    interrupted=true;
-                }
-            }
-        }finally {
-            if (interrupted){
-                Thread.currentThread().interrupt();
-            }
-        }
-        // 恢复中断
-        return data;
+        ObjectHolder<byte[]> resultHolder=new ObjectHolder<>();
+        ConcurrentUtils.awaitRemoteWithSleepingRetry(path, resource->{
+            resultHolder.setValue(getDataIfPresent(resource));
+            return resultHolder.getValue() != null;
+            },1,TimeUnit.SECONDS);
+        return resultHolder.getValue();
     }
 
     /**
@@ -485,21 +474,9 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
     public void waitForNodeDelete(String path) throws Exception {
         // 使用NodeCache的话，主要是当前节点不存在的时候，不会产生事件，无法基于事件优雅的等待
         // 轮询虽然不雅观，但是正确性易保证
-        boolean interrupted=false;
-        try {
-            while (isPathExist(path)){
-                try {
-                    Thread.sleep(500);
-                }catch (InterruptedException e){
-                    interrupted=true;
-                }
-            }
-        }finally {
-            // 恢复中断
-            if (interrupted){
-                Thread.currentThread().interrupt();
-            }
-        }
+        ConcurrentUtils.awaitRemoteWithSleepingRetry(path,
+                resource -> !isPathExist(resource),
+                1,TimeUnit.SECONDS);
     }
 
     /**

@@ -246,7 +246,20 @@ public class NetUtils {
     }
 
     /**
-     * 设置channel性能偏好
+     * 设置channel性能偏好.
+     *
+     * 可参考 - https://blog.csdn.net/zero__007/article/details/51723434
+     *
+     * 	在 JDK 1.5 中, 还为 Socket 类提供了{@link Socket#setPerformancePreferences(int, int, int)}方法:
+     *  以上方法的 3 个参数表示网络传输数据的 3 选指标.
+     *  connectionTime: 表示用最少时间建立连接.
+     *  latency: 表示最小延迟.
+     *  bandwidth: 表示最高带宽.
+     *  setPerformancePreferences() 方法用来设定这 3 项指标之间的相对重要性.
+     *  可以为这些参数赋予任意的整数, 这些整数之间的相对大小就决定了相应参数的相对重要性.
+     *  例如, 如果参数 connectionTime 为 2, 参数 latency 为 1, 而参数bandwidth 为 3,
+     *  就表示最高带宽最重要, 其次是最少连接时间, 最后是最小延迟.
+     *
      * @param channel
      */
     public static void setChannelPerformancePreferences(Channel channel) {

@@ -21,6 +21,9 @@ import java.io.IOException;
 /**
  * 消息序列化器，完成业务逻辑消息对象的序列化与反序列化工作。
  * {@link #init(MessageMapper)} happens-before {@link #serialize(Object)} and {@link #deserialize(Class, byte[])}
+ * （由线程启动规则提供happens-before规则）
+ *
+ * 此外符合文档约束的实现将是<b>事实不可变对象</b>，它需要安全发布，才能保证线程安全；
  *
  * @apiNote
  * 如果serializer是有状态的，那么初始化完成之后，序列化和反序列化方法不可以修改它的状态，以实现高性能的并发。

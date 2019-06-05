@@ -181,7 +181,6 @@ public class FastCollectionsUtils {
         return initCapacity > 0 ? constructor.newMap(initCapacity + 1, 1) : constructor.newMap(16, 0.75f);
     }
 
-
     /**
      * @see #newEnoughCapacityMap(MapConstructor, int)
      */

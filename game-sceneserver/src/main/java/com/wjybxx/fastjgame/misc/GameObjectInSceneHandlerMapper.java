@@ -16,31 +16,21 @@
 
 package com.wjybxx.fastjgame.misc;
 
-import com.wjybxx.fastjgame.scene.Scene;
 import com.wjybxx.fastjgame.scene.gameobject.GameObject;
 
 /**
- * 游戏对象进出场景处理器
+ * 场景对象在场景中的生命周期处理器映射
+ * (名字有点长)
  * @author wjybxx
  * @version 1.0
- * @date 2019/6/4 19:35
+ * @date 2019/6/5 19:31
  * @github - https://github.com/hl845740757
  */
-@Stateless
-public interface GameObjectInOutHandler<T extends GameObject> {
+public class GameObjectInSceneHandlerMapper extends GameObjectHandlerMapper<GameObjectInSceneHandler<?>>{
 
-    /**
-     * 执行游戏对象进入场景逻辑
-     * @param scene gameObject将要进入的场景
-     * @param gameObject 场景对象
-     */
-    void processEnterScene(Scene scene, T gameObject);
-
-    /**
-     * 执行游戏对象离开场景逻辑
-     * @param scene gameObject当前所在的场景
-     * @param gameObject 场景对象
-     */
-    void processLeaveScene(Scene scene, T gameObject);
-
+    @SuppressWarnings("unchecked")
+    @Override
+    public <U extends GameObject> GameObjectInSceneHandler<U> getHandler(U gameObject) {
+        return (GameObjectInSceneHandler<U>) super.getHandler(gameObject);
+    }
 }

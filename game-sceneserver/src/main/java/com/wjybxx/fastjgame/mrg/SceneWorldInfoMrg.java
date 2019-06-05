@@ -39,8 +39,8 @@ import java.util.Set;
  */
 public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
 
-    private static final int SINGLE_SCENE_MIN_CHANNEL_ID=1;
-    private static final int CROSS_SCENE_MIN_CHANNEL_ID=10001;
+    private static final int SINGLE_SCENE_MIN_CHANNEL_ID = 1;
+    private static final int CROSS_SCENE_MIN_CHANNEL_ID = 10001;
 
     /**
      * scene进程类型
@@ -64,7 +64,7 @@ public class SceneWorldInfoMrg extends WorldCoreInfoMrg{
      */
     private int channelId;
     /**
-     * 复合当前进程类型的场景区域
+     * 符合当前进程类型的场景区域
      */
     private Set<SceneRegion> configuredRegions;
 

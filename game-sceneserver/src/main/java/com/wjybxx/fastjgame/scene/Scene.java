@@ -16,20 +16,17 @@
 
 package com.wjybxx.fastjgame.scene;
 
-import com.wjybxx.fastjgame.config.TemplateMapConfig;
+import com.wjybxx.fastjgame.config.TemplateSceneConfig;
 import com.wjybxx.fastjgame.core.SceneRegion;
-import com.wjybxx.fastjgame.misc.NotifyHandler;
-import com.wjybxx.fastjgame.misc.SceneGameObjectManager;
+import com.wjybxx.fastjgame.misc.*;
+import com.wjybxx.fastjgame.mrg.MapDataLoadMrg;
 import com.wjybxx.fastjgame.mrg.SceneSendMrg;
 import com.wjybxx.fastjgame.mrg.SceneWrapper;
 import com.wjybxx.fastjgame.scene.gameobject.GameObject;
-import com.wjybxx.fastjgame.scene.gameobject.GameObjectType;
-import com.wjybxx.fastjgame.utils.CollectionUtils;
 import com.wjybxx.fastjgame.utils.GameConstant;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
 
 /**
@@ -51,12 +48,14 @@ public abstract class Scene {
      * 刷新视野格子的间隔
      */
     private static final long DELTA_UPDATE_VIEW_GRIDS = 1000;
-    /**
-     * 当前累积的用于刷新视野的时间增量；
-     */
-    private long deltaUpdateViewGrids=0;
 
     private final SceneSendMrg sendMrg;
+    private final MapDataLoadMrg mapDataLoadMrg;
+
+    /**
+     * 下次刷新视野的时间戳；
+     */
+    private long nextUpdateViewGridTime = 0;
 
     /**
      * 每一个场景都有一个唯一的id
@@ -65,7 +64,7 @@ public abstract class Scene {
     /**
      * 每个场景都有一个对应的配置文件
      */
-    private final TemplateMapConfig mapConfig;
+    private final TemplateSceneConfig sceneConfig;
     /**
      * 场景对象容器,对外提供访问对象的接口
      */
@@ -76,17 +75,25 @@ public abstract class Scene {
     /**
      * 场景视野通知策略
      */
-    private final EnumMap<GameObjectType, NotifyHandler<?>> notifyHandlerMap = new EnumMap<>(GameObjectType.class);
+    private final NotifyHandlerMapper notifyHandlerMapper = new NotifyHandlerMapper();
 
-    public Scene(long guid, TemplateMapConfig mapConfig, SceneWrapper sceneWrapper) {
+    /**
+     * 游戏对象在场景中的生命周期管理
+     * (名字有点长)
+     */
+    private final GameObjectInSceneHandlerMapper gameObjectInSceneHandlerMapper = new GameObjectInSceneHandlerMapper();
+
+    public Scene(long guid, TemplateSceneConfig sceneConfig, SceneWrapper sceneWrapper) {
         this.guid = guid;
-        this.mapConfig = mapConfig;
+        this.sceneConfig = sceneConfig;
         this.sendMrg = sceneWrapper.getSendMrg();
+        this.mapDataLoadMrg = sceneWrapper.getMapDataLoadMrg();
 
         // 以后再考虑是否需要重用
-        this.viewGridSet = new ViewGridSet(mapConfig.mapData.getMapWidth(),
-                mapConfig.mapData.getMapHeight(),
-                mapConfig.viewableRange,
+        MapData mapData = mapDataLoadMrg.loadMapData(sceneConfig.mapId);
+        this.viewGridSet = new ViewGridSet(mapData.getMapWidth(),
+                mapData.getMapHeight(),
+                sceneConfig.viewableRange,
                 getViewGridInitCapacityHolder());
 
         // 创建管理该场景对象的控制器
@@ -110,67 +117,48 @@ public abstract class Scene {
         return InitCapacityHolder.EMPTY;
     }
 
-    /**
-     * scene刷帧
-     * @param elapsedTime 上一帧到当前帧逝去的时间
-     */
-    public void tick(long elapsedTime) throws Exception{
-
-        deltaUpdateViewGrids += elapsedTime;
-
-        if (deltaUpdateViewGrids > DELTA_UPDATE_VIEW_GRIDS){
-            deltaUpdateViewGrids = 0;
-            updateViewableGrid();
-        }
-
+    public SceneGameObjectManager getSceneGameObjectManager() {
+        return sceneGameObjectManager;
     }
 
     public long getGuid() {
         return guid;
     }
 
-    public TemplateMapConfig getMapConfig() {
-        return mapConfig;
+    public TemplateSceneConfig getSceneConfig() {
+        return sceneConfig;
     }
 
     public SceneRegion region(){
-        return mapConfig.sceneRegion;
+        return sceneConfig.sceneRegion;
     }
 
     public final int mapId(){
-        return mapConfig.mapData.getMapId();
+        return sceneConfig.mapId;
     }
 
-    /**
-     * 注册视野通知策略，不可以重复注册；
-     * 如果想要替换，请使用{@link #replaceNotifyHandler(GameObjectType, NotifyHandler)}
-     * @param gameObjectType 游戏对象类型
-     * @param notifyHandler 通知策略
-     */
-    protected final void registerNotifyHandler(GameObjectType gameObjectType, NotifyHandler<?> notifyHandler){
-        CollectionUtils.requireNotContains(notifyHandlerMap,gameObjectType,"gameObjectType");
-        notifyHandlerMap.put(gameObjectType,notifyHandler);
-    }
+    public abstract SceneType sceneType();
+
+    // ----------------------------------------核心逻辑开始------------------------------
+    // region tick
 
     /**
-     * 获取游戏对象对应的使用通知处理器
-     * @param gameObject 游戏对象
-     * @param <T> 对象类型
-     * @return notify handler
+     * scene刷帧
+     * @param curMillTime 当前系统时间戳
      */
-    @SuppressWarnings("unchecked")
-    protected final <T extends GameObject> NotifyHandler<T> getNotifyHandler(T gameObject){
-        return (NotifyHandler<T>) notifyHandlerMap.get(gameObject.getObjectType());
+    public void tick(long curMillTime) throws Exception{
+
+        // 检测视野格子刷新
+        if (curMillTime >= nextUpdateViewGridTime){
+            nextUpdateViewGridTime = curMillTime + DELTA_UPDATE_VIEW_GRIDS;
+            updateViewableGrid();
+        }
     }
 
-    /**
-     * 如果某些场景想替换通知策略，请使用该方法
-     * @param gameObjectType 游戏对象类型
-     * @param notifyHandler 通知策略
-     */
-    protected final void replaceNotifyHandler(GameObjectType gameObjectType,NotifyHandler<?> notifyHandler){
-        notifyHandlerMap.put(gameObjectType,notifyHandler);
-    }
+    // endregion
+
+
+    // region 视野管理
 
     /**
      * 刷新所有对象的视野格子
@@ -219,7 +207,7 @@ public abstract class Scene {
             preViewGrid.removeObject(gameObject);
             curViewGrid.addGameObject(gameObject);
 
-            NotifyHandler<T> notifyHandler = getNotifyHandler(gameObject);
+            NotifyHandler<T> notifyHandler = notifyHandlerMapper.getHandler(gameObject);
             // 视野，进入和退出都是相互的，他们离开了我的视野，我也离开了他们的视野
             // 通知该对象，这些对象离开了我的视野
             notifyHandler.notifyGameObjectOthersOut(gameObject,invisibleGrids);
@@ -235,5 +223,88 @@ public abstract class Scene {
             visibleGrids.clear();
         }
     }
+    // endregion
 
+    /**
+     * 游戏对象在场景中的模板实现
+     * @param <T>
+     */
+    public abstract class AbstractGameObjectInSceneHandler<T extends GameObject> implements GameObjectInSceneHandler<T> {
+
+        @Override
+        public final void processEnterScene(T gameObject) {
+            beforeEnterScene(gameObject);
+            enterSceneCore(gameObject);
+            afterEnterScene(gameObject);
+        }
+
+        /**
+         * 进入场景的核心逻辑
+         * @param gameObject 场景对象
+         */
+        private void enterSceneCore(T gameObject){
+
+        }
+
+        /**
+         * 在进入场景之前需要进行必要的初始化
+         * @param gameObject 场景对象
+         */
+        protected abstract void beforeEnterScene(T gameObject);
+
+        /**
+         * 在成功进入场景之后，可能有额外逻辑
+         * @param gameObject 场景对象
+         */
+        protected abstract void afterEnterScene(T gameObject);
+
+        @Override
+        public final void tick(T gameObject) {
+            tickCore(gameObject);
+            tickHook(gameObject);
+        }
+
+        /**
+         * tick公共逻辑(核心逻辑)
+         * @param gameObject
+         */
+        private void tickCore(T gameObject){
+
+        }
+
+        /**
+         * 子类独有逻辑
+         * @param gameObject
+         */
+        protected void tickHook(T gameObject){
+
+        }
+
+        @Override
+        public final void processLeaveScene(T gameObject) {
+            beforeLeaveScene(gameObject);
+            leaveSceneCore(gameObject);
+            afterLeaveScene(gameObject);
+        }
+
+        /**
+         * 离开场景的核心逻辑(公共逻辑)
+         * @param gameObject 场景对象
+         */
+        private void leaveSceneCore(T gameObject){
+
+        }
+
+        /**
+         * 在离开场景之前可能有额外逻辑
+         * @param gameObject 场景对象
+         */
+        protected abstract void beforeLeaveScene(T gameObject);
+
+        /**
+         * 在成功离开场景之后可能有额外逻辑
+         * @param gameObject 场景对象
+         */
+        protected abstract  void afterLeaveScene(T gameObject);
+    }
 }

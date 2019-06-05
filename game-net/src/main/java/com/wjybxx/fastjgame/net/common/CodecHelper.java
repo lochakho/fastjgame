@@ -16,17 +16,20 @@
 
 package com.wjybxx.fastjgame.net.common;
 
-import javax.annotation.concurrent.ThreadSafe;
-
 /**
  * 编解码器帮助类，对{@link MessageMapper} 和 {@link MessageSerializer} 进行绑定。
+ *
+ * 它持有的{@link MessageMapper}为不可变对象，{@link MessageSerializer}为事实不可变对象，
+ * 它自身是<b>事实不可变对象</b>，因此它不是线程安全的；
+ * 事实不可变对象需要安全的发布才能保证线程安全；
+ *
+ * （全部域都是final不代表是不可变对象，引用的对象可能是可变的）
  *
  * @author wjybxx
  * @version 1.0
  * @date 2019/4/28 10:47
  * @github - https://github.com/hl845740757
  */
-@ThreadSafe
 public final class CodecHelper {
     /**
      * 消息映射器

@@ -72,6 +72,7 @@ public class GameUtils {
 
     /**
      * 安全的执行一个任务，只是将错误打印到日志，不抛出异常。
+     * 对于不甚频繁的方法调用可以进行封装，如果大量的调用可能会对性能有所影响；
      * {@code io.netty.channel.SingleThreadEventLoop#safeExecute(Runnable)}
      * @param task 要执行的任务，可以将要执行的方法封装为 ()-> safeExecute()
      */
@@ -84,7 +85,7 @@ public class GameUtils {
     }
 
     /**
-     * 字符串具有可读性
+     * 将int序列化为字符串字节数组，字符串具有更好的可读性
      * @param integer
      * @return
      */

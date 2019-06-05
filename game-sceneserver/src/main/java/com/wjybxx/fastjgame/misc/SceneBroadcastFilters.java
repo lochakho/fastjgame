@@ -34,48 +34,43 @@ public class SceneBroadcastFilters {
     // 使用lambda表达式的，是因为是无状态的，不捕获任何属性，编译后是静态方法，性能可以接受
     // 匿名内部类性能不好
 
-    /**
-     * 所有玩家
-     */
-    public static final Predicate<Player> ALL = player -> true;
-
-    public static Predicate exceptSelf(Player player){
-        return new ExceptSelf(player);
+    public static Predicate except(Player player){
+        return new ExceptSingle(player);
     }
 
     public static Predicate except(Player... players){
-        return new Except(Arrays.asList(players));
+        return new ExceptBatch(Arrays.asList(players));
     }
 
     public static Predicate except(List<Player> playerList){
-        return new Except(playerList);
+        return new ExceptBatch(playerList);
     }
 
-    private static final class ExceptSelf implements Predicate<Player>{
+    private static final class ExceptSingle implements Predicate<Player>{
 
         private final Player player;
 
-        private ExceptSelf(Player player) {
+        private ExceptSingle(Player player) {
             this.player = player;
         }
 
         @Override
         public boolean test(Player player) {
-            return this.player != player;
+            return this.player == player;
         }
     }
 
-    private static final class Except implements Predicate<Player>{
+    private static final class ExceptBatch implements Predicate<Player>{
 
         private final List<Player> excepts;
 
-        private Except(List<Player> excepts) {
+        private ExceptBatch(List<Player> excepts) {
             this.excepts=excepts;
         }
 
         @Override
         public boolean test(Player player) {
-            return excepts.indexOf(player) >= 0;
+            return excepts.contains(player);
         }
     }
 }

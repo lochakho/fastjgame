@@ -16,6 +16,8 @@
 
 package com.wjybxx.fastjgame.dsl;
 
+import com.wjybxx.fastjgame.utils.MathUtils;
+
 /**
  * 弧度角 (-PI,PI]； 也可写为 RadAngle
  *
@@ -44,5 +46,9 @@ public final class RadiansAngle {
 
     public void setAngle(float angle) {
         this.angle = angle;
+    }
+
+    public CentralAngle toCentralAngle(){
+        return new CentralAngle(MathUtils.centralAngle(angle));
     }
 }

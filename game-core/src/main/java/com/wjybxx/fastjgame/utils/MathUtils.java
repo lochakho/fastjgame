@@ -150,7 +150,8 @@ public class MathUtils {
         float dy = end.getY() - start.getY();
         if (Float.compare(dy,0.0f) == 0){
             // y的差值为0表示平行于x轴
-            // 将y存为临时变量，避免捕获start对象
+            // 将y存为临时变量，避免捕获start对象(不仅内存泄漏，逻辑会还有bug，因为start可能是可变对象)
+            // 警告：以lambda表达式作为返回值的，一定要注意捕获变量问题
             float y = start.getY();
             return x -> y;
         }
@@ -171,24 +172,50 @@ public class MathUtils {
         return Point2D.newPoint2D(x,straightLine.apply(x));
     }
 
+    // region 格子索引计算
+
     /**
-     * 计算一个点的行索引
-     * @param point2D
-     * @param gridHeight 格子高度
-     * @return
+     * 计算格子总行数
+     * @param mapHeight 地图高度
+     * @param gridHeight 格子高度或宽度（正方形）
+     * @return 格子总行数
      */
-    public static int rowIndex(Point2D point2D,int gridHeight){
-        return (int)(point2D.getY()) / gridHeight;
+    public static int rowCount(int mapHeight, int gridHeight){
+        return MathUtils.divideIntCeil(mapHeight, gridHeight);
+    }
+
+    /**
+     * 计算一个点的行索引；
+     * 需要注意越界问题，正方向边界需要-1；
+     * 普通格子是不包含右侧边和上侧边的，而最右边格子包含右侧边，最上边格子包含上侧边；
+     * @param rowCount 总行数
+     * @param gridHeight 格子高度
+     * @param y 当前所在y坐标
+     * @return 当前y坐标对应的行索引
+     */
+    public static int rowIndex(int rowCount, int gridHeight, float y){
+        return Math.min(rowCount - 1, (int) y / gridHeight);
+    }
+
+    /**
+     * 计算格子总列数(进一法)
+     * @param mapWidth 地图总宽度
+     * @param gridWidth 格子宽度
+     * @return 格子总猎术
+     */
+    public static int colCount(int mapWidth, int gridWidth){
+        return MathUtils.divideIntCeil(mapWidth, gridWidth);
     }
 
     /**
      * 计算一个点的列索引
-     * @param point2D
+     * @param colCount 总列数
      * @param gridWidth 格子宽度
+     * @param x 当前x坐标
      * @return
      */
-    public static int colIndex(Point2D point2D,int gridWidth){
-        return (int)(point2D.getX()) / gridWidth;
+    public static int colIndex(int colCount, int gridWidth, float x){
+        return Math.min(colCount - 1, (int) x / gridWidth);
     }
 
     /**
@@ -212,6 +239,8 @@ public class MathUtils {
     public static Point2D gridCenterLocation(int rowIndex, int colIndex, int gridWidth){
         return Point2D.newPoint2D((colIndex + 0.5f) * gridWidth, (rowIndex + 0.5f) * gridWidth);
     }
+
+    // endregion
 
     // region 弧度角(RadiansAngle)与圆心角(CentralAngle)
     // - https://blog.csdn.net/zoo_king/article/details/51613697

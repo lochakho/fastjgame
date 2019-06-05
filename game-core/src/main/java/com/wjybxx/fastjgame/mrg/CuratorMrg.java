@@ -213,7 +213,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
      */
     public void lock(String path) throws Exception {
         // 需要保留下来才能重入
-        InterProcessMutex lock=lockMap.computeIfAbsent(path,key->new InterProcessMutex(client,key));
+        InterProcessMutex lock = lockMap.computeIfAbsent(path,key->new InterProcessMutex(client,key));
         lock.acquire();
     }
 
@@ -222,8 +222,8 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
      * @param path 路径
      */
     public void unlock(String path) throws Exception {
-        InterProcessMutex lock=lockMap.get(path);
-        if (null==lock){
+        InterProcessMutex lock = lockMap.get(path);
+        if (null == lock){
             throw new IllegalStateException("path " + path + " lock state is wrong.");
         }
         lock.release();
@@ -310,6 +310,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
     public String createNode(String path, CreateMode mode) throws Exception {
         return client.create().creatingParentsIfNeeded().withMode(mode).forPath(path);
     }
+
     /**
      * 创建一个节点，并以指定数据初始化它，如果是并发创建的节点，注意加锁，
      * (可能存在检测到节点不存在，创建节点仍可能失败)，期望原子的操作请使用
@@ -415,7 +416,7 @@ public class CuratorMrg extends AbstractThreadLifeCycleHelper {
             String childFullPath = ZKPaths.makePath(path, child);
             byte[] childData = getDataIfPresent(childFullPath);
             // 即使 getChildren 查询到节点存在，也不一定能获取到数据，一定要注意
-            if (null!=childData){
+            if (null != childData){
                 result.put(childFullPath,childData);
             }
         }

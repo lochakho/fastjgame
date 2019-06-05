@@ -107,9 +107,9 @@ public class ViewGridSet {
             logger.warn("bad viewableRange {}",viewableRange);
         }
 
-        // 行数由高度决定，列由宽度决定
-        rowCount = MathUtils.divideIntCeil(mapHeight, viewGridWidth);
-        colCount = MathUtils.divideIntCeil(mapWidth, viewGridWidth);
+        // 行数由高度决定，列由宽度决定 (格子宽高一致)
+        rowCount = MathUtils.rowCount(mapHeight,viewGridWidth);
+        colCount = MathUtils.colCount(mapWidth,viewGridWidth);
 
         allViewGrids=new ViewGrid[rowCount][colCount];
 
@@ -182,9 +182,8 @@ public class ViewGridSet {
      * @return 视野格子
      */
     public ViewGrid findViewGrid(Point2D point2D){
-        // 需要注意上界溢出问题
-        int rowIndex = Math.min(rowCount - 1, (int)point2D.getY() / viewGridWidth);
-        int colIndex = Math.min(colCount - 1, (int)point2D.getX() / viewGridWidth);
+        int rowIndex = MathUtils.rowIndex(rowCount, viewGridWidth, point2D.getY());
+        int colIndex = MathUtils.colIndex(colCount, viewGridWidth, point2D.getX());
         return allViewGrids[rowIndex][colIndex];
     }
 

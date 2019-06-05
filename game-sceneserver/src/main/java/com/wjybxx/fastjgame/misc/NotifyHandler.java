@@ -34,7 +34,7 @@ public interface NotifyHandler<T extends GameObject> {
 
     // 我要准备执行的逻辑
     /**
-     * 将我需要看到的格子的游戏对象同步给我自己
+     * 通知gameObject，newVisibleGrids这些格子进入了我的视野；
      *
      * @param gameObject 游戏对象
      * @param newVisibleGrids gameObject当前能看见的新格子
@@ -43,7 +43,7 @@ public interface NotifyHandler<T extends GameObject> {
     void notifyGameObjectOthersIn(T gameObject, List<ViewGrid> newVisibleGrids);
     
     /**
-     * 通知指定对象，这些格子里的对象离开了它的视野
+     * 通知gameObject，range这些格子离开了我的视野；
      *
      * @param gameObject 游戏对象
      * @param range gameObject离开了这些格子
@@ -53,7 +53,7 @@ public interface NotifyHandler<T extends GameObject> {
 
     // 其他人要执行的逻辑
     /**
-     * 通知(range)这些格子里的对象，有一个新对象进入了它们的视野格子
+     * 通知(range)这些格子里的对象，有一个gameObject进入了它们的视野格子
      *
      * @param range 视野格子
      * @param gameObject 进入这些视野格子的对象
@@ -62,7 +62,7 @@ public interface NotifyHandler<T extends GameObject> {
     void notifyOthersGameObjectIn(List<ViewGrid> range, T gameObject);
 
     /**
-     * 通知(range)这些格子里的对象，有一个对象离开了它们的视野格子
+     * 通知(range)这些格子里的对象，有一个gameObject离开了它们的视野格子
      *
      * @param range 视野格子
      * @param gameObject 离开这些视野格子的对象

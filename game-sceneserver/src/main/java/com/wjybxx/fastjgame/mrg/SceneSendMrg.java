@@ -132,17 +132,17 @@ public class SceneSendMrg {
      * 广播指定对象视野内的所有玩家，去除掉指定条件的玩家
      * @param gameObject 广播中心对象
      * @param msg 广播消息
-     * @param matcher 广播条件，true的广播，false的不广播;
+     * @param except 排除条件，true的不广播
      * {@link com.wjybxx.fastjgame.misc.SceneBroadcastFilters}可能会有帮助
      */
-    public void broadcastPlayerExcept(GameObject gameObject, Object msg, Predicate<Player> matcher){
+    public void broadcastPlayerExcept(GameObject gameObject, Object msg, Predicate<Player> except){
         ViewGrid centerViewGrid = gameObject.getViewGrid();
         for (ViewGrid  viewGrid: centerViewGrid.getViewableGrids()){
             if (viewGrid.getPlayerNum() <= 0){
                 continue;
             }
             for (Player player : viewGrid.getPlayerSet()){
-                if (matcher.test(player)){
+                if (!except.test(player)){
                     sendToPlayer(player,msg);
                 }
             }

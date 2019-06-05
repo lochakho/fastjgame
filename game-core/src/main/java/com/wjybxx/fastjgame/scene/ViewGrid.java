@@ -16,9 +16,12 @@
 
 package com.wjybxx.fastjgame.scene;
 
+import com.wjybxx.fastjgame.dsl.CoordinateSystem2D;
 import com.wjybxx.fastjgame.scene.shape2d.Rectangle;
-import com.wjybxx.fastjgame.utils.MathUtils;
+import com.wjybxx.fastjgame.scene.shape2d.Shape2D;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +39,8 @@ import static com.wjybxx.fastjgame.utils.GameConstant.VIEWABLE_GRID_NUM;
  * @date 2019/5/31 23:13
  * @github - https://github.com/hl845740757
  */
-public class ViewGrid extends GameObjectContainer {
+@NotThreadSafe
+public class ViewGrid extends GameObjectContainer implements Shape2D {
 
     /**
      * 行索引（y索引）
@@ -71,7 +75,7 @@ public class ViewGrid extends GameObjectContainer {
         this.rowIndex = rowIndex;
         this.colIndex = colIndex;
         this.gridWidth = gridWidth;
-        this.region=buildRegion(rowIndex,colIndex, gridWidth);
+        this.region= CoordinateSystem2D.buildGridRegion(rowIndex,colIndex, gridWidth);
     }
 
     public int getRowIndex() {
@@ -90,15 +94,8 @@ public class ViewGrid extends GameObjectContainer {
         return viewableGrids;
     }
 
-    private static Rectangle buildRegion(int rowIndex, int colIndex, int gridWidth){
-        Point2D a = MathUtils.gridVertexLocation(rowIndex,colIndex, gridWidth);
-        // ab 同y
-        Point2D b = Point2D.newPoint2D(a.getX() + gridWidth, a.getY());
-        // bc 同x
-        Point2D c = Point2D.newPoint2D(b.getX(), b.getY() + gridWidth);
-        // ad同x cd同y
-        Point2D d = Point2D.newPoint2D(a.getX(), c.getY());
-        return new Rectangle(a,b,c,d);
+    @Override
+    public boolean hasPoint(@Nonnull Point2D point2D) {
+        return region.hasPoint(point2D);
     }
-
 }

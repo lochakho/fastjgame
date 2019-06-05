@@ -16,26 +16,36 @@
 
 package com.wjybxx.fastjgame.misc;
 
-import com.wjybxx.fastjgame.scene.GameObjectContainer;
-import com.wjybxx.fastjgame.scene.InitCapacityHolder;
-
-import javax.annotation.concurrent.NotThreadSafe;
+import com.wjybxx.fastjgame.scene.gameobject.GameObject;
 
 /**
- * 对外提供访问场景内当前对象的接口
+ * 游戏对象在场景中的生命周期管理器；
+ * 在Scene对象内部进行实现，因为可能涉及大量场景对象之间的交互；
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/31 23:03
+ * @date 2019/6/4 19:35
  * @github - https://github.com/hl845740757
  */
-@NotThreadSafe
-public class SceneGameObjectManager extends GameObjectContainer {
+@Stateless
+public interface GameObjectInSceneHandler<T extends GameObject> {
 
-    public SceneGameObjectManager() {
-        this(InitCapacityHolder.EMPTY);
-    }
+    /**
+     * 执行游戏对象进入场景逻辑
+     * @param gameObject 场景对象
+     */
+    void processEnterScene(T gameObject);
 
-    public SceneGameObjectManager(InitCapacityHolder capacityHolder) {
-        super(capacityHolder);
-    }
+    /**
+     * tick刷帧
+     * @param gameObject 游戏场景对象
+     *
+     */
+    void tick(T gameObject);
+
+    /**
+     * 执行游戏对象离开场景逻辑
+     * @param gameObject 场景对象
+     */
+    void processLeaveScene(T gameObject);
+
 }

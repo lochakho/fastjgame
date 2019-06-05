@@ -28,13 +28,19 @@ import com.google.inject.Inject;
 public class SceneWrapper {
 
     private final SceneSendMrg sendMrg;
+    private final MapDataLoadMrg mapDataLoadMrg;
 
     @Inject
-    public SceneWrapper(SceneSendMrg sendMrg) {
+    public SceneWrapper(SceneSendMrg sendMrg, MapDataLoadMrg mapDataLoadMrg) {
         this.sendMrg = sendMrg;
+        this.mapDataLoadMrg = mapDataLoadMrg;
     }
 
     public SceneSendMrg getSendMrg() {
         return sendMrg;
+    }
+
+    public MapDataLoadMrg getMapDataLoadMrg() {
+        return mapDataLoadMrg;
     }
 }

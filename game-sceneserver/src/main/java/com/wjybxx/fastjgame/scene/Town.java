@@ -14,41 +14,27 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.dsl;
+package com.wjybxx.fastjgame.scene;
 
-import com.wjybxx.fastjgame.utils.MathUtils;
+import com.wjybxx.fastjgame.config.TemplateSceneConfig;
+import com.wjybxx.fastjgame.misc.SceneType;
+import com.wjybxx.fastjgame.mrg.SceneWrapper;
 
 /**
- * 圆心角 [0,360)；
- *
- * 一般没有额外说明时都是弧度角。
+ * 城镇场景，不销毁；
  * @author wjybxx
  * @version 1.0
- * @date 2019/6/2 15:01
+ * @date 2019/6/5 19:59
  * @github - https://github.com/hl845740757
  */
-public class CentralAngle {
+public abstract class Town extends Scene{
 
-    /**
-     * [0,360)
-     * 0 inclusive
-     * 360 exclusive
-     */
-    private float angle;
-
-    public CentralAngle(float angle) {
-        this.angle = angle;
+    public Town(long guid, TemplateSceneConfig sceneConfig, SceneWrapper sceneWrapper) {
+        super(guid, sceneConfig, sceneWrapper);
     }
 
-    public float getAngle() {
-        return angle;
-    }
-
-    public void setAngle(float angle) {
-        this.angle = angle;
-    }
-
-    public RadiansAngle toRadAngle(){
-        return new RadiansAngle(MathUtils.radAngle(angle));
+    @Override
+    public final SceneType sceneType() {
+        return SceneType.TOWN;
     }
 }

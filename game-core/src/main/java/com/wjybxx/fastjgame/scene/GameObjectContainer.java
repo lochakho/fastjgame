@@ -21,6 +21,7 @@ import com.wjybxx.fastjgame.utils.FastCollectionsUtils;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectCollection;
 
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.EnumMap;
 
 /**
@@ -30,12 +31,13 @@ import java.util.EnumMap;
  * @date 2019/6/4 21:52
  * @github - https://github.com/hl845740757
  */
+@NotThreadSafe
 public class GameObjectContainer {
 
     /**
      * 所有游戏对象
      */
-    private final Long2ObjectMap<GameObject> guid2GameObjectMap;
+    private final Long2ObjectMap<GameObject> allGameObjectMap;
 
     /**
      * 玩家集合，用于快速访问;
@@ -67,7 +69,7 @@ public class GameObjectContainer {
         petMap = createMap(GameObjectType.PET, capacityHolder.getPetSetInitCapacity());
         npcMap = createMap(GameObjectType.NPC, capacityHolder.getNpcSetInitCapacity());
 
-        guid2GameObjectMap = FastCollectionsUtils.newEnoughCapacityLongMap(totalInitCapacity);
+        allGameObjectMap = FastCollectionsUtils.newEnoughCapacityLongMap(totalInitCapacity);
     }
 
     private <V extends GameObject> Long2ObjectMap<V> createMap(GameObjectType gameObjectType,int initCapacity){
@@ -75,6 +77,18 @@ public class GameObjectContainer {
         helperMap.put(gameObjectType, result);
         totalInitCapacity += initCapacity;
         return result;
+    }
+
+    public GameObject getObject(long guid){
+        return allGameObjectMap.get(guid);
+    }
+
+    public int getAllGameObjectNum(){
+        return allGameObjectMap.size();
+    }
+
+    public ObjectCollection<GameObject> getAllGameObject(){
+        return allGameObjectMap.values();
     }
 
     public int getPlayerNum(){
@@ -99,8 +113,8 @@ public class GameObjectContainer {
      * @param <T> 对象的类型
      */
     public <T extends GameObject> void addGameObject(T gameObject){
-        FastCollectionsUtils.requireNotContains(guid2GameObjectMap,gameObject.getGuid(),"guid");
-        guid2GameObjectMap.put(gameObject.getGuid(),gameObject);
+        FastCollectionsUtils.requireNotContains(allGameObjectMap,gameObject.getGuid(),"guid");
+        allGameObjectMap.put(gameObject.getGuid(),gameObject);
 
         @SuppressWarnings("unchecked")
         Long2ObjectMap<T> objectMap = (Long2ObjectMap<T>) helperMap.get(gameObject.getObjectType());
@@ -114,7 +128,7 @@ public class GameObjectContainer {
      * @param <T> 对象的类型
      */
     public <T extends GameObject> void removeObject(T gameObject){
-        GameObject removeObj = guid2GameObjectMap.remove(gameObject.getGuid());
+        GameObject removeObj = allGameObjectMap.remove(gameObject.getGuid());
         assert null != removeObj;
 
         @SuppressWarnings("unchecked")

@@ -14,41 +14,22 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.dsl;
+package com.wjybxx.fastjgame.misc;
 
-import com.wjybxx.fastjgame.utils.MathUtils;
+import com.wjybxx.fastjgame.scene.gameobject.GameObject;
 
 /**
- * 圆心角 [0,360)；
- *
- * 一般没有额外说明时都是弧度角。
+ * 视野管理handler映射
  * @author wjybxx
  * @version 1.0
- * @date 2019/6/2 15:01
+ * @date 2019/6/5 19:32
  * @github - https://github.com/hl845740757
  */
-public class CentralAngle {
+public class NotifyHandlerMapper extends GameObjectHandlerMapper<NotifyHandler<?>>{
 
-    /**
-     * [0,360)
-     * 0 inclusive
-     * 360 exclusive
-     */
-    private float angle;
-
-    public CentralAngle(float angle) {
-        this.angle = angle;
-    }
-
-    public float getAngle() {
-        return angle;
-    }
-
-    public void setAngle(float angle) {
-        this.angle = angle;
-    }
-
-    public RadiansAngle toRadAngle(){
-        return new RadiansAngle(MathUtils.radAngle(angle));
+    @SuppressWarnings("unchecked")
+    @Override
+    public <U extends GameObject> NotifyHandler<U> getHandler(U gameObject) {
+        return (NotifyHandler<U>) super.getHandler(gameObject);
     }
 }

@@ -46,7 +46,7 @@ public enum GridObstacle implements NumberEnum {
     SAFE_AREA(2)
     ;
 
-    public final int number;
+    private final int number;
 
     GridObstacle(int number) {
         this.number = number;

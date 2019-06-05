@@ -14,38 +14,45 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.config;
-
-import com.wjybxx.fastjgame.core.SceneRegion;
-import com.wjybxx.fastjgame.scene.MapData;
+package com.wjybxx.fastjgame.scene;
 
 /**
+ * 矩形顶点holder类
  * @author wjybxx
  * @version 1.0
- * @date 2019/6/4 13:14
+ * @date 2019/6/5 17:54
  * @github - https://github.com/hl845740757
  */
-public class TemplateMapConfig {
+public class RectangleVertexHolder {
 
-    /**
-     * 所属的场景区域
-     */
-    public final SceneRegion sceneRegion;
+    private final Point2D a;
 
-    /**
-     * 视野范围
-     */
-    public final int viewableRange;
+    private final Point2D b;
 
-    /**
-     * 地图元数据，应该由地图编辑器导出
-     */
-    public final MapData mapData;
+    private final Point2D c;
 
-    public TemplateMapConfig(SceneRegion sceneRegion, int viewableRange, MapData mapData) {
-        this.sceneRegion = sceneRegion;
-        this.viewableRange = viewableRange;
-        this.mapData = mapData;
+    private final Point2D d;
+
+    public RectangleVertexHolder(Point2D a, Point2D b, Point2D c, Point2D d) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
     }
 
+    public Point2D getA() {
+        return a;
+    }
+
+    public Point2D getB() {
+        return b;
+    }
+
+    public Point2D getC() {
+        return c;
+    }
+
+    public Point2D getD() {
+        return d;
+    }
 }

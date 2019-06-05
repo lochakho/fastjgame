@@ -24,11 +24,12 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * 消息对象映射器，存储消息id到消息类的映射关系。
+ * 它是不可变对象，是天然的线程安全的；
+ *
  *
  * @author wjybxx
  * @version 1.0
@@ -37,16 +38,20 @@ import java.util.Set;
  */
 @ThreadSafe
 public final class MessageMapper {
+
     /**
      * 消息类->消息id的映射
      */
-    private final Object2IntMap<Class<?>> messageClazz2IdMap=new Object2IntOpenHashMap<>();
+    private final Object2IntMap<Class<?>> messageClazz2IdMap = new Object2IntOpenHashMap<>();
+
     /**
      * 消息id->消息类的映射
      */
-    private final Int2ObjectMap<Class<?>> messageId2ClazzMap=new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<Class<?>> messageId2ClazzMap = new Int2ObjectOpenHashMap<>();
 
     public MessageMapper(Object2IntMap<Class<?>> mapper){
+        // 构造方法对final域的写入操作，以及对通过final域可达的初始变量的写入操作都不会被重排序
+        // 不确定的可以查看java并发实战程序清单: 16 - 8
         for (Object2IntMap.Entry<Class<?>> entry:mapper.object2IntEntrySet()){
             messageClazz2IdMap.put(entry.getKey(),entry.getIntValue());
             messageId2ClazzMap.put(entry.getIntValue(),entry.getKey());

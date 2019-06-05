@@ -36,6 +36,13 @@ public class MapData {
     private final int mapId;
 
     /**
+     * 所有的格子数据
+     */
+    private final MapGrid[][] allMapGrids;
+    private final int rowCount;
+    private final int colCount;
+
+    /**
      * 地图宽
      */
     private final int mapWidth;
@@ -45,16 +52,13 @@ public class MapData {
      */
     private final int mapHeight;
 
-    /**
-     * 所有的格子数据
-     */
-    private final MapGrid[][] allMapGrids;
-
-    public MapData(int mapId, int mapWidth, int mapHeight, MapGrid[][] allMapGrids) {
+    public MapData(int mapId, MapGrid[][] allMapGrids) {
         this.mapId = mapId;
-        this.mapWidth = mapWidth;
-        this.mapHeight = mapHeight;
         this.allMapGrids = allMapGrids;
+        this.rowCount = allMapGrids.length;
+        this.colCount = allMapGrids[0].length;
+        this.mapWidth = colCount * GameConstant.MAP_GRID_WIDTH;
+        this.mapHeight = rowCount * GameConstant.MAP_GRID_WIDTH;
     }
 
     public int getMapId() {
@@ -74,17 +78,16 @@ public class MapData {
     }
 
     public int getRowCount(){
-        return allMapGrids.length;
+        return rowCount;
     }
 
     public int getColCount(){
-        return allMapGrids[0].length;
+        return colCount;
     }
 
     public MapGrid getGrid(Point2D point2D){
-        // 需要注意上界溢出问题
-        int rowIndex = Math.min(getRowCount() - 1,(int)point2D.getY() / GameConstant.MAP_GRID_WIDTH);
-        int colIndex = Math.min(getColCount() - 1,(int)point2D.getX() / GameConstant.MAP_GRID_WIDTH);
+        int rowIndex = MathUtils.rowIndex(rowCount, GameConstant.MAP_GRID_WIDTH, point2D.getY());
+        int colIndex = MathUtils.colIndex(colCount, GameConstant.MAP_GRID_WIDTH, point2D.getX());
         return allMapGrids[rowIndex][colIndex];
     }
 
@@ -93,20 +96,22 @@ public class MapData {
     }
 
     /**
-     * 纠正算出来的坐标值
+     * 纠正算出来的坐标值，修正到地图内部，脱离 边界条件 和 溢出情况；
      * @param point2D 地图内的一坐标值
      */
     public void correctLocation(Point2D point2D){
+        int x = (int) point2D.getX();
         // 检查x左边溢出
-        if (point2D.getX() < 0){
+        if (x <= 0){
             point2D.setX(1);
-        } else if (point2D.getX() > mapWidth){
+        } else if (x >= mapWidth){
             point2D.setX(mapWidth - 1);
         }
         // 检查Y坐标溢出
-        if (point2D.getY() < 0){
+        int y = (int) point2D.getY();
+        if (y <= 0){
             point2D.setY(1);
-        } else if (point2D.getY() > mapHeight){
+        } else if (y >= mapHeight){
             point2D.setY(mapHeight - 1);
         }
     }

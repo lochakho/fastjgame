@@ -40,6 +40,7 @@ public class InitCapacityHolder {
 
     /**
      * 宠物集合初始值大小
+     * (如果有规律的话，倒是可以使用玩家的初始值)
      */
     private final int petSetInitCapacity;
     /**

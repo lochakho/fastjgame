@@ -16,7 +16,9 @@
 
 package com.wjybxx.fastjgame.scene.shape2d;
 
+import com.wjybxx.fastjgame.dsl.CoordinateSystem2D;
 import com.wjybxx.fastjgame.scene.Point2D;
+import com.wjybxx.fastjgame.scene.RectangleVertexHolder;
 import com.wjybxx.fastjgame.utils.MathUtils;
 
 /**
@@ -50,52 +52,11 @@ public class Rectangle extends Quadrilateral{
     }
 
     /**
-     * <pre>
-     *         direction
-     *            |
-     *            |
-     *            |
-     *   ......bottom......
-     * </pre>
-     * 实现上两种方式，一种可读性好，一种性能好
-     * <pre>
-     *     {@code
-     *         // 左右旋转90° 获得 a b两点 左加右减(可读性是很好的)
-     *         Point2D a = MathUtils.directionPoint(bottomCenter,MathUtils.radAngleAdd(direction,MathUtils.HALF_PI),width/2);
-     *         Point2D b = MathUtils.directionPoint(bottomCenter,MathUtils.radAngleSub(direction,MathUtils.HALF_PI),width/2);
-     *
-     *         // 由b得到c a得到d
-     *         Point2D c = MathUtils.directionPoint(b,direction,height);
-     *         Point2D d = MathUtils.directionPoint(a,direction,height);
-     *     }
-     * </pre>
-     *
-     * 通过弧度角朝向创建矩形
-     * @param bottomCenter 矩形底部中心点
-     * @param direction 矩形朝向(底部边的高所在方向)，弧度角
-     * @param width 矩形的宽
-     * @param height 矩形的高
-     * @return
+     * @see com.wjybxx.fastjgame.dsl.CoordinateSystem2D#calRectangleVertex(Point2D, float, float, float)
      */
     public static Rectangle newRectangle(Point2D bottomCenter, float direction, float width, float height){
-        // 减少MathUtils.directionPoint调用，计算cos和sin的消耗
-        // 最好拿纸画一下图，这个理解难度高不少
-        double cos = Math.cos(direction);
-        double sin = Math.sin(direction);
-
-        float widthDX = (float) (width/2 * sin);
-        float widthDY = (float) (width/2 * cos);
-
-        Point2D a = Point2D.newPoint2D(bottomCenter.getX() - widthDX, bottomCenter.getY() + widthDY);
-        Point2D b = Point2D.newPoint2D(bottomCenter.getX() + widthDX, bottomCenter.getY() - widthDY);
-
-        float heightDX = (float) (height * cos);
-        float heightDY = (float) (height * sin);
-
-        // 由b得到c a得到d
-        Point2D c = Point2D.newPoint2D(b.getX() + heightDX, b.getY() + heightDY);
-        Point2D d = Point2D.newPoint2D(a.getX() + heightDX, a.getY() + heightDY);
-        return new Rectangle(a,b,c,d);
+        RectangleVertexHolder vertexHolder = CoordinateSystem2D.calRectangleVertex(bottomCenter, direction, width, height);
+        return new Rectangle(vertexHolder.getA(), vertexHolder.getB(), vertexHolder.getC(), vertexHolder.getD());
     }
 
     /**
@@ -127,29 +88,21 @@ public class Rectangle extends Quadrilateral{
      * @return
      */
     public Rectangle redraw(Point2D bottomCenter, float direction, float width, float height) {
-        double cos = Math.cos(direction);
-        double sin = Math.sin(direction);
-
-        float widthDX = (float) (width/2 * sin);
-        float widthDY = (float) (width/2 * cos);
-
-        Point2D a = Point2D.newPoint2D(bottomCenter.getX() - widthDX, bottomCenter.getY() + widthDY);
-        Point2D b = Point2D.newPoint2D(bottomCenter.getX() + widthDX, bottomCenter.getY() - widthDY);
-
-        float heightDX = (float) (height * cos);
-        float heightDY = (float) (height * sin);
-
-        // 由b得到c a得到d
-        Point2D c = Point2D.newPoint2D(b.getX() + heightDX, b.getY() + heightDY);
-        Point2D d = Point2D.newPoint2D(a.getX() + heightDX, a.getY() + heightDY);
-
+        RectangleVertexHolder vertexHolder = CoordinateSystem2D.calRectangleVertex(bottomCenter, direction, width, height);
         // 不可以对超类的实现做出假设
-        return redraw(a,b,c,d);
+        return redraw(vertexHolder.getA(), vertexHolder.getB(), vertexHolder.getC(), vertexHolder.getD());
     }
 
     private void refreshCache(){
-        this.width=MathUtils.distance(getPointA(),getPointD());
-        this.height=MathUtils.distance(getPointA(),getPointB());
+        float a = MathUtils.distance(getPointA(),getPointD());
+        float b = MathUtils.distance(getPointA(),getPointB());
+        if (a >= b){
+            this.width = a;
+            this.height = b;
+        }else {
+            this.width = b;
+            this.height = a;
+        }
     }
 
     public float getWidth(){

@@ -14,41 +14,27 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.dsl;
-
-import com.wjybxx.fastjgame.utils.MathUtils;
+package com.wjybxx.fastjgame.misc;
 
 /**
- * 圆心角 [0,360)；
- *
- * 一般没有额外说明时都是弧度角。
+ * 场景类型
  * @author wjybxx
  * @version 1.0
- * @date 2019/6/2 15:01
+ * @date 2019/6/5 20:22
  * @github - https://github.com/hl845740757
  */
-public class CentralAngle {
+public enum SceneType {
 
     /**
-     * [0,360)
-     * 0 inclusive
-     * 360 exclusive
+     * 城镇；
+     * 一旦创建，不会销毁。
      */
-    private float angle;
+    TOWN,
 
-    public CentralAngle(float angle) {
-        this.angle = angle;
-    }
+    /**
+     * 副本(地下城)；
+     * 当一段时间没有玩家后，删除；
+     */
+    DUNGEON,
 
-    public float getAngle() {
-        return angle;
-    }
-
-    public void setAngle(float angle) {
-        this.angle = angle;
-    }
-
-    public RadiansAngle toRadAngle(){
-        return new RadiansAngle(MathUtils.radAngle(angle));
-    }
 }

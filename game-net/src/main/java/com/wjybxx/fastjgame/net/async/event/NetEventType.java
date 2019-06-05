@@ -16,6 +16,10 @@
 
 package com.wjybxx.fastjgame.net.async.event;
 
+import com.wjybxx.fastjgame.enummapper.NumberEnum;
+import com.wjybxx.fastjgame.enummapper.NumberEnumMapper;
+import com.wjybxx.fastjgame.utils.ReflectionUtils;
+
 import java.util.Arrays;
 
 /**
@@ -24,7 +28,7 @@ import java.util.Arrays;
  * @version 1.0
  * @date 2019/4/26 23:14
  */
-public enum NetEventType {
+public enum NetEventType implements NumberEnum {
 
     /**
      * 客户端请求建立链接(验证TOKEN)
@@ -65,21 +69,26 @@ public enum NetEventType {
     ;
 
     public final byte pkgType;
-    /**
-     * 排序号的枚举数组，方便查找
-     */
-    private static final NetEventType[] sortValues;
 
     NetEventType(byte pkgType) {
         this.pkgType = pkgType;
     }
 
-    static {
-        NetEventType[] values = NetEventType.values();
-        NetEventType[] netEventTypes = Arrays.copyOf(values, values.length);
-        Arrays.sort(netEventTypes);
-        sortValues = netEventTypes;
+    /**
+     * 仅仅用于初始化映射关系
+     * @deprecated use {@link #pkgType}
+     * @return int
+     */
+    @Deprecated
+    @Override
+    public int getNumber() {
+        return pkgType;
     }
+
+    /**
+     * 排序号的枚举数组，方便查找
+     */
+    private static final NumberEnumMapper<NetEventType> mapper = ReflectionUtils.indexNumberEnum(values());
 
     /**
      * 通过网络包中的pkgType找到对应的枚举。
@@ -87,9 +96,7 @@ public enum NetEventType {
      * @return 包类型对应的枚举
      */
     public static NetEventType forNumber(byte pkgType){
-        if (pkgType<1 || pkgType>sortValues.length){
-            return null;
-        }
-        return sortValues[pkgType-1];
+        return mapper.forNumber(pkgType);
     }
+
 }

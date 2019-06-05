@@ -14,40 +14,28 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.constants;
+package com.wjybxx.fastjgame.scene;
 
 /**
- * 网络模块中的一些常量
+ * 游戏中的一个点，也作为向量使用。
+ *
+ * @param <T> the type of this
  * @author wjybxx
  * @version 1.0
- * @date 2019/4/27 12:59
+ * @date 2019/5/31 22:29
  * @github - https://github.com/hl845740757
  */
-public final class NetConstants {
+public interface Point<T extends Point<T>> {
 
     /**
-     * 网络包配置文件名字
+     * 将自己的坐标修改为和参数坐标点一致
+     * @param anotherPoint 另一个与自己同类型的坐标点
      */
-    public static final String NET_CONFIG_NAME = "net_config.properties";
-    /**
-     * 无效的sessionId
-     */
-    public static final long INVALID_SESSION_ID = Long.MIN_VALUE;
-    /**
-     * 初始请求id
-     */
-    public static final long INIT_REQUEST_GUID=0;
-
-    private NetConstants() {
-
-    }
+    void updateLocation(T anotherPoint);
 
     /**
-     * 是否是无效的sessionId
-     * @param sessionId query session id
-     * @return true/false
+     * 返回一个不可修改的视图
+     * @return an unmodifiable view
      */
-    public static boolean isInvalid(long sessionId){
-        return sessionId == INVALID_SESSION_ID;
-    }
+    T unmodifiable();
 }

@@ -17,14 +17,12 @@
 package com.wjybxx.fastjgame.module;
 
 import com.google.inject.Singleton;
-import com.wjybxx.fastjgame.mrg.CenterInSceneInfoMrg;
-import com.wjybxx.fastjgame.mrg.SceneRegionMrg;
-import com.wjybxx.fastjgame.mrg.SceneWorldInfoMrg;
-import com.wjybxx.fastjgame.mrg.WorldInfoMrg;
+import com.wjybxx.fastjgame.mrg.*;
 import com.wjybxx.fastjgame.world.SceneWorld;
 import com.wjybxx.fastjgame.world.World;
 
 /**
+ * 场景模块需要绑定的对象(依赖注入管理的对象)
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/16 21:20
@@ -43,5 +41,6 @@ public class SceneModule extends CoreModule {
         bind(SceneWorldInfoMrg.class).in(Singleton.class);
         bind(CenterInSceneInfoMrg.class).in(Singleton.class);
         bind(SceneRegionMrg.class).in(Singleton.class);
+        bind(SceneSendMrg.class).in(Singleton.class);
     }
 }

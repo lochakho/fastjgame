@@ -16,8 +16,9 @@
 
 package com.wjybxx.fastjgame.core;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import com.wjybxx.fastjgame.enummapper.NumberEnum;
+import com.wjybxx.fastjgame.enummapper.NumberEnumMapper;
+import com.wjybxx.fastjgame.utils.ReflectionUtils;
 
 /**
  * 场景区域划分。
@@ -28,7 +29,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
  * @date 2019/5/15 11:33
  * @github - https://github.com/hl845740757
  */
-public enum SceneRegion {
+public enum SceneRegion implements NumberEnum {
 
     /**
      * 本服普通区域，不互斥，大多数地图都应该属于它。
@@ -70,24 +71,15 @@ public enum SceneRegion {
     /**
      * 数字id到枚举的映射
      */
-    private static final Int2ObjectMap<SceneRegion> regionsMap;
-
-    static {
-        regionsMap=new Int2ObjectOpenHashMap<>(values().length+1,1);
-        for (SceneRegion sceneRegion:values()){
-            if (regionsMap.containsKey(sceneRegion.number)){
-                throw new IllegalArgumentException("number " + sceneRegion.number + " is duplicate.");
-            }
-            regionsMap.put(sceneRegion.number,sceneRegion);
-        }
-    }
+    private static final NumberEnumMapper<SceneRegion> mapper = ReflectionUtils.indexNumberEnum(values());
 
     public static SceneRegion forNumber(int number){
-        SceneRegion sceneRegion = regionsMap.get(number);
+        SceneRegion sceneRegion = mapper.forNumber(number);
         assert null!=sceneRegion:"invalid number " + number;
         return sceneRegion;
     }
 
+    @Override
     public int getNumber() {
         return number;
     }

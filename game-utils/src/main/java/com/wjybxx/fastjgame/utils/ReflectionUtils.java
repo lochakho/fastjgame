@@ -18,7 +18,9 @@ package com.wjybxx.fastjgame.utils;
 
 import com.google.protobuf.MessageLite;
 import com.google.protobuf.Parser;
+import com.wjybxx.fastjgame.enummapper.*;
 import com.wjybxx.fastjgame.ref.NettyTypeParameterFinderAdapter;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,5 +101,38 @@ public class ReflectionUtils {
     public static <T extends MessageLite> Class<T> findMessageClass(String javaPackageName, String javaOuterClassName, String messageName) throws ClassNotFoundException {
         String classFullName=javaPackageName+"."+javaOuterClassName+"$"+messageName;
         return (Class<T>)Class.forName(classFullName);
+    }
+
+    /**
+     * 根据枚举的values建立索引；
+     * 该方法的开销相对小，代码量也能省下；
+     * @param values 枚举数组
+     * @param <T> 枚举类型
+     * @return unmodifiable
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends NumberEnum> NumberEnumMapper<T> indexNumberEnum(T[] values){
+        if (values.length == 0){
+            return (NumberEnumMapper<T>) EmptyMapper.INSTANCE;
+        }
+
+        // 存在一定的浪费，判定重复用
+        Int2ObjectMap<T> result = FastCollectionsUtils.newEnoughCapacityIntMap(values.length);
+        int minNumber = values[0].getNumber();
+        int maxNumber = values[0].getNumber();
+
+        for (T t : values){
+            FastCollectionsUtils.requireNotContains(result,t.getNumber(),"number");
+            result.put(t.getNumber(),t);
+
+            minNumber = Math.min(minNumber,t.getNumber());
+            maxNumber = Math.max(maxNumber,t.getNumber());
+        }
+
+        if (ArrayBasedMapper.available(minNumber,maxNumber)){
+            return new ArrayBasedMapper<>(values,minNumber,maxNumber);
+        }else {
+            return new MapBasedMapper<>(result);
+        }
     }
 }

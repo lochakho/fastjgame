@@ -18,6 +18,7 @@
 package com.wjybxx.fastjgame.mrg;
 
 import com.google.inject.Inject;
+import com.wjybxx.fastjgame.constants.NetConstants;
 import com.wjybxx.fastjgame.core.CenterInSceneInfo;
 import com.wjybxx.fastjgame.core.SceneProcessType;
 import com.wjybxx.fastjgame.core.SceneRegion;
@@ -37,8 +38,6 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import static com.wjybxx.fastjgame.protobuffer.p_center_scene.*;
-import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_cross_scene_hello;
-import static com.wjybxx.fastjgame.protobuffer.p_center_scene.p_center_single_scene_hello;
 
 /**
  * CenterServer在SceneServer中的连接管理等。
@@ -180,5 +179,14 @@ public class CenterInSceneInfoMrg {
             builder.addConfiguredRegions(sceneRegion.getNumber());
         }
         s2CSessionMrg.send(session.getClientGuid(),builder.build());
+    }
+
+    public long getCenterGuid(PlatformType platformType,int serverId){
+        Int2ObjectMap<CenterInSceneInfo> serverId2InfoMap = platInfoMap.get(platformType);
+        if (null == serverId2InfoMap){
+            return NetConstants.INVALID_SESSION_ID;
+        }
+        CenterInSceneInfo centerInSceneInfo = serverId2InfoMap.get(serverId);
+        return null == centerInSceneInfo? NetConstants.INVALID_SESSION_ID : centerInSceneInfo.getCenterProcessGuid();
     }
 }

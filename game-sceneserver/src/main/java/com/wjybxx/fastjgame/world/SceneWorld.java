@@ -39,13 +39,17 @@ public class SceneWorld extends WorldCore {
     private final CenterInSceneInfoMrg centerInSceneInfoMrg;
     private final SceneRegionMrg sceneRegionMrg;
     private final SceneWorldInfoMrg sceneWorldInfoMrg;
+    private final SceneSendMrg sendMrg;
 
     @Inject
-    public SceneWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper, CenterInSceneInfoMrg centerInSceneInfoMrg, SceneRegionMrg sceneRegionMrg) {
+    public SceneWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper,
+                      CenterInSceneInfoMrg centerInSceneInfoMrg, SceneRegionMrg sceneRegionMrg,
+                      SceneSendMrg sendMrg) {
         super(worldWrapper, coreWrapper);
         this.centerInSceneInfoMrg = centerInSceneInfoMrg;
         this.sceneRegionMrg = sceneRegionMrg;
         this.sceneWorldInfoMrg= (SceneWorldInfoMrg) worldWrapper.getWorldInfoMrg();
+        this.sendMrg = sendMrg;
     }
 
     @Override
@@ -131,7 +135,6 @@ public class SceneWorld extends WorldCore {
         }
         curatorMrg.createNode(ZKPaths.makePath(parentPath,nodeName), CreateMode.EPHEMERAL,GameUtils.serializeToJsonBytes(sceneNodeData));
     }
-
 
     @Override
     protected void tickHook() {

@@ -14,77 +14,53 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.net.common;
+package com.wjybxx.fastjgame.scene;
 
 import com.wjybxx.fastjgame.enummapper.NumberEnum;
 import com.wjybxx.fastjgame.enummapper.NumberEnumMapper;
 import com.wjybxx.fastjgame.utils.ReflectionUtils;
 
 /**
- * 用于标识会话对方的角色类型
+ * 格子遮挡标记；
+ * 没有使用更加高效的int值，因为可读性会较差，而{@link java.util.EnumSet}也是基于位运算的；
  * @author wjybxx
  * @version 1.0
- * @date 2019/4/27 10:01
+ * @date 2019/6/4 13:30
  * @github - https://github.com/hl845740757
  */
-public enum RoleType implements NumberEnum {
+public enum GridObstacle implements NumberEnum {
+
     /**
-     * 无效的
+     * 遮挡，玩家和NPC都不可以走动
      */
-    INVALID(-1),
+    OBSTACLE(0),
+
     /**
-     * 测试用
+     * 无限制，任何人都可以走动
      */
-    TEST(0),
+    FREE(1),
+
     /**
-     * 网关服(不使用)
+     * 安全区
      */
-    GATE(1),
-    /**
-     * 登录服(login server)
-     */
-    LOGIN(2),
-    /**
-     * 中心服务器
-     */
-    CENTER(3),
-    /**
-     * 场景服
-     */
-    SCENE(4),
-    /**
-     * 战区服
-     */
-    WARZONE(5),
-    /**
-     * 玩家
-     */
-    PLAYER(6),
-    /**
-     * GM
-     */
-    GM(7),
+    SAFE_AREA(2)
     ;
 
-    /**
-     * 角色编号
-     */
     public final int number;
 
-    RoleType(int roleType) {
-        this.number = roleType;
-    }
-
-    private static final NumberEnumMapper<RoleType> mapper = ReflectionUtils.indexNumberEnum(values());
-
-    public static RoleType forNumber(int number){
-        RoleType roleType = mapper.forNumber(number);
-        assert null!=roleType:"invalid number " + number;
-        return roleType;
+    GridObstacle(int number) {
+        this.number = number;
     }
 
     @Override
     public int getNumber() {
         return number;
     }
+
+    private static final NumberEnumMapper<GridObstacle> mapper = ReflectionUtils.indexNumberEnum(values());
+
+    public static GridObstacle forNumber(int number){
+        return mapper.forNumber(number);
+    }
+
 }

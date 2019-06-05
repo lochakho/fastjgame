@@ -16,8 +16,9 @@
 
 package com.wjybxx.fastjgame.misc;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import com.wjybxx.fastjgame.enummapper.NumberEnum;
+import com.wjybxx.fastjgame.enummapper.NumberEnumMapper;
+import com.wjybxx.fastjgame.utils.ReflectionUtils;
 
 /**
  * 运行平台类型，平台问题最终还是会遇见，这里先处理。
@@ -26,13 +27,12 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
  * @date 2019/5/17 22:02
  * @github - https://github.com/hl845740757
  */
-public enum PlatformType {
+public enum PlatformType implements NumberEnum {
     /**
      * 测试用的运营平台
      */
     TEST(0),
     ;
-
 
     /**
      * 平台数字标记
@@ -43,24 +43,15 @@ public enum PlatformType {
         this.number = number;
     }
 
+    @Override
     public int getNumber() {
         return number;
     }
 
-    private static final Int2ObjectMap<PlatformType> number2PlatformMap;
-
-    static {
-        number2PlatformMap=new Int2ObjectOpenHashMap<>();
-        for (PlatformType platformType:values()){
-            if (number2PlatformMap.containsKey(platformType.number)){
-                throw new IllegalArgumentException();
-            }
-            number2PlatformMap.put(platformType.number,platformType);
-        }
-    }
+    private static final NumberEnumMapper<PlatformType> mapper = ReflectionUtils.indexNumberEnum(values());
 
     public static PlatformType forNumber(int number){
-        PlatformType platformType = number2PlatformMap.get(number);
+        PlatformType platformType = mapper.forNumber(number);
         assert null!=platformType:"invalid number "+number;
         return platformType;
     }

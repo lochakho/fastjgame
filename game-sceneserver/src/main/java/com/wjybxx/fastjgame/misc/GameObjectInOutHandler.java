@@ -14,40 +14,33 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.constants;
+package com.wjybxx.fastjgame.misc;
+
+import com.wjybxx.fastjgame.scene.Scene;
+import com.wjybxx.fastjgame.scene.gameobject.GameObject;
 
 /**
- * 网络模块中的一些常量
+ * 游戏对象进出场景处理器
  * @author wjybxx
  * @version 1.0
- * @date 2019/4/27 12:59
+ * @date 2019/6/4 19:35
  * @github - https://github.com/hl845740757
  */
-public final class NetConstants {
+@Stateless
+public interface GameObjectInOutHandler<T extends GameObject> {
 
     /**
-     * 网络包配置文件名字
+     * 执行游戏对象进入场景逻辑
+     * @param scene gameObject将要进入的场景
+     * @param gameObject 场景对象
      */
-    public static final String NET_CONFIG_NAME = "net_config.properties";
-    /**
-     * 无效的sessionId
-     */
-    public static final long INVALID_SESSION_ID = Long.MIN_VALUE;
-    /**
-     * 初始请求id
-     */
-    public static final long INIT_REQUEST_GUID=0;
-
-    private NetConstants() {
-
-    }
+    void processEnterScene(Scene scene, T gameObject);
 
     /**
-     * 是否是无效的sessionId
-     * @param sessionId query session id
-     * @return true/false
+     * 执行游戏对象离开场景逻辑
+     * @param scene gameObject当前所在的场景
+     * @param gameObject 场景对象
      */
-    public static boolean isInvalid(long sessionId){
-        return sessionId == INVALID_SESSION_ID;
-    }
+    void processLeaveScene(Scene scene, T gameObject);
+
 }

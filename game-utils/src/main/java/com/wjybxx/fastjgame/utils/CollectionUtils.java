@@ -16,6 +16,13 @@
 
 package com.wjybxx.fastjgame.utils;
 
+import com.wjybxx.fastjgame.function.MapConstructor;
+import it.unimi.dsi.fastutil.HashCommon;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
+
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -212,4 +219,48 @@ public final class CollectionUtils {
             }
         }
     }
+
+    public static <K> void requireNotContains(Map<K,?> map,K k,String name){
+        if (map.containsKey(k)){
+            throw new IllegalArgumentException("duplicate " + name + " " + k);
+        }
+    }
+
+    /**
+     * 创建足够容量的Map，容量到达指定容量之后才会开始扩容；
+     * 适合用在能估算最大容量的时候;
+     * @param constructor map的构造器函数
+     * @param initCapacity 初始容量 大于0有效
+     * @param <K> key的类型
+     * @param <V> value的类型
+     * @return M
+     */
+    public static <K,V,M extends Map<K,V>> M newEnoughCapacityMap(MapConstructor<M> constructor, int initCapacity){
+        return initCapacity > 0 ? constructor.newMap(initCapacity,1) : constructor.newMap(16,0.75f);
+    }
+
+    /**
+     *
+     * 创建足够容量的HashMap，容量到达指定容量之后才会开始扩容；
+     * 适合用在能估算最大容量的时候;
+     * @param initCapacity 初始容量 大于0有效
+     * @param <K> key的类型
+     * @param <V> value的类型
+     */
+    public static <K,V> HashMap<K,V> newEnoughCapacityHashMap(int initCapacity){
+        return newEnoughCapacityMap(HashMap::new, initCapacity);
+    }
+
+    /**
+     * 创建足够容量的LinkecHashMap，容量到达指定容量之后才会开始扩容；
+     * 适合用在能估算最大容量的时候;
+     * @param initCapacity 初始容量 大于0有效
+     * @param <K> key的类型
+     * @param <V> value的类型
+     * @return
+     */
+    public static <K,V> LinkedHashMap<K,V> newEnoughCapacityLinkedHashMap(int initCapacity){
+        return newEnoughCapacityMap(LinkedHashMap::new, initCapacity);
+    }
+
 }

@@ -14,40 +14,45 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.constants;
+package com.wjybxx.fastjgame.scene.gameobject;
+
+import com.wjybxx.fastjgame.enummapper.NumberEnum;
+import com.wjybxx.fastjgame.enummapper.NumberEnumMapper;
+import com.wjybxx.fastjgame.utils.ReflectionUtils;
 
 /**
- * 网络模块中的一些常量
+ * 游戏对象类型
  * @author wjybxx
  * @version 1.0
- * @date 2019/4/27 12:59
+ * @date 2019/6/2 22:59
  * @github - https://github.com/hl845740757
  */
-public final class NetConstants {
+public enum GameObjectType implements NumberEnum {
 
     /**
-     * 网络包配置文件名字
+     * 玩家
      */
-    public static final String NET_CONFIG_NAME = "net_config.properties";
-    /**
-     * 无效的sessionId
-     */
-    public static final long INVALID_SESSION_ID = Long.MIN_VALUE;
-    /**
-     * 初始请求id
-     */
-    public static final long INIT_REQUEST_GUID=0;
+    PLAYER,
 
-    private NetConstants() {
+    /**
+     * 宠物
+     */
+    PET,
 
+    /**
+     * 普通NPC
+     */
+    NPC,
+    ;
+
+    @Override
+    public int getNumber() {
+        return ordinal();
     }
 
-    /**
-     * 是否是无效的sessionId
-     * @param sessionId query session id
-     * @return true/false
-     */
-    public static boolean isInvalid(long sessionId){
-        return sessionId == INVALID_SESSION_ID;
+    private static final NumberEnumMapper<GameObjectType> mapper = ReflectionUtils.indexNumberEnum(values());
+
+    public static GameObjectType forNumber(int number){
+        return mapper.forNumber(number);
     }
 }

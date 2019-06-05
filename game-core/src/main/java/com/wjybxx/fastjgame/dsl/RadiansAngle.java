@@ -14,40 +14,35 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.constants;
+package com.wjybxx.fastjgame.dsl;
 
 /**
- * 网络模块中的一些常量
+ * 弧度角 (-PI,PI]； 也可写为 RadAngle
+ *
+ * 一般没有额外说明时都是弧度角。
  * @author wjybxx
  * @version 1.0
- * @date 2019/4/27 12:59
+ * @date 2019/6/2 15:01
  * @github - https://github.com/hl845740757
  */
-public final class NetConstants {
+public final class RadiansAngle {
 
     /**
-     * 网络包配置文件名字
+     * (-PI,PI]
+     * -PI exclusive
+     * PI inclusive
      */
-    public static final String NET_CONFIG_NAME = "net_config.properties";
-    /**
-     * 无效的sessionId
-     */
-    public static final long INVALID_SESSION_ID = Long.MIN_VALUE;
-    /**
-     * 初始请求id
-     */
-    public static final long INIT_REQUEST_GUID=0;
+    private float angle;
 
-    private NetConstants() {
-
+    public RadiansAngle(float angle) {
+        this.angle = angle;
     }
 
-    /**
-     * 是否是无效的sessionId
-     * @param sessionId query session id
-     * @return true/false
-     */
-    public static boolean isInvalid(long sessionId){
-        return sessionId == INVALID_SESSION_ID;
+    public float getAngle() {
+        return angle;
+    }
+
+    public void setAngle(float angle) {
+        this.angle = angle;
     }
 }

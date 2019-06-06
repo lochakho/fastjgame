@@ -107,6 +107,10 @@ public class GameObjectContainer {
         return npcMap.values();
     }
 
+    public ObjectCollection<? extends GameObject> getGameObjectSet(GameObjectType gameObjectType){
+        return helperMap.get(gameObjectType).values();
+    }
+
     /**
      * 添加一个场景对象到该视野格子
      * @param gameObject 游戏对象

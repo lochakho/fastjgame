@@ -16,9 +16,9 @@
 
 package com.wjybxx.fastjgame.dsl;
 
-import com.wjybxx.fastjgame.scene.Point2D;
-import com.wjybxx.fastjgame.scene.RectangleVertexHolder;
-import com.wjybxx.fastjgame.scene.shape2d.Rectangle;
+import com.wjybxx.fastjgame.shape.Point2D;
+import com.wjybxx.fastjgame.shape.RectangleVertexHolder;
+import com.wjybxx.fastjgame.shape.shape2d.Rectangle;
 import com.wjybxx.fastjgame.utils.MathUtils;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -137,7 +137,7 @@ public final class CoordinateSystem2D {
      * @param centerDirection 基准向量弧度角
      * @return
      */
-    public static boolean isMoreRightOrOrCollinear(float compareDirection, float centerDirection){
+    public static boolean isMoreRightOrCollinear(float compareDirection, float centerDirection){
        return isMoreRight(compareDirection, centerDirection) ||
                Float.compare(compareDirection, centerDirection) == 0;
     }
@@ -216,6 +216,13 @@ public final class CoordinateSystem2D {
         return new RectangleVertexHolder(a, b, c, d);
     }
 
+    /**
+     * 构建矩形(正方形)格子的区域
+     * @param rowIndex 行索引
+     * @param colIndex 列索引
+     * @param gridWidth 格子宽高
+     * @return Rectangle
+     */
     public static Rectangle buildGridRegion(int rowIndex, int colIndex, int gridWidth){
         Point2D a = MathUtils.gridVertexLocation(rowIndex,colIndex, gridWidth);
         // ab 同y

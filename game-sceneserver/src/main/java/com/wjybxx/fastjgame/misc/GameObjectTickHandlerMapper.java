@@ -14,45 +14,22 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.scene;
+package com.wjybxx.fastjgame.misc;
+
+import com.wjybxx.fastjgame.scene.gameobject.GameObject;
 
 /**
- * 矩形顶点holder类
+ * tick上下文映射
  * @author wjybxx
  * @version 1.0
- * @date 2019/6/5 17:54
+ * @date 2019/6/6 11:59
  * @github - https://github.com/hl845740757
  */
-public class RectangleVertexHolder {
+public class GameObjectTickHandlerMapper extends GameObjectHandlerMapper<GameObjectTickHandler<? extends GameObject>>{
 
-    private final Point2D a;
-
-    private final Point2D b;
-
-    private final Point2D c;
-
-    private final Point2D d;
-
-    public RectangleVertexHolder(Point2D a, Point2D b, Point2D c, Point2D d) {
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-    }
-
-    public Point2D getA() {
-        return a;
-    }
-
-    public Point2D getB() {
-        return b;
-    }
-
-    public Point2D getC() {
-        return c;
-    }
-
-    public Point2D getD() {
-        return d;
+    @SuppressWarnings("unchecked")
+    @Override
+    public <U extends GameObject> GameObjectTickHandler<U> getHandler(U gameObject) {
+        return (GameObjectTickHandler<U>) super.getHandler(gameObject);
     }
 }

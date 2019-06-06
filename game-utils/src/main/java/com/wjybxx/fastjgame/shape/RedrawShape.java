@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.misc;
-
-import com.wjybxx.fastjgame.scene.gameobject.GameObject;
+package com.wjybxx.fastjgame.shape;
 
 /**
- * 视野管理handler映射
+ * 可重绘的图形，由于需要的参数不尽相同，定义方法不是很方便，因此是个标记接口。
+ * 子类需要提供一个redraw方法，并返回自己。
+ * 该接口只是个契约。
  * @author wjybxx
  * @version 1.0
- * @date 2019/6/5 19:32
+ * @date 2019/6/2 15:17
  * @github - https://github.com/hl845740757
  */
-public class NotifyHandlerMapper extends GameObjectHandlerMapper<NotifyHandler<? extends GameObject>>{
+public interface RedrawShape {
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <U extends GameObject> NotifyHandler<U> getHandler(U gameObject) {
-        return (NotifyHandler<U>) super.getHandler(gameObject);
-    }
+    // redraw and return this
+
 }

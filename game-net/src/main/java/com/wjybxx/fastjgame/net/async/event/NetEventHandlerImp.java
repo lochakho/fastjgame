@@ -16,6 +16,7 @@
 
 package com.wjybxx.fastjgame.net.async.event;
 
+import com.wjybxx.fastjgame.utils.MathUtils;
 import com.wjybxx.fastjgame.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,7 @@ public class NetEventHandlerImp implements NetEventHandler{
      */
     public NetEventHandlerImp(World world, int framesPerSecond) {
         this.world = world;
-        this.frameInterval = 1000/framesPerSecond;
+        this.frameInterval = MathUtils.frameInterval(framesPerSecond);
     }
 
     /**

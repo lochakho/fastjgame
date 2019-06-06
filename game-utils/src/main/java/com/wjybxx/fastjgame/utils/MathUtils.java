@@ -16,9 +16,9 @@
 
 package com.wjybxx.fastjgame.utils;
 
-import com.wjybxx.fastjgame.misc.FStraightLine;
-import com.wjybxx.fastjgame.scene.Point2D;
-import com.wjybxx.fastjgame.scene.Point3D;
+import com.wjybxx.fastjgame.shape.Point2D;
+import com.wjybxx.fastjgame.shape.Point3D;
+import com.wjybxx.fastjgame.shape.shape2d.StraightLine;
 
 /**
  * 数学计算辅助类
@@ -50,6 +50,18 @@ public class MathUtils {
     public static final double DOUBLE_DEVIATION = 0.0000001d;
 
     private MathUtils() {
+    }
+
+    /**
+     * 帧间隔(毫秒)
+     * @param framePerSecond 每秒帧数
+     * @return millTime
+     */
+    public static long frameInterval(int framePerSecond){
+        if (framePerSecond < 1 || framePerSecond > 1000){
+            throw new IllegalArgumentException("framePerSecond " + framePerSecond + " must within 1~1000");
+        }
+        return 1000 / framePerSecond;
     }
 
     /**
@@ -140,7 +152,7 @@ public class MathUtils {
      * @param end 结束点
      * @return 两点所在的直线
      */
-    public static FStraightLine calStraightLine(Point2D start,Point2D end){
+    public static StraightLine calStraightLine(Point2D start, Point2D end){
         float dx = end.getX() - start.getX();
         // x的差值不能为0
         if (Float.compare(dx,0.0f) == 0){
@@ -168,7 +180,7 @@ public class MathUtils {
      * @param x x坐标
      * @return Point2D(x,y)
      */
-    public static Point2D calStraightLine(FStraightLine straightLine,float x){
+    public static Point2D calStraightLine(StraightLine straightLine, float x){
         return Point2D.newPoint2D(x,straightLine.apply(x));
     }
 
@@ -226,7 +238,7 @@ public class MathUtils {
      * @return
      */
     public static Point2D gridVertexLocation(int rowIndex, int colIndex, int gridWidth){
-        return Point2D.newPoint2D(colIndex * gridWidth,rowIndex * gridWidth);
+        return Point2D.newPoint2D(colIndex * gridWidth, rowIndex * gridWidth);
     }
 
     /**

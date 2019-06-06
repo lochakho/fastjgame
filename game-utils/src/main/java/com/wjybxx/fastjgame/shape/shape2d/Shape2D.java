@@ -14,19 +14,30 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.scene;
+package com.wjybxx.fastjgame.shape.shape2d;
+
+import com.wjybxx.fastjgame.shape.Point2D;
+
+import javax.annotation.Nonnull;
 
 /**
- * 可重绘的图形，由于需要的参数不尽相同，定义方法不是很方便，因此是个标记接口。
- * 子类需要提供一个redraw方法，并返回自己。
- * 该接口只是个契约。
+ * 2D图形，采用左下角为(0,0)点；
+ * 建议逆时针对点编号，为什么呢？
+ * 你写0是逆时针写还是顺时针写？
+ * 你画圆是逆时针还是顺时针？
+ * 你画三角形是逆时针还是顺时针？
+ *
  * @author wjybxx
  * @version 1.0
- * @date 2019/6/2 15:17
+ * @date 2019/5/31 23:18
  * @github - https://github.com/hl845740757
  */
-public interface RedrawShape {
+public interface Shape2D {
 
-    // redraw and return this
-
+    /**
+     * 该图形内是否存在该点，在边上也算。
+     * @param point2D 2d平面的一点
+     * @return
+     */
+    boolean hasPoint(@Nonnull Point2D point2D);
 }

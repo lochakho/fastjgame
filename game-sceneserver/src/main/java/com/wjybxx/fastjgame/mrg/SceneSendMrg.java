@@ -22,12 +22,11 @@ import com.wjybxx.fastjgame.misc.PlatformType;
 import com.wjybxx.fastjgame.mrg.async.S2CSessionMrg;
 import com.wjybxx.fastjgame.scene.ViewGrid;
 import com.wjybxx.fastjgame.scene.gameobject.GameObject;
-import com.wjybxx.fastjgame.scene.gameobject.GameObjectType;
 import com.wjybxx.fastjgame.scene.gameobject.Player;
-import it.unimi.dsi.fastutil.objects.ObjectCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -96,7 +95,16 @@ public class SceneSendMrg {
      */
     public void broadcastPlayer(GameObject gameObject,Object msg){
         ViewGrid centerViewGrid = gameObject.getViewGrid();
-        for (ViewGrid  viewGrid: centerViewGrid.getViewableGrids()){
+        broadcastPlayer(centerViewGrid.getViewableGrids(), msg);
+    }
+
+    /**
+     * 广播指定视野格子的玩家
+     * @param viewGrids 视野格子
+     * @param msg 消息
+     */
+    public void broadcastPlayer(List<ViewGrid> viewGrids, Object msg){
+        for (ViewGrid  viewGrid: viewGrids){
             if (viewGrid.getPlayerNum() <= 0){
                 continue;
             }
@@ -114,12 +122,22 @@ public class SceneSendMrg {
      */
     public void broadcastPlayerExcept(GameObject gameObject,Object msg,Player exceptPlayer){
         ViewGrid centerViewGrid = gameObject.getViewGrid();
-        for (ViewGrid  viewGrid: centerViewGrid.getViewableGrids()){
+        broadcastPlayerExcept(centerViewGrid.getViewableGrids(), msg, exceptPlayer);
+    }
+
+    /**
+     * 广播指定视野格子内的玩家，去除指定玩家
+     * @param viewGrids 视野格子
+     * @param msg 消息
+     * @param exceptPlayer 去除的玩家
+     */
+    public void broadcastPlayerExcept(List<ViewGrid> viewGrids,Object msg,Player exceptPlayer){
+        for (ViewGrid  viewGrid: viewGrids){
             if (viewGrid.getPlayerNum() <= 0){
                 continue;
             }
             for (Player player : viewGrid.getPlayerSet()){
-                // 去除自己
+                // 去除指定玩家
                 if (player == exceptPlayer){
                     continue;
                 }
@@ -137,7 +155,18 @@ public class SceneSendMrg {
      */
     public void broadcastPlayerExcept(GameObject gameObject, Object msg, Predicate<Player> except){
         ViewGrid centerViewGrid = gameObject.getViewGrid();
-        for (ViewGrid  viewGrid: centerViewGrid.getViewableGrids()){
+        broadcastPlayerExcept(centerViewGrid.getViewableGrids(), msg, except);
+    }
+
+    /**
+     * 广播指定视野格子的玩家，去除掉指定条件的玩家
+     * @param viewGrids 指定的视野格子
+     * @param msg 消息
+     * @param except 排除条件，true的不广播
+     * {@link com.wjybxx.fastjgame.misc.SceneBroadcastFilters}可能会有帮助
+     */
+    public void broadcastPlayerExcept(List<ViewGrid> viewGrids, Object msg, Predicate<Player> except){
+        for (ViewGrid  viewGrid: viewGrids){
             if (viewGrid.getPlayerNum() <= 0){
                 continue;
             }

@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.scene;
+package com.wjybxx.fastjgame.misc;
+
+import com.wjybxx.fastjgame.scene.gameobject.GameObject;
 
 /**
- * 游戏中的一个点，也作为向量使用。
- *
- * @param <T> the type of this
+ * 场景对象在场景中的生命周期处理器映射
+ * (名字有点长)
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/31 22:29
+ * @date 2019/6/5 19:31
  * @github - https://github.com/hl845740757
  */
-public interface Point<T extends Point<T>> {
+public class GameObjectInOutHandlerMapper extends GameObjectHandlerMapper<GameObjectInOutHandler<? extends GameObject>>{
 
-    /**
-     * 将自己的坐标修改为和参数坐标点一致
-     * @param anotherPoint 另一个与自己同类型的坐标点
-     */
-    void updateLocation(T anotherPoint);
-
-    /**
-     * 返回一个不可修改的视图
-     * @return an unmodifiable view
-     */
-    T unmodifiable();
+    @SuppressWarnings("unchecked")
+    @Override
+    public <U extends GameObject> GameObjectInOutHandler<U> getHandler(U gameObject) {
+        return (GameObjectInOutHandler<U>) super.getHandler(gameObject);
+    }
 }

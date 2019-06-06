@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.scene.shape2d;
+package com.wjybxx.fastjgame.shape.shape2d;
 
-import com.wjybxx.fastjgame.scene.Point2D;
-import com.wjybxx.fastjgame.scene.Point3D;
-import com.wjybxx.fastjgame.scene.RedrawShape;
+import com.wjybxx.fastjgame.shape.Point2D;
+import com.wjybxx.fastjgame.shape.Point3D;
+import com.wjybxx.fastjgame.shape.RedrawShape;
 import com.wjybxx.fastjgame.utils.MathUtils;
 
 import javax.annotation.Nonnull;

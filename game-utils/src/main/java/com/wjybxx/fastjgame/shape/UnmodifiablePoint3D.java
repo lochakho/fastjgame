@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.scene;
+package com.wjybxx.fastjgame.shape;
 
 /**
  * 不可修改的3D坐标点，代理对象。

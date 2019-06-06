@@ -14,30 +14,27 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.scene.shape2d;
-
-import com.wjybxx.fastjgame.scene.Point2D;
-
-import javax.annotation.Nonnull;
+package com.wjybxx.fastjgame.shape.shape2d;
 
 /**
- * 2D图形，采用左下角为(0,0)点；
- * 建议逆时针对点编号，为什么呢？
- * 你写0是逆时针写还是顺时针写？
- * 你画圆是逆时针还是顺时针？
- * 你画三角形是逆时针还是顺时针？
+ * 直线函数
+ * <pre>
+ *  y = k *x + b
+ * </pre>
  *
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/31 23:18
+ * @date 2019/6/1 22:16
  * @github - https://github.com/hl845740757
  */
-public interface Shape2D {
+@FunctionalInterface
+public interface StraightLine {
 
     /**
-     * 该图形内是否存在该点，在边上也算。
-     * @param point2D 2d平面的一点
-     * @return
+     * 通过x计算对应的y值
+     * @param x x
+     * @return y
      */
-    boolean hasPoint(@Nonnull Point2D point2D);
+    float apply(float x);
+
 }

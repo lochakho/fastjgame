@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.test;
+package com.wjybxx.gamefast.test;
 
-import com.wjybxx.fastjgame.scene.Point2D;
-import com.wjybxx.fastjgame.scene.shape2d.Triangle;
+import com.wjybxx.fastjgame.shape.Point2D;
+import com.wjybxx.fastjgame.shape.shape2d.Triangle;
 
 /**
  * 主要测试三角形的计算点是否ok

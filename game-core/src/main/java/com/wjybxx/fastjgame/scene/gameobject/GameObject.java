@@ -16,7 +16,7 @@
 
 package com.wjybxx.fastjgame.scene.gameobject;
 
-import com.wjybxx.fastjgame.scene.Point2D;
+import com.wjybxx.fastjgame.shape.Point2D;
 import com.wjybxx.fastjgame.scene.ViewGrid;
 
 import javax.annotation.Nonnull;

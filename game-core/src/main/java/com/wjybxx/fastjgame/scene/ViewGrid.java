@@ -17,8 +17,9 @@
 package com.wjybxx.fastjgame.scene;
 
 import com.wjybxx.fastjgame.dsl.CoordinateSystem2D;
-import com.wjybxx.fastjgame.scene.shape2d.Rectangle;
-import com.wjybxx.fastjgame.scene.shape2d.Shape2D;
+import com.wjybxx.fastjgame.shape.Point2D;
+import com.wjybxx.fastjgame.shape.shape2d.Rectangle;
+import com.wjybxx.fastjgame.shape.shape2d.Shape2D;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;

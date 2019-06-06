@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.scene;
+package com.wjybxx.fastjgame.shape;
 
 /**
  * 默认2D坐标实现，支持坐标修改。

@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.test;
-
-import com.wjybxx.fastjgame.scene.Point2D;
-import com.wjybxx.fastjgame.scene.shape2d.Rectangle;
+package com.wjybxx.fastjgame.shape.shape2d;
 
 /**
- * 矩形创建测试
+ * 默认直线实现，如果不想使用lambda表达式
  * @author wjybxx
  * @version 1.0
- * @date 2019/6/3 20:10
+ * @date 2019/6/6 11:04
  * @github - https://github.com/hl845740757
  */
-public class RectangleTest {
+public class StraightLineImp implements StraightLine{
 
-    public static void main(String[] args) {
-        Rectangle rectangle=Rectangle.newRectangleByCentralAngle(Point2D.newPoint2D(0,0),90,6,3);
-        System.out.println(rectangle);
+    private final float k;
 
-        Rectangle rectangle2=Rectangle.newRectangleByCentralAngle(Point2D.newPoint2D(0,0),45,6,3);
-        System.out.println(rectangle2);
+    private final float b;
+
+    public StraightLineImp(float k, float b) {
+        this.k = k;
+        this.b = b;
     }
 
+    @Override
+    public float apply(float x) {
+        return k *x + b;
+    }
 }

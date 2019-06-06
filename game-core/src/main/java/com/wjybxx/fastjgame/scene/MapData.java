@@ -16,6 +16,7 @@
 
 package com.wjybxx.fastjgame.scene;
 
+import com.wjybxx.fastjgame.shape.Point2D;
 import com.wjybxx.fastjgame.utils.GameConstant;
 import com.wjybxx.fastjgame.utils.MathUtils;
 

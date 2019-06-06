@@ -22,12 +22,19 @@ import com.wjybxx.fastjgame.misc.*;
 import com.wjybxx.fastjgame.mrg.MapDataLoadMrg;
 import com.wjybxx.fastjgame.mrg.SceneSendMrg;
 import com.wjybxx.fastjgame.mrg.SceneWrapper;
-import com.wjybxx.fastjgame.scene.gameobject.GameObject;
+import com.wjybxx.fastjgame.scene.gameobject.*;
+import com.wjybxx.fastjgame.trigger.TriggerSystem;
 import com.wjybxx.fastjgame.utils.GameConstant;
+import com.wjybxx.fastjgame.utils.MathUtils;
+import it.unimi.dsi.fastutil.objects.ObjectCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.wjybxx.fastjgame.scene.gameobject.GameObjectType.*;
 
 /**
  * 场景基类，所有的场景都继承该类
@@ -38,7 +45,9 @@ import java.util.List;
  * @github - https://github.com/hl845740757
  */
 @NotThreadSafe
-public abstract class Scene {
+public abstract class Scene extends TriggerSystem {
+
+    private static final Logger logger = LoggerFactory.getLogger(Scene.class);
 
     // 更新单个对象时，缓存对象，避免大量的创建list
     private static final List<ViewGrid> invisibleGridsCache = new ArrayList<>(GameConstant.VIEWABLE_GRID_NUM);
@@ -78,10 +87,14 @@ public abstract class Scene {
     private final NotifyHandlerMapper notifyHandlerMapper = new NotifyHandlerMapper();
 
     /**
-     * 游戏对象在场景中的生命周期管理
+     * 游戏对象进出场景handler
      * (名字有点长)
      */
-    private final GameObjectInSceneHandlerMapper gameObjectInSceneHandlerMapper = new GameObjectInSceneHandlerMapper();
+    private final GameObjectInOutHandlerMapper gameObjectInOutHandlerMapper = new GameObjectInOutHandlerMapper();
+    /**
+     * 场景对象刷帧handler
+     */
+    private final GameObjectTickHandlerMapper gameObjectTickHandlerMapper = new GameObjectTickHandlerMapper();
 
     public Scene(long guid, TemplateSceneConfig sceneConfig, SceneWrapper sceneWrapper) {
         this.guid = guid;
@@ -98,6 +111,30 @@ public abstract class Scene {
 
         // 创建管理该场景对象的控制器
         this.sceneGameObjectManager = new SceneGameObjectManager(getGameObjectManagerInitCapacityHolder());
+    }
+
+    private void registerHandlers(){
+        registerNotifyHandlers();
+        registerInOutHandlers();
+        registerTickHandlers();
+    }
+
+    private void registerNotifyHandlers(){
+        notifyHandlerMapper.registerHandler(PLAYER, new PlayerNotifyHandler());
+        notifyHandlerMapper.registerHandler(PET, new DefaultNotifyHandler<>());
+        notifyHandlerMapper.registerHandler(NPC, new DefaultNotifyHandler<>());
+    }
+
+    private void registerInOutHandlers(){
+        gameObjectInOutHandlerMapper.registerHandler(PLAYER, new PlayerInOutHandler());
+        gameObjectInOutHandlerMapper.registerHandler(PET, new PetInOutHandler());
+        gameObjectInOutHandlerMapper.registerHandler(NPC, new NpcInOutHandler());
+    }
+
+    private void registerTickHandlers(){
+        gameObjectTickHandlerMapper.registerHandler(PLAYER, new PlayerTickHandler(30));
+        gameObjectTickHandlerMapper.registerHandler(PET, new PetTickHandler(30));
+        gameObjectTickHandlerMapper.registerHandler(NPC, new NpcTickHandler(10));
     }
 
     /**
@@ -148,10 +185,34 @@ public abstract class Scene {
      */
     public void tick(long curMillTime) throws Exception{
 
+        // 场景对象刷帧
+        for (GameObjectType gameObjectType : GameObjectType.values()){
+            tryTickGameObjects(curMillTime, gameObjectType);
+        }
+
         // 检测视野格子刷新
-        if (curMillTime >= nextUpdateViewGridTime){
-            nextUpdateViewGridTime = curMillTime + DELTA_UPDATE_VIEW_GRIDS;
-            updateViewableGrid();
+        tryUpdateViewableGrid(curMillTime);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends GameObject> void tryTickGameObjects(long curMillTime, GameObjectType gameObjectType){
+        GameObjectTickHandler<T> handler = (GameObjectTickHandler<T>) gameObjectTickHandlerMapper.getHandler(gameObjectType);
+        if (curMillTime < handler.getNextTickTimeMills()){
+            return;
+        }
+        handler.setNextTickTimeMills(curMillTime + handler.getTickInterval());
+
+        ObjectCollection<T> gameObjectSet = (ObjectCollection<T>) sceneGameObjectManager.getGameObjectSet(gameObjectType);
+        if (gameObjectSet.size() == 0){
+            return;
+        }
+
+        for (T gameObject : gameObjectSet){
+            try {
+                handler.tick(gameObject);
+            }catch (Exception e){
+                logger.error("tick {}-{} caught exception", gameObjectType, gameObject.getGuid(),e);
+            }
         }
     }
 
@@ -163,8 +224,26 @@ public abstract class Scene {
     /**
      * 刷新所有对象的视野格子
      */
-    protected final void updateViewableGrid(){
+    private void tryUpdateViewableGrid(long curMillTime){
+        if (curMillTime < nextUpdateViewGridTime){
+            return;
+        }
+        nextUpdateViewGridTime = curMillTime + DELTA_UPDATE_VIEW_GRIDS;
 
+        // 视野刷新最好不要有依赖，我们之前项目某些实现导致视野刷新之间有依赖(跟随对象的特殊跟随策略)
+        for (GameObjectType gameObjectType : GameObjectType.values()){
+            ObjectCollection<? extends GameObject> gameObjectSet = sceneGameObjectManager.getGameObjectSet(gameObjectType);
+            if (gameObjectSet.size() == 0){
+                continue;
+            }
+            for (GameObject gameObject : gameObjectSet){
+                try {
+                    updateViewableGrid(gameObject);
+                }catch (Exception e){
+                    logger.error("update {}-{} viewableGrids caught exception", gameObjectType, gameObject.getGuid());
+                }
+            }
+        }
     }
 
     /**
@@ -223,13 +302,73 @@ public abstract class Scene {
             visibleGrids.clear();
         }
     }
+
+    private class DefaultNotifyHandler<T extends GameObject> implements NotifyHandler<T>{
+
+        @Override
+        public void notifyGameObjectOthersIn(T t, List<ViewGrid> newVisibleGrids) {
+
+        }
+
+        @Override
+        public void notifyGameObjectOthersOut(T t, List<ViewGrid> range) {
+
+        }
+
+        @Override
+        public void notifyOthersGameObjectIn(List<ViewGrid> range, T t) {
+            if (t.getObjectType() != PLAYER){
+                return;
+            }
+            // TODO serialize range objects
+//            Object msg
+//            sendMrg.broadcastPlayerExcept(range, msg,(Player) gameObject);
+        }
+
+        @Override
+        public void notifyOthersGameObjectOut(List<ViewGrid> range, T gameObject) {
+            if (gameObject.getObjectType() != PLAYER){
+                return;
+            }
+            // TODO serialize gameObject
+//            Object msg
+//            sendMrg.broadcastPlayerExcept(range, msg,(Player) gameObject);
+        }
+    }
+
+    private class PlayerNotifyHandler implements NotifyHandler<Player>{
+
+        @Override
+        public void notifyGameObjectOthersIn(Player player, List<ViewGrid> newVisibleGrids) {
+
+        }
+
+        @Override
+        public void notifyGameObjectOthersOut(Player player, List<ViewGrid> range) {
+
+        }
+
+        @Override
+        public void notifyOthersGameObjectIn(List<ViewGrid> range, Player player) {
+
+        }
+
+        @Override
+        public void notifyOthersGameObjectOut(List<ViewGrid> range, Player player) {
+
+        }
+    }
+
+
     // endregion
 
+    // region 进出场景
+
     /**
-     * 游戏对象在场景中的模板实现
+     * 游戏对象进出场景模板实现
      * @param <T>
      */
-    public abstract class AbstractGameObjectInSceneHandler<T extends GameObject> implements GameObjectInSceneHandler<T> {
+    protected abstract class AbstractGameObjectInOutHandler<T extends GameObject> implements GameObjectInOutHandler<T> {
 
         @Override
         public final void processEnterScene(T gameObject) {
@@ -259,28 +398,6 @@ public abstract class Scene {
         protected abstract void afterEnterScene(T gameObject);
 
         @Override
-        public final void tick(T gameObject) {
-            tickCore(gameObject);
-            tickHook(gameObject);
-        }
-
-        /**
-         * tick公共逻辑(核心逻辑)
-         * @param gameObject
-         */
-        private void tickCore(T gameObject){
-
-        }
-
-        /**
-         * 子类独有逻辑
-         * @param gameObject
-         */
-        protected void tickHook(T gameObject){
-
-        }
-
-        @Override
         public final void processLeaveScene(T gameObject) {
             beforeLeaveScene(gameObject);
             leaveSceneCore(gameObject);
@@ -305,6 +422,150 @@ public abstract class Scene {
          * 在成功离开场景之后可能有额外逻辑
          * @param gameObject 场景对象
          */
-        protected abstract  void afterLeaveScene(T gameObject);
+        protected abstract void afterLeaveScene(T gameObject);
     }
+
+    protected class PlayerInOutHandler extends AbstractGameObjectInOutHandler<Player>{
+
+        @Override
+        protected void beforeEnterScene(Player player) {
+
+        }
+
+        @Override
+        protected void afterEnterScene(Player player) {
+
+        }
+
+        @Override
+        protected void beforeLeaveScene(Player player) {
+
+        }
+
+        @Override
+        protected void afterLeaveScene(Player player) {
+
+        }
+    }
+
+    protected class PetInOutHandler extends AbstractGameObjectInOutHandler<Pet>{
+        @Override
+        protected void beforeEnterScene(Pet pet) {
+
+        }
+
+        @Override
+        protected void afterEnterScene(Pet pet) {
+
+        }
+
+        @Override
+        protected void beforeLeaveScene(Pet pet) {
+
+        }
+
+        @Override
+        protected void afterLeaveScene(Pet pet) {
+
+        }
+    }
+
+    protected class NpcInOutHandler extends AbstractGameObjectInOutHandler<Npc>{
+
+        @Override
+        protected void beforeEnterScene(Npc npc) {
+
+        }
+
+        @Override
+        protected void afterEnterScene(Npc npc) {
+
+        }
+
+        @Override
+        protected void beforeLeaveScene(Npc npc) {
+
+        }
+
+        @Override
+        protected void afterLeaveScene(Npc npc) {
+
+        }
+    }
+
+    // endregion
+
+    // region 刷帧
+    /**
+     * 游戏对象刷帧模板实现
+     * @param <T>
+     */
+    protected abstract class AbstractGameObjectTickHandler<T extends GameObject> extends GameObjectTickHandler<T>{
+
+        protected AbstractGameObjectTickHandler(int framePerSecond) {
+            super(framePerSecond);
+        }
+
+        @Override
+        public final void tick(T gameObject) {
+            tickCore(gameObject);
+            tickHook(gameObject);
+        }
+
+        /**
+         * tick公共逻辑(核心逻辑)
+         * @param gameObject
+         */
+        private void tickCore(T gameObject){
+
+        }
+
+        /**
+         * 子类独有逻辑
+         * @param gameObject
+         */
+        protected void tickHook(T gameObject){
+
+        }
+    }
+
+
+    protected class PlayerTickHandler extends AbstractGameObjectTickHandler<Player>{
+
+        public PlayerTickHandler(int framePerSecond) {
+            super(framePerSecond);
+        }
+
+        @Override
+        protected void tickHook(Player player) {
+            super.tickHook(player);
+        }
+    }
+
+    protected class PetTickHandler extends AbstractGameObjectTickHandler<Pet>{
+
+        public PetTickHandler(int framePerSecond) {
+            super(framePerSecond);
+        }
+
+        @Override
+        protected void tickHook(Pet pet) {
+            super.tickHook(pet);
+        }
+    }
+
+    protected class NpcTickHandler extends AbstractGameObjectTickHandler<Npc>{
+
+        public NpcTickHandler(int framePerSecond) {
+            super(framePerSecond);
+        }
+
+        @Override
+        protected void tickHook(Npc npc) {
+            super.tickHook(npc);
+        }
+    }
+    // endregion
 }
+
+

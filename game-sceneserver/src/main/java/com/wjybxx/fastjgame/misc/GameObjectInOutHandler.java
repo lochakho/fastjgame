@@ -19,7 +19,7 @@ package com.wjybxx.fastjgame.misc;
 import com.wjybxx.fastjgame.scene.gameobject.GameObject;
 
 /**
- * 游戏对象在场景中的生命周期管理器；
+ * 游戏对象进出场景接口；
  * 在Scene对象内部进行实现，因为可能涉及大量场景对象之间的交互；
  * @author wjybxx
  * @version 1.0
@@ -27,7 +27,7 @@ import com.wjybxx.fastjgame.scene.gameobject.GameObject;
  * @github - https://github.com/hl845740757
  */
 @Stateless
-public interface GameObjectInSceneHandler<T extends GameObject> {
+public interface GameObjectInOutHandler<T extends GameObject> {
 
     /**
      * 执行游戏对象进入场景逻辑
@@ -36,15 +36,8 @@ public interface GameObjectInSceneHandler<T extends GameObject> {
     void processEnterScene(T gameObject);
 
     /**
-     * tick刷帧
-     * @param gameObject 游戏场景对象
-     *
-     */
-    void tick(T gameObject);
-
-    /**
      * 执行游戏对象离开场景逻辑
-     * @param gameObject 场景对象
+     * @param gameObject 场景对象(命名为t的好处是子类实现的时候，ide生成的名字更加有意义)
      */
     void processLeaveScene(T gameObject);
 

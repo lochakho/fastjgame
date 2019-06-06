@@ -69,7 +69,7 @@ public class GameObjectHandlerMapper<T> {
      * @return handler
      */
     public <U extends GameObject> T getHandler(U gameObject){
-        return getHandler(gameObject.getObjectType());
+        return handlerMap.get(gameObject.getObjectType());
     }
 
 }

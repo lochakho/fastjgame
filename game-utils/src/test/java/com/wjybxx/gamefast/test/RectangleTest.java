@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.misc;
+package com.wjybxx.gamefast.test;
 
-import com.wjybxx.fastjgame.scene.gameobject.GameObject;
+import com.wjybxx.fastjgame.shape.Point2D;
+import com.wjybxx.fastjgame.shape.shape2d.Rectangle;
 
 /**
- * 视野管理handler映射
+ * 矩形创建测试
  * @author wjybxx
  * @version 1.0
- * @date 2019/6/5 19:32
+ * @date 2019/6/3 20:10
  * @github - https://github.com/hl845740757
  */
-public class NotifyHandlerMapper extends GameObjectHandlerMapper<NotifyHandler<? extends GameObject>>{
+public class RectangleTest {
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <U extends GameObject> NotifyHandler<U> getHandler(U gameObject) {
-        return (NotifyHandler<U>) super.getHandler(gameObject);
+    public static void main(String[] args) {
+        Rectangle rectangle=Rectangle.newRectangleByCentralAngle(Point2D.newPoint2D(0,0),90,6,3);
+        System.out.println(rectangle);
+
+        Rectangle rectangle2=Rectangle.newRectangleByCentralAngle(Point2D.newPoint2D(0,0),45,6,3);
+        System.out.println(rectangle2);
     }
+
 }

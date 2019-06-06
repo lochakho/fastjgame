@@ -33,7 +33,7 @@ public class SystemTimeMrg {
     /**
      * 获取时间策略
      */
-    private Strategy strategy=new RealTimeStrategy();
+    private Strategy strategy = new RealTimeStrategy();
 
     @Inject
     public SystemTimeMrg() {
@@ -64,14 +64,14 @@ public class SystemTimeMrg {
      * 切换到缓存策略
      */
     public void changeToCacheStrategy(){
-        this.strategy=new CacheStrategy();
+        this.strategy = new CacheStrategy();
     }
 
     /**
      * 切换到实时策略
      */
     public void changeToRealTimeStrategy(){
-        this.strategy=new RealTimeStrategy();
+        this.strategy = new RealTimeStrategy();
     }
 
 

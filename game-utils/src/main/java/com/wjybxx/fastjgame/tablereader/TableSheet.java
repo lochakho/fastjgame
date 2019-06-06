@@ -159,7 +159,7 @@ public class TableSheet {
      * @return
      */
     @Nullable
-    public TableRow getRow(String colName,String colValue){
+    public TableRow getRow(String colName,@Nonnull String colValue){
         for (TableRow tableRow:getContentRows()){
             if (colValue.equals(tableRow.getAsString(colName))){
                 return tableRow;

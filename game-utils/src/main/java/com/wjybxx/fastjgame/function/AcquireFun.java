@@ -16,6 +16,7 @@
 package com.wjybxx.fastjgame.function;
 
 /**
+ * 资源申请函数
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/14 10:58

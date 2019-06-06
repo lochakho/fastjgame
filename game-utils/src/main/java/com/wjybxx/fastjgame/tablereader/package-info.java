@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package com.wjybxx.fastjgame.misc;
-
-import io.netty.channel.EventLoopGroup;
-
 /**
+ * 这里是用于读取excel和csv表格的辅助类
  * @author wjybxx
  * @version 1.0
- * @date 2019/5/16 17:31
+ * @date 2019/6/6 15:06
  * @github - https://github.com/hl845740757
  */
-public interface NettyThreadHolder {
-
-}
+package com.wjybxx.fastjgame.tablereader;

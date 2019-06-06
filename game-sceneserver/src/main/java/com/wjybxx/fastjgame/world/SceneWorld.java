@@ -40,16 +40,18 @@ public class SceneWorld extends WorldCore {
     private final SceneRegionMrg sceneRegionMrg;
     private final SceneWorldInfoMrg sceneWorldInfoMrg;
     private final SceneSendMrg sendMrg;
+    private final SceneMrg sceneMrg;
 
     @Inject
     public SceneWorld(WorldWrapper worldWrapper, WorldCoreWrapper coreWrapper,
                       CenterInSceneInfoMrg centerInSceneInfoMrg, SceneRegionMrg sceneRegionMrg,
-                      SceneSendMrg sendMrg) {
+                      SceneSendMrg sendMrg, SceneMrg sceneMrg) {
         super(worldWrapper, coreWrapper);
         this.centerInSceneInfoMrg = centerInSceneInfoMrg;
         this.sceneRegionMrg = sceneRegionMrg;
         this.sceneWorldInfoMrg= (SceneWorldInfoMrg) worldWrapper.getWorldInfoMrg();
         this.sendMrg = sendMrg;
+        this.sceneMrg = sceneMrg;
     }
 
     @Override
@@ -138,7 +140,7 @@ public class SceneWorld extends WorldCore {
 
     @Override
     protected void tickHook() {
-
+        sceneMrg.tick();
     }
 
     @Override

@@ -54,7 +54,7 @@ public class MathUtils {
 
     /**
      * 帧间隔(毫秒)
-     * @param framePerSecond 每秒帧数
+     * @param framePerSecond 每秒帧数 1 ~ 1000
      * @return millTime
      */
     public static long frameInterval(int framePerSecond){

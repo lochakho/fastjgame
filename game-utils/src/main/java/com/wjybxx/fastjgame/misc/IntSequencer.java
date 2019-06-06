@@ -50,7 +50,7 @@ public class IntSequencer {
      * @param sequence
      */
     public void set(int sequence){
-        this.value=sequence;
+        this.value = sequence;
     }
 
     /**

@@ -17,56 +17,16 @@
 package com.wjybxx.fastjgame.misc;
 
 import com.wjybxx.fastjgame.scene.gameobject.GameObject;
-import com.wjybxx.fastjgame.utils.MathUtils;
 
 /**
+ * 场景游戏对象刷帧逻辑
  * @author wjybxx
  * @version 1.0
- * @date 2019/6/6 11:48
+ * @date 2019/6/6 16:07
  * @github - https://github.com/hl845740757
  */
-public abstract class GameObjectTickHandler<T extends GameObject> {
+public interface GameObjectTickHandler<T extends GameObject> {
 
-    /**
-     * 每秒几帧
-     */
-    private final int framePerSecond;
+    void tick(T gameObject);
 
-    /**
-     * tick间隔(帧间隔)
-     */
-    private final long tickInterval;
-
-    /**
-     * 下次tick的时间戳
-     */
-    private long nextTickTimeMills;
-
-    protected GameObjectTickHandler(int framePerSecond) {
-        this.framePerSecond = framePerSecond;
-        this.tickInterval = MathUtils.frameInterval(framePerSecond);
-    }
-
-    /**
-     * tick刷帧
-     * @param gameObject 游戏场景对象
-     *
-     */
-    public abstract void tick(T gameObject);
-
-    public int getFramePerSecond() {
-        return framePerSecond;
-    }
-
-    public long getTickInterval() {
-        return tickInterval;
-    }
-
-    public long getNextTickTimeMills() {
-        return nextTickTimeMills;
-    }
-
-    public void setNextTickTimeMills(long nextTickTimeMills) {
-        this.nextTickTimeMills = nextTickTimeMills;
-    }
 }

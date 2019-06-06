@@ -19,7 +19,7 @@ package com.wjybxx.fastjgame.misc;
 import javax.annotation.Nonnull;
 
 /**
- * 远端信息
+ * 地址信息
  * @author wjybxx
  * @version 1.0
  * @date 2019/5/15 18:22

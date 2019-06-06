@@ -39,6 +39,7 @@ public class SceneMrg {
 
     private static final Logger logger = LoggerFactory.getLogger(SceneMrg.class);
 
+    private final SystemTimeMrg systemTimeMrg;
     // 按照Scene的不同存储在不同的map
 
     /**
@@ -53,19 +54,20 @@ public class SceneMrg {
     private final Long2ObjectMap<Dungeon> dungeonMap = new Long2ObjectOpenHashMap<>();
 
     @Inject
-    public SceneMrg() {
-
+    public SceneMrg(SystemTimeMrg systemTimeMrg) {
+        this.systemTimeMrg = systemTimeMrg;
     }
 
-    public void tick(long curMillTime){
-        tickScene(townMap,curMillTime);
-        tickScene(dungeonMap,curMillTime);
+    public void tick(){
+        tickScene(townMap);
+        tickScene(dungeonMap);
     }
 
-    private <T extends Scene> void tickScene(Long2ObjectMap<T> sceneMap,long curMillTime){
+    private <T extends Scene> void tickScene(Long2ObjectMap<T> sceneMap){
         if (sceneMap.size() == 0){
             return;
         }
+        long curMillTime = systemTimeMrg.getSystemMillTime();
         for (Scene scene : sceneMap.values()){
             try {
                 scene.tick(curMillTime);

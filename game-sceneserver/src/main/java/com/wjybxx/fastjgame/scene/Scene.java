@@ -25,6 +25,7 @@ import com.wjybxx.fastjgame.mrg.SceneWrapper;
 import com.wjybxx.fastjgame.scene.gameobject.*;
 import com.wjybxx.fastjgame.trigger.TriggerSystem;
 import com.wjybxx.fastjgame.utils.GameConstant;
+import com.wjybxx.fastjgame.utils.MathUtils;
 import it.unimi.dsi.fastutil.objects.ObjectCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,13 @@ public abstract class Scene extends TriggerSystem {
      * 刷新视野格子的间隔
      */
     private static final long DELTA_UPDATE_VIEW_GRIDS = 1000;
+
+    /**
+     * 玩家刷帧间隔
+     */
+    private static final long PLAYER_FRAME_INTERVAL = MathUtils.frameInterval(30);
+    private static final long PET_FRAME_INTERVAL = MathUtils.frameInterval(30);
+    private static final long NPC_FRAME_INTERVAL = MathUtils.frameInterval(10);
 
     private final SceneSendMrg sendMrg;
     private final MapDataLoadMrg mapDataLoadMrg;
@@ -93,7 +101,7 @@ public abstract class Scene extends TriggerSystem {
     /**
      * 场景对象刷帧handler
      */
-    private final GameObjectHandlerMapper<GameObjectTickHandler<?>> gameObjectTickHandlerMapper = new GameObjectHandlerMapper<>();
+    private final GameObjectHandlerMapper<GameObjectTickContext<?>> gameObjectTickContextMapper = new GameObjectHandlerMapper<>();
 
     public Scene(long guid, TemplateSceneConfig sceneConfig, SceneWrapper sceneWrapper) {
         this.guid = guid;
@@ -110,9 +118,8 @@ public abstract class Scene extends TriggerSystem {
 
         // 创建管理该场景对象的控制器
         this.sceneGameObjectManager = new SceneGameObjectManager(getGameObjectManagerInitCapacityHolder());
-    }
 
-    private void registerHandlers(){
+        // 注册各种各样的处理器
         registerNotifyHandlers();
         registerInOutHandlers();
         registerTickHandlers();
@@ -131,9 +138,14 @@ public abstract class Scene extends TriggerSystem {
     }
 
     private void registerTickHandlers(){
-        gameObjectTickHandlerMapper.registerHandler(PLAYER, new PlayerTickHandler(30));
-        gameObjectTickHandlerMapper.registerHandler(PET, new PetTickHandler(30));
-        gameObjectTickHandlerMapper.registerHandler(NPC, new NpcTickHandler(10));
+        gameObjectTickContextMapper.registerHandler(PLAYER,
+                new GameObjectTickContext<>(PLAYER_FRAME_INTERVAL, new PlayerTickHandler()));
+
+        gameObjectTickContextMapper.registerHandler(PET,
+                new GameObjectTickContext<>(PET_FRAME_INTERVAL, new PetTickHandler()));
+
+        gameObjectTickContextMapper.registerHandler(NPC,
+                new GameObjectTickContext<>(NPC_FRAME_INTERVAL, new NpcTickHandler()));
     }
 
     /**
@@ -184,33 +196,34 @@ public abstract class Scene extends TriggerSystem {
      */
     public void tick(long curMillTime) throws Exception{
 
-        // 场景对象刷帧
+        // 场景对象刷帧(场景对象之间刷帧最好也是没有依赖的)
         for (GameObjectType gameObjectType : GameObjectType.values()){
-            tryTickGameObjects(curMillTime, gameObjectType);
+            GameObjectTickContext<?> tickContext = gameObjectTickContextMapper.getHandler(gameObjectType);
+            if (curMillTime >= tickContext.nextTickTimeMills){
+                tickContext.nextTickTimeMills = curMillTime + tickContext.frameInterval;
+                tickGameObjects(gameObjectType, tickContext.handler);
+            }
         }
 
         // 检测视野格子刷新
-        tryUpdateViewableGrid(curMillTime);
+        if (curMillTime >= nextUpdateViewGridTime){
+            nextUpdateViewGridTime = curMillTime + DELTA_UPDATE_VIEW_GRIDS;
+            updateViewableGrid();
+        }
+
     }
 
-    @SuppressWarnings("unchecked")
-    private <T extends GameObject> void tryTickGameObjects(long curMillTime, GameObjectType gameObjectType){
-        GameObjectTickHandler<T> handler = (GameObjectTickHandler<T>) gameObjectTickHandlerMapper.getHandler(gameObjectType);
-        if (curMillTime < handler.getNextTickTimeMills()){
-            return;
-        }
-        handler.setNextTickTimeMills(curMillTime + handler.getTickInterval());
-
+    private <T extends GameObject> void tickGameObjects(GameObjectType gameObjectType, GameObjectTickHandler<T> handler){
+        @SuppressWarnings("unchecked")
         ObjectCollection<T> gameObjectSet = (ObjectCollection<T>) sceneGameObjectManager.getGameObjectSet(gameObjectType);
         if (gameObjectSet.size() == 0){
             return;
         }
-
         for (T gameObject : gameObjectSet){
             try {
                 handler.tick(gameObject);
             }catch (Exception e){
-                logger.error("tick {}-{} caught exception", gameObjectType, gameObject.getGuid(),e);
+                logger.error("tick {}-{} caught exception", gameObjectType, gameObject.getGuid());
             }
         }
     }
@@ -223,12 +236,7 @@ public abstract class Scene extends TriggerSystem {
     /**
      * 刷新所有对象的视野格子
      */
-    private void tryUpdateViewableGrid(long curMillTime){
-        if (curMillTime < nextUpdateViewGridTime){
-            return;
-        }
-        nextUpdateViewGridTime = curMillTime + DELTA_UPDATE_VIEW_GRIDS;
-
+    private void updateViewableGrid(){
         // 视野刷新最好不要有依赖，我们之前项目某些实现导致视野刷新之间有依赖(跟随对象的特殊跟随策略)
         for (GameObjectType gameObjectType : GameObjectType.values()){
             ObjectCollection<? extends GameObject> gameObjectSet = sceneGameObjectManager.getGameObjectSet(gameObjectType);
@@ -495,16 +503,38 @@ public abstract class Scene extends TriggerSystem {
 
     // endregion
 
+
+
     // region 刷帧
+
+    static class GameObjectTickContext<T extends GameObject>{
+
+        /**
+         * 帧间隔
+         */
+        final long frameInterval;
+
+        /**
+         * 真正刷帧逻辑
+         */
+        final GameObjectTickHandler<T> handler;
+
+        /**
+         * 下次刷帧事件戳
+         */
+        long nextTickTimeMills;
+
+        GameObjectTickContext(long frameInterval, GameObjectTickHandler<T> handler) {
+            this.frameInterval = frameInterval;
+            this.handler = handler;
+        }
+    }
+
     /**
      * 游戏对象刷帧模板实现
      * @param <T>
      */
-    protected abstract class AbstractGameObjectTickHandler<T extends GameObject> extends GameObjectTickHandler<T>{
-
-        protected AbstractGameObjectTickHandler(int framePerSecond) {
-            super(framePerSecond);
-        }
+    public abstract class AbstractGameObjectTickHandler<T extends GameObject> implements GameObjectTickHandler<T>{
 
         @Override
         public final void tick(T gameObject) {
@@ -514,7 +544,7 @@ public abstract class Scene extends TriggerSystem {
 
         /**
          * tick公共逻辑(核心逻辑)
-         * @param gameObject
+         * @param gameObject 场景对象
          */
         private void tickCore(T gameObject){
 
@@ -522,19 +552,14 @@ public abstract class Scene extends TriggerSystem {
 
         /**
          * 子类独有逻辑
-         * @param gameObject
+         * @param gameObject 场景对象
          */
         protected void tickHook(T gameObject){
 
         }
     }
 
-
-    protected class PlayerTickHandler extends AbstractGameObjectTickHandler<Player>{
-
-        public PlayerTickHandler(int framePerSecond) {
-            super(framePerSecond);
-        }
+    protected class PlayerTickHandler extends AbstractGameObjectTickHandler<Player> {
 
         @Override
         protected void tickHook(Player player) {
@@ -542,11 +567,7 @@ public abstract class Scene extends TriggerSystem {
         }
     }
 
-    protected class PetTickHandler extends AbstractGameObjectTickHandler<Pet>{
-
-        public PetTickHandler(int framePerSecond) {
-            super(framePerSecond);
-        }
+    protected class PetTickHandler extends AbstractGameObjectTickHandler<Pet> {
 
         @Override
         protected void tickHook(Pet pet) {
@@ -554,11 +575,7 @@ public abstract class Scene extends TriggerSystem {
         }
     }
 
-    protected class NpcTickHandler extends AbstractGameObjectTickHandler<Npc>{
-
-        public NpcTickHandler(int framePerSecond) {
-            super(framePerSecond);
-        }
+    protected class NpcTickHandler extends AbstractGameObjectTickHandler<Npc> {
 
         @Override
         protected void tickHook(Npc npc) {

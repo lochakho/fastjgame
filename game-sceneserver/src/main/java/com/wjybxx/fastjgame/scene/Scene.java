@@ -25,7 +25,6 @@ import com.wjybxx.fastjgame.mrg.SceneWrapper;
 import com.wjybxx.fastjgame.scene.gameobject.*;
 import com.wjybxx.fastjgame.trigger.TriggerSystem;
 import com.wjybxx.fastjgame.utils.GameConstant;
-import com.wjybxx.fastjgame.utils.MathUtils;
 import it.unimi.dsi.fastutil.objects.ObjectCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,17 +83,17 @@ public abstract class Scene extends TriggerSystem {
     /**
      * 场景视野通知策略
      */
-    private final NotifyHandlerMapper notifyHandlerMapper = new NotifyHandlerMapper();
+    private final GameObjectHandlerMapper<NotifyHandler<?>> notifyHandlerMapper = new GameObjectHandlerMapper<>();
 
     /**
      * 游戏对象进出场景handler
      * (名字有点长)
      */
-    private final GameObjectInOutHandlerMapper gameObjectInOutHandlerMapper = new GameObjectInOutHandlerMapper();
+    private final GameObjectHandlerMapper<GameObjectInOutHandler<?>> gameObjectInOutHandlerMapper = new GameObjectHandlerMapper<>();
     /**
      * 场景对象刷帧handler
      */
-    private final GameObjectTickHandlerMapper gameObjectTickHandlerMapper = new GameObjectTickHandlerMapper();
+    private final GameObjectHandlerMapper<GameObjectTickHandler<?>> gameObjectTickHandlerMapper = new GameObjectHandlerMapper<>();
 
     public Scene(long guid, TemplateSceneConfig sceneConfig, SceneWrapper sceneWrapper) {
         this.guid = guid;
@@ -286,7 +285,8 @@ public abstract class Scene extends TriggerSystem {
             preViewGrid.removeObject(gameObject);
             curViewGrid.addGameObject(gameObject);
 
-            NotifyHandler<T> notifyHandler = notifyHandlerMapper.getHandler(gameObject);
+            @SuppressWarnings("unchecked")
+            NotifyHandler<T> notifyHandler = (NotifyHandler<T>) notifyHandlerMapper.getHandler(gameObject);
             // 视野，进入和退出都是相互的，他们离开了我的视野，我也离开了他们的视野
             // 通知该对象，这些对象离开了我的视野
             notifyHandler.notifyGameObjectOthersOut(gameObject,invisibleGrids);
